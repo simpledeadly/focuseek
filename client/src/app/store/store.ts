@@ -1,6 +1,7 @@
+// store/userStore.ts
 import { defineStore } from 'pinia'
 
-export const useStore = defineStore('store', {
+export const useUserStore = defineStore('storeName', {
 	state: () => ({}),
 	actions: {},
 })
