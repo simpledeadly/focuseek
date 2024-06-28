@@ -7,9 +7,34 @@ const routes: Array<RouteRecordRaw> = [
 		component: () => import('../../views/HomeView.vue'),
 	},
 	{
-		path: '/help',
-		name: 'help',
-		component: () => import('../../views/HelpView.vue'),
+		path: '/inbox',
+		name: 'inbox',
+		component: () => import('../../views/InboxView.vue'),
+	},
+	{
+		path: '/materials',
+		name: 'materials',
+		component: () => import('../../views/MaterialsView.vue'),
+	},
+	{
+		path: '/tasks',
+		name: 'tasks',
+		component: () => import('../../views/TasksView.vue'),
+	},
+	{
+		path: '/projects',
+		name: 'projects',
+		component: () => import('../../views/ProjectsView.vue'),
+	},
+	{
+		path: '/achievements',
+		name: 'achievements',
+		component: () => import('../../views/AchievementsView.vue'),
+	},
+	{
+		path: '/timetrack',
+		name: 'timetrack',
+		component: () => import('../../views/TimeTrackView.vue'),
 	},
 ]
 

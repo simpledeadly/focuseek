@@ -1,5 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-	<h1>Help meeee</h1>
+	<h1>Projects</h1>
 </template>
+
+<style lang="scss"></style>
