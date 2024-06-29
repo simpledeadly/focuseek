@@ -49,6 +49,7 @@ const setActiveTab = (tabId: number) => {
 .bar {
 	background: #e2e6e9;
 	border: 1px solid #c3c3c3;
+	margin-bottom: 2rem;
 }
 
 .active {

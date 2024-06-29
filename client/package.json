@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/axios": "^0.14.0",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
