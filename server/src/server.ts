@@ -7,18 +7,28 @@ import { Item } from '../../common/types/interfaces'
 let items: Item[] = [
 	{
 		id: 1,
-		text: 'one',
+		title: 'one',
 		category: 'task',
 	},
 	{
 		id: 2,
-		text: 'two',
+		title: 'two',
 		category: 'task',
 	},
 	{
 		id: 3,
-		text: 'three',
+		title: 'three',
 		category: 'project',
+	},
+	{
+		id: 4,
+		title: 'four',
+		category: 'material',
+	},
+	{
+		id: 5,
+		title: 'five',
+		category: 'inbox',
 	},
 ]
 

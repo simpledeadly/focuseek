@@ -1,24 +1,50 @@
 <script setup lang="ts">
-import { fetchItems } from '@/shared/lib/items'
-import { onMounted, ref } from 'vue'
-import { Item } from '../../../common/types/interfaces'
+import { Table } from '@/widgets/tableView'
 
-const items = ref<Item[]>([])
-
-onMounted(async () => {
-	const res = await fetchItems()
-	items.value = Object.values(res)
-})
+const columns = ['Title', 'Category']
 </script>
 
 <template>
-	<h2>Projects</h2>
-	<ul v-if="items && items.length > 0" v-for="item in items">
-		<li :key="item.id" v-if="item.category === 'project'">
-			{{ item.text }} – {{ item.category }}
-		</li>
-	</ul>
-	<h2 v-else>Nothing here</h2>
+	<script setup lang="ts">
+		import { DataTable } from '@/widgets/tableView'
+		import { columns } from '@/widgets/tableView/model/columns'
+		import { Payment } from '@/widgets/tableView/model/data'
+		import { onMounted, ref } from 'vue'
+
+		const data = ref<Payment[]>([])
+
+		async function getData(): Promise<Payment[]> {
+			// Fetch data from your API here.
+			return [
+				{
+					id: '728ed52f',
+					amount: 100,
+					status: 'pending',
+					email: 'm@example.com',
+				},
+				{
+					id: '489e1d42',
+					amount: 125,
+					status: 'processing',
+					email: 'example@gmail.com',
+				},
+			]
+		}
+
+		onMounted(async () => {
+			data.value = await getData()
+		})
+	</script>
+
+	<template>
+		<div class="container py-10 mx-auto">
+			<DataTable :columns="columns" :data="data" />
+		</div>
+	</template>
+
+	<style lang="scss" scoped></style>
+
+	<Table :columns="columns" filter="project" />
 </template>
 
 <style lang="scss" scoped></style>

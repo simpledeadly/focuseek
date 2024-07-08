@@ -1,21 +1,28 @@
 <script setup lang="ts">
+import { Toggle } from '@/shared/ui/toggle'
 import { Navbar } from '@/widgets/navbar'
+import { SettingsView } from '@/widgets/settingsView'
+import { CircleUser } from 'lucide-vue-next'
 </script>
 
 <template>
 	<div class="container">
 		<div class="centered">
-			<!-- <img
-				src="../assets/images/focuseek_logo.png"
-				alt="Focuseek"
-				class="logo"
-			/> -->
-			<h1 class="logo">Focuseek</h1>
+			<div class="navmenu">
+				<h1 class="logo">Focuseek</h1>
+				<div class="navmenu-options">
+					<SettingsView />
+					<!-- <Separator orientation="vertical" /> -->
+					<Toggle>
+						<CircleUser />
+					</Toggle>
+				</div>
+			</div>
 		</div>
 		<Navbar class="centered" />
-		<transition name="fade">
-			<router-view />
-		</transition>
+		<!-- <transition name="fade"> -->
+		<router-view />
+		<!-- </transition> -->
 	</div>
 </template>
 
@@ -29,15 +36,15 @@ import { Navbar } from '@/widgets/navbar'
 	padding: 0;
 	font-size: 18px;
 	outline: none;
-	color: #3f3f3f;
+	// color: #3f3f3f;
 }
 
 body {
-	background: #f5f7f8;
+	// background: #f5f7f8;
 }
 
 .container {
-	width: 1024px;
+	max-width: 1024px;
 	margin: 0 auto;
 	// height: 90vh;
 }
@@ -51,16 +58,32 @@ body {
 	margin: 0 auto;
 }
 
-.logo {
-	// for img
+.navmenu {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-direction: row;
+	width: 100%;
 	margin-top: 1.5rem;
-	margin-bottom: 0.5rem; // 6px
-	width: auto;
-	// height: 36px;
+	margin-bottom: 0.5rem;
 
-	// not img
+	&-options {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	& > div {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+	}
+}
+
+.logo {
 	font-family: 'Lilly Script One', cursive;
-	font-size: 25px;
+	font-size: 30px;
 	color: #f5f7f8;
 	text-shadow: 1px 1px 0 #2f2f2f, -1px -1px 0 #2f2f2f, 1px -1px 0 #2f2f2f,
 		-1px 1px 0 #2f2f2f;

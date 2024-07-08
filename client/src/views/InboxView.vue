@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { fetchItems } from '@/shared/lib/items'
+import { DataTable } from '@/widgets/tableView'
+import { columns } from '@/widgets/tableView/model'
 import { onMounted, ref } from 'vue'
 import { Item } from '../../../common/types/interfaces'
 
@@ -7,20 +9,17 @@ const items = ref<Item[]>([])
 
 onMounted(async () => {
 	const res = await fetchItems()
-	items.value = Object.values(res)
+	items.value = res.map(proxy => ({
+		id: proxy.id,
+		title: proxy.title,
+		category: proxy.category,
+	}))
 })
 </script>
 
 <template>
-	<div>
-		<h2>Inbox</h2>
-		<!-- *widget here (entitie and features in widget)* -->
-		<ul v-if="items && items.length > 0">
-			<li v-for="item in items" :key="item.id">
-				{{ item.text }} - {{ item.category }}
-			</li>
-		</ul>
-		<h2 v-else>Nothing here</h2>
+	<div class="container py-10 mx-auto">
+		<DataTable :columns="columns" :data="items" :noCols="true" />
 	</div>
 </template>
 

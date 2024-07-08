@@ -16,7 +16,7 @@ const tabs: TabType[] = [
 	{ id: 3, title: 'Materials', route: '/materials' },
 	{ id: 4, title: 'Tasks', route: '/tasks' },
 	{ id: 5, title: 'Projects', route: '/projects' },
-	{ id: 6, title: 'Achievements', route: '/achievements' },
+	// { id: 6, title: 'Achievements', route: '/achievements' },
 	// { id: 7, title: 'TimeTrack', route: '/timetrack' },
 ]
 
@@ -45,22 +45,30 @@ const setActiveTab = (tabId: number) => {
 	</Tabs>
 </template>
 
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 .bar {
 	background: #e2e6e9;
 	border: 1px solid #c3c3c3;
-	margin-bottom: 2rem;
+	// margin-bottom: 0rem;
 }
 
 .active {
 	color: #2f2f2f;
-	font-weight: bolder;
+	// font-weight: bolder;
 	background: #f5f7f8;
 	box-shadow: 0 1px 2px #c3c3c3;
 	transition: all 0.3s ease;
+
+	&:active {
+		font-weight: bolder;
+	}
 }
 
 .default {
 	color: #3f3f3f;
+
+	&:active {
+		background: #f5f7f8;
+	}
 }
-</style>
+</style> -->
