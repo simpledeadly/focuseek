@@ -1,4 +1,4 @@
-import { Item } from '@/../../common/types/interfaces'
+import type { Item, State } from '@/../../common/types/types'
 import {
 	addItemToServer,
 	deleteItemFromServer,
@@ -8,8 +8,8 @@ import { defineStore } from 'pinia'
 
 export const useItemsStore = defineStore({
 	id: 'items',
-	state: () => ({
-		items: [] as Item[],
+	state: (): State => ({
+		items: [],
 	}),
 	actions: {
 		async fetchItemsFromStoreFromServer() {
@@ -39,5 +39,34 @@ export const useItemsStore = defineStore({
 				console.error('Ошибка при удалении элемента:', e)
 			}
 		},
+		changeItemType(
+			id: number,
+			newType: 'inbox' | 'material' | 'todo' | 'project'
+		) {
+			const item = this.items.find(item => item.id === id)
+
+			if (item) {
+				item.type = newType
+				if (newType === 'material') {
+					delete item.isDone
+					delete item.subtodos
+				}
+				if (newType === 'todo' || newType === 'project') {
+					item.isDone = false
+				}
+				if (newType === 'project') {
+					item.subtodos = []
+				}
+			}
+		},
+	},
+	getters: {
+		getItemsByType:
+			state => (type: 'inbox' | 'material' | 'todo' | 'project') => {
+				// state.items.length === 0 && console.error('Элементы не загрузились')
+				return state.items.filter(item => item.type === type)
+			},
 	},
 })
+
+useItemsStore().fetchItemsFromStoreFromServer()

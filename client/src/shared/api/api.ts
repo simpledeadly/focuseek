@@ -1,4 +1,4 @@
-import { Item } from '@/../../common/types/interfaces'
+import type { Item } from '@/../../common/types/types'
 import axios, { AxiosResponse } from 'axios'
 
 export const fetchItemsFromServer = async (): Promise<Item[]> => {

@@ -2,11 +2,6 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
 	{
-		path: '/',
-		name: 'home',
-		component: () => import('../../views/HomeView.vue'),
-	},
-	{
 		path: '/inbox',
 		name: 'inbox',
 		component: () => import('../../views/InboxView.vue'),
@@ -17,24 +12,14 @@ const routes: Array<RouteRecordRaw> = [
 		component: () => import('../../views/MaterialsView.vue'),
 	},
 	{
-		path: '/tasks',
-		name: 'tasks',
-		component: () => import('../../views/TasksView.vue'),
+		path: '/todos',
+		name: 'todos',
+		component: () => import('../../views/TodosView.vue'),
 	},
 	{
 		path: '/projects',
 		name: 'projects',
 		component: () => import('../../views/ProjectsView.vue'),
-	},
-	{
-		path: '/achievements',
-		name: 'achievements',
-		component: () => import('../../views/AchievementsView.vue'),
-	},
-	{
-		path: '/timetrack',
-		name: 'timetrack',
-		component: () => import('../../views/TimeTrackView.vue'),
 	},
 ]
 

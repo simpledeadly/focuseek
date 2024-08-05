@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import { fetchItems } from '@/shared/lib/items'
-import { DataTable } from '@/widgets/tableView'
-import { columns } from '@/widgets/tableView/model'
-import { onMounted, ref } from 'vue'
-import { Item } from '../../../common/types/interfaces'
-
-const items = ref<Item[]>([])
-
-onMounted(async () => {
-	const res = await fetchItems()
-	items.value = res.map(proxy => ({
-		id: proxy.id,
-		title: proxy.title,
-		category: proxy.category,
-	}))
-})
+import { ItemsList } from '@/widgets/items-widget'
 </script>
 
 <template>
 	<div class="container py-10 mx-auto">
-		<DataTable :columns="columns" :data="items" :noCols="true" />
+		<h1 class="centered h1">Inbox</h1>
+		<ItemsList :filter="'inbox'" />
 	</div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.h1 {
+	margin-bottom: 1.5rem;
+	font-size: 30px;
+	font-weight: 900;
+	color: #101010;
+}
+</style>

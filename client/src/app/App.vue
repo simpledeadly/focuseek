@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { Toggle } from '@/shared/ui/toggle'
-import { Navbar } from '@/widgets/navbar'
-import { SettingsView } from '@/widgets/settingsView'
-import { CircleUser } from 'lucide-vue-next'
+import { Navbar } from '@/widgets/navbar-widget'
+import { SettingsView } from '@/widgets/settings-widget'
 </script>
 
 <template>
@@ -12,17 +10,11 @@ import { CircleUser } from 'lucide-vue-next'
 				<h1 class="logo">Focuseek</h1>
 				<div class="navmenu-options">
 					<SettingsView />
-					<!-- <Separator orientation="vertical" /> -->
-					<Toggle>
-						<CircleUser />
-					</Toggle>
 				</div>
 			</div>
 		</div>
 		<Navbar class="centered" />
-		<!-- <transition name="fade"> -->
 		<router-view />
-		<!-- </transition> -->
 	</div>
 </template>
 
@@ -63,7 +55,7 @@ body {
 	justify-content: space-around;
 	align-items: center;
 	flex-direction: row;
-	width: 100%;
+	// width: 100%;
 	margin-top: 1.5rem;
 	margin-bottom: 0.5rem;
 
@@ -71,6 +63,8 @@ body {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		margin-left: 1rem;
+		color: #333;
 	}
 
 	& > div {

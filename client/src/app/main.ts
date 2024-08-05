@@ -1,5 +1,5 @@
+import '@/assets/styles/global.scss'
 import { createApp } from 'vue'
-import '../assets/styles/global.scss'
 import App from './App.vue'
 import router from './router'
 import { pinia } from './store'

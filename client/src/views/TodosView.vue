@@ -4,8 +4,8 @@ import { ItemsList } from '@/widgets/items-widget'
 
 <template>
 	<div class="container py-10 mx-auto">
-		<h1 class="centered h1">Projects</h1>
-		<ItemsList :filter="'project'" />
+		<h1 class="centered h1">Todos</h1>
+		<ItemsList :filter="'todo'" />
 	</div>
 </template>
 

@@ -11,13 +11,10 @@ type TabType = {
 }
 
 const tabs: TabType[] = [
-	// { id: 1, title: 'Overview', route: '/' },
 	{ id: 2, title: 'Inbox', route: '/inbox' },
 	{ id: 3, title: 'Materials', route: '/materials' },
-	{ id: 4, title: 'Tasks', route: '/tasks' },
+	{ id: 4, title: 'Todos', route: '/todos' },
 	{ id: 5, title: 'Projects', route: '/projects' },
-	// { id: 6, title: 'Achievements', route: '/achievements' },
-	// { id: 7, title: 'TimeTrack', route: '/timetrack' },
 ]
 
 const setActiveTab = (tabId: number) => {

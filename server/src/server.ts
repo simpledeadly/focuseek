@@ -2,33 +2,18 @@ import chalk from 'chalk'
 import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
-import { Item } from '../../common/types/interfaces'
+import type { Item } from '../../common/types/types'
 
 let items: Item[] = [
-	{
-		id: 1,
-		title: 'one',
-		category: 'task',
-	},
-	{
-		id: 2,
-		title: 'two',
-		category: 'task',
-	},
-	{
-		id: 3,
-		title: 'three',
-		category: 'project',
-	},
+	{ id: 1, description: 'Inbox Item 1', type: 'inbox', isDone: false },
+	{ id: 2, description: 'Material Item 1', type: 'material' },
+	{ id: 3, description: 'Todo Item 1', type: 'todo', isDone: false },
 	{
 		id: 4,
-		title: 'four',
-		category: 'material',
-	},
-	{
-		id: 5,
-		title: 'five',
-		category: 'inbox',
+		description: 'Project Item 1',
+		type: 'project',
+		isDone: false,
+		subtodos: [],
 	},
 ]
 
@@ -63,5 +48,5 @@ app.delete('/api/items/:id', (req, res) => {
 })
 
 app.listen(PORT, () => {
-	console.log(chalk.hex('#fff').bold(`Сервер запущен, порт: ${PORT}`))
+	console.log(chalk.hex('#000').bold(`Сервер запущен, порт: ${PORT}`))
 })
