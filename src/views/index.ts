@@ -1,5 +1,6 @@
-import AboutView from './AboutView.vue'
-import HomeView from './HomeView.vue'
-import TodoView from './TodoView.vue'
+import InboxView from './InboxView.vue'
+import MaterialsView from './MaterialsView.vue'
+import ProjectsView from './ProjectsView.vue'
+import TodosView from './TodosView.vue'
 
-export { AboutView, HomeView, TodoView }
+export { InboxView, MaterialsView, ProjectsView, TodosView }

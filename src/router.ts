@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { AboutView, HomeView, TodoView } from './views'
+import { InboxView, MaterialsView, ProjectsView, TodosView } from './views'
 
 const routes = [
-  { path: '/home', redirect: { name: 'home' } },
-  { path: '/', component: HomeView, name: 'home' },
-  { path: '/about', component: AboutView, name: 'about' },
-  { path: '/todo', component: TodoView, name: 'todo' }
+  { path: '/home', redirect: { name: 'inbox' } },
+  { path: '/', component: InboxView, name: 'inbox' },
+  { path: '/materials', component: MaterialsView, name: 'materials' },
+  { path: '/todos', component: TodosView, name: 'todos' },
+  { path: '/projects', component: ProjectsView, name: 'projects' }
 ]
 
 export const router = createRouter({

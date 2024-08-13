@@ -1,27 +1,51 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export type TypeTodo = {
+export type ChooseType = 'inbox' | 'material' | 'todo' | 'project'
+
+export type ItemType = {
   id: number
-  text: string
-  isDone: boolean
+  title: string
+  type: ChooseType
+  isDone?: boolean
+  subtodos?: []
   isEditting: boolean
 }
 
-export const useTodosStore = defineStore('todos', () => {
-  const todos = ref<TypeTodo[]>([
-    { id: Date.now(), text: 'First todo to do :)', isDone: false, isEditting: false },
-    { id: Date.now() + 1, text: 'Second todo to do ;D', isDone: false, isEditting: false },
-    { id: Date.now() + 2, text: 'Third todo already done :3', isDone: true, isEditting: false }
-  ])
+const db: ItemType[] = [
+  {
+    id: Date.now(),
+    title: 'First todo to do :)',
+    type: 'todo',
+    isDone: false,
+    isEditting: false
+  },
+  {
+    id: Date.now() + 1,
+    title: 'Second todo to do ;D',
+    type: 'todo',
+    isDone: false,
+    isEditting: false
+  },
+  {
+    id: Date.now() + 2,
+    title: 'Third todo already done :3',
+    type: 'todo',
+    isDone: true,
+    isEditting: false
+  }
+]
 
-  function addTodo(todo: TypeTodo) {
-    todos.value.push(todo)
+export const useItemsStore = defineStore('items', () => {
+  const items = ref<ItemType[]>(db)
+
+  function addTodo(item: ItemType) {
+    items.value.push(item)
   }
 
   function removeTodo(id: number) {
-    todos.value = todos.value.filter((todo: TypeTodo) => todo.id !== id)
+    items.value = items.value.filter((item: ItemType) => item.id !== id)
   }
 
-  return { todos, addTodo, removeTodo }
+  return { items, addTodo, removeTodo }
 })

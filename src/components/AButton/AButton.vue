@@ -1,15 +1,8 @@
-<script setup lang="ts">
-const props = defineProps<{
-  counter: number
-}>()
-
-const emit = defineEmits(['count'])
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <button @click="emit('count')" class="button">
+  <button class="button">
     <slot />
-    <div class="counter">ㅤ{{ counter }}</div>
   </button>
 </template>
 

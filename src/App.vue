@@ -2,8 +2,9 @@
 
 <template>
   <nav>
-    <RouterLink to="/">Home</RouterLink> | <RouterLink to="/about">About</RouterLink> |
-    <RouterLink to="/todo">Todo</RouterLink>
+    <RouterLink to="/">Inbox</RouterLink> | <RouterLink to="/materials">Materials</RouterLink> |
+    <RouterLink to="/todos">About</RouterLink> |
+    <RouterLink to="/projects">Projects</RouterLink>
   </nav>
   <main>
     <RouterView />
