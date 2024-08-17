@@ -1,23 +1,34 @@
 <script setup lang="ts">
 import { AInput, ASelect, ListItem } from '@/components'
 import { useItemsStore, type ChooseType, type ItemType } from '@/store'
-import { ref, toRaw, watch, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 
 const chosenType = ref<ChooseType>('inbox')
 
 const store = useItemsStore()
 
-watch(store.items, () => console.log('Updated db:\n', toRaw(store.items)))
+// watch(store.items, () => console.log('Updated db:\n', toRaw(store.items)))
 
 function handleAddItem(text: Ref<string>) {
   const newItem: ItemType = {
     id: Date.now(),
     title: text.value,
     type: chosenType.value,
-    isDone: chosenType.value === 'material' ? undefined : false,
-    subtodos: chosenType.value === 'project' ? [] : undefined,
     isEditting: false
   }
+
+  switch (chosenType.value) {
+    case 'material':
+      break
+    case 'todo' || 'inbox':
+      newItem.isDone = false
+      break
+    case 'project':
+      newItem.isDone = false
+      newItem.subtodos = []
+      break
+  }
+
   store.addTodo(newItem)
   console.log('New item:', newItem)
 }

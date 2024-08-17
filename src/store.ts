@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
+import { db } from './data'
 
 export type ChooseType = 'inbox' | 'material' | 'todo' | 'project'
 
@@ -12,30 +13,6 @@ export type ItemType = {
   isEditting: boolean
 }
 
-const db: ItemType[] = [
-  {
-    id: Date.now(),
-    title: 'First todo to do :)',
-    type: 'todo',
-    isDone: false,
-    isEditting: false
-  },
-  {
-    id: Date.now() + 1,
-    title: 'Second todo to do ;D',
-    type: 'todo',
-    isDone: false,
-    isEditting: false
-  },
-  {
-    id: Date.now() + 2,
-    title: 'Third todo already done :3',
-    type: 'todo',
-    isDone: true,
-    isEditting: false
-  }
-]
-
 export const useItemsStore = defineStore('items', () => {
   const items = ref<ItemType[]>(db)
 
@@ -44,8 +21,31 @@ export const useItemsStore = defineStore('items', () => {
   }
 
   function removeTodo(id: number) {
-    items.value = items.value.filter((item: ItemType) => item.id !== id)
+    items.value = toRaw(items.value.filter((item: ItemType) => item.id !== id))
   }
 
-  return { items, addTodo, removeTodo }
+  function changeItemType(id: number) {
+    const item = items.value.find((item) => item.id === id)
+
+    switch (item?.type) {
+      case 'material':
+        item.isDone && delete item.isDone
+        item.subtodos && delete item.subtodos
+        break
+
+      case 'project':
+        !item.isDone && (item.isDone = false)
+        !item.subtodos && (item.subtodos = [])
+        break
+
+      case 'todo' || 'inbox':
+        !item.isDone && (item.isDone = false)
+        item.subtodos && delete item.subtodos
+        break
+    }
+    console.log('updated item:', toRaw(item))
+    console.log('db:', toRaw(items.value))
+  }
+
+  return { items, addTodo, removeTodo, changeItemType }
 })

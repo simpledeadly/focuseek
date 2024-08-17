@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ASelect } from '@/components'
 import { useItemsStore, type ItemType } from '@/store'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const newText = ref<string>('')
 
@@ -20,6 +20,14 @@ function handleCancel() {
   props.item.title = newText.value
   props.item.isEditting = false
 }
+
+watch(
+  () => props.item.type,
+  (now, before) => {
+    // console.log(props.item.id, [before, '—>', now].join(' '))
+    store.changeItemType(props.item.id)
+  }
+)
 </script>
 
 <template>
