@@ -21,7 +21,7 @@ export const useItemsStore = defineStore('items', () => {
   }
 
   function removeTodo(id: number) {
-    items.value = toRaw(items.value.filter((item: ItemType) => item.id !== id))
+    items.value = items.value.filter((item: ItemType) => item.id !== id).map(toRaw)
   }
 
   function changeItemType(id: number) {

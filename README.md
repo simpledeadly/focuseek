@@ -21,10 +21,4 @@
 
 ### Misunderstandings
 
-- ? watchPostEffect() | What means { flush: 'post' }?
-  <br>
-- ? watchSyncEffect() | What means { flush: 'sync' }?
-  <br>
-- ? triggerRef() with shallowReactive()
-  <br>
 - ? history in routes
