@@ -1,48 +1,88 @@
 <script setup lang="ts">
 import { ASelect } from '@/components'
-import { useItemsStore, type ItemType } from '@/store'
-import { ref, watch } from 'vue'
-
-const newText = ref<string>('')
+import { type ChooseType } from '@/store'
+import { ref } from 'vue'
 
 const props = defineProps<{
-  item: ItemType
+  title: string
 }>()
 
-const store = useItemsStore()
+const emit = defineEmits<{
+  (e: 'update:title', value: string): void
+  (e: 'remove'): void
+}>()
 
-function handleStartEditting() {
-  props.item.isEditting = true
-  newText.value = props.item.title
+const type = defineModel<ChooseType>('type')
+const isDone = defineModel<boolean>('isDone')
+const newTitle = ref<string>('')
+const isEditting = ref<boolean>(false)
+
+const handleEdit = () => {
+  newTitle.value = props.title
+  isEditting.value = true
 }
 
-function handleCancel() {
-  props.item.title = newText.value
-  props.item.isEditting = false
+const handleSave = () => {
+  emit('update:title', newTitle.value)
+  handleFinished()
 }
 
-watch(
-  () => props.item.type,
-  (now, before) => {
-    // console.log(props.item.id, [before, '—>', now].join(' '))
-    store.changeItemType(props.item.id)
-  }
-)
+const handleFinished = () => {
+  newTitle.value = ''
+  isEditting.value = false
+}
+
+const handleRemove = () => {
+  emit('remove')
+}
 </script>
 
 <template>
   <li class="list-item">
-    <div v-if="!item.isEditting" class="container">
-      <input type="checkbox" v-model="item.isDone" />
-      <div :class="item.isDone && 'done-task'">{{ item.title }}</div>
-      <div class="action" @click="handleStartEditting">ㅤ✎</div>
-      <div class="action" @click="store.removeTodo(item.id)">ㅤ&times;ㅤ</div>
-      <ASelect v-model="item.type" />
+    <div
+      v-if="!isEditting"
+      class="container"
+    >
+      <input
+        type="checkbox"
+        v-model="isDone"
+      />
+      <div :class="{ 'done-task': isDone }">{{ props.title }}</div>
+      <div
+        class="action"
+        @click="handleEdit"
+      >
+        ㅤ✎
+      </div>
+      <div
+        class="action"
+        @click="handleRemove"
+      >
+        ㅤ&times;ㅤ
+      </div>
+      <ASelect v-model="type" />
     </div>
-    <div v-else class="container">
-      <input class="input-editting" type="text" v-model="item.title" />
-      <button class="button-action" @click="item.isEditting = false">✓</button>
-      <button class="button-action" @click="handleCancel">&times;</button>
+    <div
+      v-else
+      class="container"
+    >
+      <input
+        class="input-editting"
+        type="text"
+        v-model="newTitle"
+      />
+      <button
+        class="button-action"
+        @click="handleSave"
+      >
+        ✓
+      </button>
+      <button
+        class="button-action"
+        @click="handleFinished"
+      >
+        &times;
+      </button>
     </div>
   </li>
 </template>

@@ -1,5 +1,6 @@
+import pick from 'lodash-es/pick'
 import { defineStore } from 'pinia'
-import { ref, toRaw } from 'vue'
+import { shallowReactive } from 'vue'
 import { db } from './data'
 
 export type ChooseType = 'inbox' | 'material' | 'todo' | 'project'
@@ -10,42 +11,52 @@ export type ItemType = {
   type: ChooseType
   isDone?: boolean
   subtodos?: []
-  isEditting: boolean
 }
 
 export const useItemsStore = defineStore('items', () => {
-  const items = ref<ItemType[]>(db)
+  const items: ItemType[] = shallowReactive(db)
 
-  function addTodo(item: ItemType) {
-    items.value.push(item)
-  }
-
-  function removeTodo(id: number) {
-    items.value = items.value.filter((item: ItemType) => item.id !== id).map(toRaw)
-  }
-
-  function changeItemType(id: number) {
-    const item = items.value.find((item) => item.id === id)
-
-    switch (item?.type) {
-      case 'material':
-        item.isDone && delete item.isDone
-        item.subtodos && delete item.subtodos
-        break
-
-      case 'project':
-        !item.isDone && (item.isDone = false)
-        !item.subtodos && (item.subtodos = [])
-        break
-
-      case 'todo' || 'inbox':
-        !item.isDone && (item.isDone = false)
-        item.subtodos && delete item.subtodos
-        break
+  const modifyItemByType = (item: ItemType) => {
+    const newItem = { ...item }
+    if (['project', 'todo', 'inbox'].includes(item.type)) {
+      newItem.isDone = false
     }
-    console.log('updated item:', toRaw(item))
-    console.log('db:', toRaw(items.value))
+    if (item.type === 'project') {
+      newItem.subtodos = []
+    }
+    return newItem
   }
 
-  return { items, addTodo, removeTodo, changeItemType }
+  const addItem = (title: string, type: ChooseType) => {
+    const item: ItemType = { id: Date.now(), type, title }
+    items.push(modifyItemByType(item))
+  }
+
+  const changeItem = (id: number, changes: Partial<ItemType>) => {
+    const idx = items.findIndex((item) => item.id === id)
+    if (idx > -1) {
+      const item = { ...items[idx], ...changes }
+      items.splice(idx, 1, item)
+    }
+  }
+
+  const changeType = (id: number, type: ChooseType) => {
+    const idx = items.findIndex((item) => item.id === id)
+    if (idx === -1) {
+      return
+    }
+    const item: ItemType = {
+      ...pick(items[idx], ['id', 'title']),
+      type
+    }
+    items.splice(idx, 1, modifyItemByType(item))
+    console.log(items)
+  }
+
+  const removeItem = (id: number) => {
+    const idx = items.findIndex((item) => item.id === id)
+    items.splice(idx, 1)
+  }
+
+  return { items, addItem, changeItem, changeType, removeItem }
 })
