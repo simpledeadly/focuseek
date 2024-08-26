@@ -1,21 +1,42 @@
 <script setup lang="ts">
 import { AInput, ASelect, ListItem } from '@/components'
-import { useItemsStore, type ChooseType } from '@/store'
-import { ref } from 'vue'
+import { useItemsStore, type ChooseType, type ItemType } from '@/store'
+import { computed, ref, watch } from 'vue'
 
 const store = useItemsStore()
-const chosenType = ref<ChooseType>('inbox')
+
+const props = defineProps<{
+  filterWord: ChooseType
+}>()
+
+console.log(store.hideChecked)
+watch(
+  () => store.hideChecked,
+  () => {
+    console.log(store.hideChecked)
+  }
+)
+
+const items = computed(() => {
+  if (store.hideChecked === true) {
+    return store.items.filter((item: ItemType) => item.type === props.filterWord && !item.isDone)
+  }
+  return store.items.filter((item: ItemType) => item.type === props.filterWord)
+})
+
+const chosenType = ref<ChooseType>(props.filterWord)
 </script>
 
 <template>
   <AInput @send="store.addItem($event, chosenType)" />
   <ASelect v-model="chosenType" />
   <ul
-    v-if="store.items.length !== 0"
+    v-if="items.length !== 0"
     class="list"
   >
     <ListItem
-      v-for="item in store.items"
+      v-for="item in items"
+      :key="item.id"
       :title="item.title"
       :is-done="item.isDone"
       :type="item.type"
@@ -25,7 +46,7 @@ const chosenType = ref<ChooseType>('inbox')
       @remove="store.removeItem(item.id)"
     />
   </ul>
-  <p v-else>No items!</p>
+  <p v-else>No one {{ props.filterWord }}!</p>
 </template>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
 import pick from 'lodash-es/pick'
 import { defineStore } from 'pinia'
-import { shallowReactive } from 'vue'
+import { ref, shallowReactive } from 'vue'
 import { db } from './data'
 
 export type ChooseType = 'inbox' | 'material' | 'todo' | 'project'
@@ -15,6 +15,9 @@ export type ItemType = {
 
 export const useItemsStore = defineStore('items', () => {
   const items: ItemType[] = shallowReactive(db)
+  const hideChecked = ref<boolean>(false)
+
+  const findIdx = (id: number) => items.findIndex((item) => item.id === id)
 
   const modifyItemByType = (item: ItemType) => {
     const newItem = { ...item }
@@ -33,7 +36,7 @@ export const useItemsStore = defineStore('items', () => {
   }
 
   const changeItem = (id: number, changes: Partial<ItemType>) => {
-    const idx = items.findIndex((item) => item.id === id)
+    const idx = findIdx(id)
     if (idx > -1) {
       const item = { ...items[idx], ...changes }
       items.splice(idx, 1, item)
@@ -41,7 +44,7 @@ export const useItemsStore = defineStore('items', () => {
   }
 
   const changeType = (id: number, type: ChooseType) => {
-    const idx = items.findIndex((item) => item.id === id)
+    const idx = findIdx(id)
     if (idx === -1) {
       return
     }
@@ -50,13 +53,12 @@ export const useItemsStore = defineStore('items', () => {
       type
     }
     items.splice(idx, 1, modifyItemByType(item))
-    console.log(items)
   }
 
   const removeItem = (id: number) => {
-    const idx = items.findIndex((item) => item.id === id)
+    const idx = findIdx(id)
     items.splice(idx, 1)
   }
 
-  return { items, addItem, changeItem, changeType, removeItem }
+  return { items, hideChecked, addItem, changeItem, changeType, removeItem }
 })

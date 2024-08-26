@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const text = ref<string>('')
 
 const emit = defineEmits<{
-  (e: 'send', value: string): void
+  send: [string]
 }>()
 
 function handleEnter() {
@@ -22,7 +22,8 @@ function handleEnter() {
     @keyup.enter="handleEnter"
     v-model="text"
     type="text"
-    placeholder="enter"
+    name="title"
+    placeholder="type and press enter"
     class="input"
   />
 </template>

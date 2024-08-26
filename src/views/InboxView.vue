@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { AInput } from '@/components'
-import type { Ref } from 'vue'
-
-function handleSend(text: Ref<string>) {
-  alert(text.value)
-}
+import { List } from '@/components'
 </script>
 
 <template>
-  <h1>About</h1>
-  <AInput @send="(text: Ref<string>) => handleSend(text)" />
+  <h1>Inbox</h1>
+  <List filterWord="inbox" />
 </template>
 
 <style lang="scss"></style>

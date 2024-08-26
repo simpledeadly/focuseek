@@ -3,8 +3,8 @@ import { List } from '@/components'
 </script>
 
 <template>
-  <h1>Todo</h1>
-  <List />
+  <h1>Projects</h1>
+  <List filterWord="project" />
 </template>
 
 <style lang="scss"></style>

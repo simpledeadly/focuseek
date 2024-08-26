@@ -5,6 +5,7 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   title: string
+  type: ChooseType
 }>()
 
 const emit = defineEmits<{
@@ -43,11 +44,14 @@ const handleRemove = () => {
       v-if="!isEditting"
       class="container"
     >
-      <input
-        type="checkbox"
-        v-model="isDone"
-      />
-      <div :class="{ 'done-task': isDone }">{{ props.title }}</div>
+      <div v-if="props.type !== 'material'">
+        <input
+          type="checkbox"
+          v-model="isDone"
+          name="isDone"
+        />
+      </div>
+      <div :class="props.type !== 'material' && isDone && 'done-task'">{{ props.title }}</div>
       <div
         class="action"
         @click="handleEdit"
@@ -69,6 +73,7 @@ const handleRemove = () => {
       <input
         class="input-editting"
         type="text"
+        name="edit-title"
         v-model="newTitle"
       />
       <button
