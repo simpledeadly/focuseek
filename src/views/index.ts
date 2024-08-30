@@ -1,6 +1,6 @@
-import InboxView from './InboxView.vue'
-import MaterialsView from './MaterialsView.vue'
-import ProjectsView from './ProjectsView.vue'
-import TodosView from './TodosView.vue'
+import InboxView from './InboxView/InboxView.vue'
+import MaterialsView from './MaterialsView/MaterialsView.vue'
+import ProjectsView from './ProjectsView/ProjectsView.vue'
+import TodosView from './TodosView/TodosView.vue'
 
 export { InboxView, MaterialsView, ProjectsView, TodosView }

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { InboxView, MaterialsView, ProjectsView, TodosView } from './views'
+import { InboxView, MaterialsView, ProjectsView, TodosView } from '../views'
 
 const routes = [
   { path: '/home', redirect: { name: 'inbox' } },

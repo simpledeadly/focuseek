@@ -1,4 +1,4 @@
-import type { ItemType } from './store'
+import type { ItemType } from '@/entities/Item/model/ItemModel'
 
 export const db: ItemType[] = [
   {

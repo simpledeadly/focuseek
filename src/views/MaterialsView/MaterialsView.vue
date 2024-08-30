@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { List } from '@/components'
+import { List } from '@/widgets'
 </script>
 
 <template>

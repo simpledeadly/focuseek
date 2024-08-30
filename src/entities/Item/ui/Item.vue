@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ASelect } from '@/components'
-import { type ChooseType } from '@/store'
+import { type ChooseType } from '@/entities/Item/model/ItemModel'
+import { ASelect } from '@/shared/ui'
 import { ref } from 'vue'
 
 const props = defineProps<{

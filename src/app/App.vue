@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { HideToggle, Navbar } from '@/components'
-import { MainLayout } from '@/layouts'
+import { HideToggle, Navbar } from '@/widgets'
+import { MainLayout } from '@/shared/ui/layouts'
 import { RouterView } from 'vue-router'
-import { useItemsStore } from './store'
+import { useItemsStore } from '@/app/store'
 
 const store = useItemsStore()
 </script>
@@ -24,8 +24,8 @@ const store = useItemsStore()
 </template>
 
 <style lang="scss">
-body {
-  background: $bg;
-  color: $color;
-}
+// body {
+//   background: $bg;
+//   color: $color;
+// }
 </style>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { List } from '@/components'
+import { List } from '@/widgets'
 </script>
 
 <template>
-  <h1>Todos</h1>
-  <List filterWord="todo" />
+  <h1>Projects</h1>
+  <List filterWord="project" />
 </template>
 
 <style lang="scss"></style>
