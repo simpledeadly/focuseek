@@ -28,6 +28,17 @@ function handleEnter() {
   />
 </template>
 
-<style lang="scss" scoped>
-@import url('./styles.scss');
+<style lang="scss">
+.input {
+  background: $darkBg;
+  color: #f0f0f0;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  outline: none;
+}
 </style>

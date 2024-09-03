@@ -1,31 +1,26 @@
 <script setup lang="ts">
-import { HideToggle, Navbar } from '@/widgets'
-import { MainLayout } from '@/shared/ui/layouts'
+import { MainLayout } from '@/shared/ui/layouts/main-layout'
+import { Navbar } from '@/widgets/navbar'
 import { RouterView } from 'vue-router'
-import { useItemsStore } from '@/app/store'
-
-const store = useItemsStore()
 </script>
 
 <template>
-  <MainLayout>
-    <template #nav>
-      <Navbar />
-    </template>
-    <template #main>
-      <main>
+  <div class="app">
+    <MainLayout>
+      <template #nav>
+        <Navbar />
+      </template>
+      <template #main>
         <RouterView />
-      </main>
-    </template>
-    <template #footer>
-      <HideToggle v-model="store.hideChecked" />
-    </template>
-  </MainLayout>
+      </template>
+      <!-- <template #footer></template> -->
+    </MainLayout>
+  </div>
 </template>
 
 <style lang="scss">
-// body {
-//   background: $bg;
-//   color: $color;
-// }
+body {
+  background: $bg;
+  color: $color;
+}
 </style>

@@ -1,10 +1,13 @@
 <script setup lang="ts">
-const model = defineModel()
+import type { ItemType } from '@/entities/item'
+
+const model = defineModel<ItemType>()
 </script>
 
 <template>
   <select
     v-model="model"
+    name="types"
     class="select"
   >
     <option value="inbox">Inbox</option>
@@ -14,12 +17,4 @@ const model = defineModel()
   </select>
 </template>
 
-<style lang="scss">
-.select {
-  background: $darkBg;
-  color: #f0f0f0;
-  font-size: 16px;
-  cursor: pointer;
-  outline: none;
-}
-</style>
+<style lang="scss"></style>

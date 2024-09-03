@@ -1,12 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { InboxView, MaterialsView, ProjectsView, TodosView } from '../views'
 
 const routes = [
-  { path: '/home', redirect: { name: 'inbox' } },
-  { path: '/', component: InboxView, name: 'inbox' },
-  { path: '/materials', component: MaterialsView, name: 'materials' },
-  { path: '/todos', component: TodosView, name: 'todos' },
-  { path: '/projects', component: ProjectsView, name: 'projects' }
+  { path: '/', component: () => import('@/pages/home'), name: 'home' },
+  { path: '/?type=material', component: () => import('@/pages/materials'), name: 'materials' },
+  { path: '/?type=todo', component: () => import('@/pages/todos'), name: 'todos' },
+  { path: '/?type=project', component: () => import('@/pages/projects'), name: 'projects' }
 ]
 
 export const router = createRouter({
