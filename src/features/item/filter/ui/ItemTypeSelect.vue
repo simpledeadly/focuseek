@@ -7,12 +7,10 @@ const model = defineModel<ItemType>()
 <template>
   <select
     v-model="model"
-    name="types"
     class="select"
   >
-    <option value="inbox">Inbox</option>
-    <option value="material">Material</option>
     <option value="todo">Todo</option>
+    <option value="material">Material</option>
     <option value="project">Project</option>
   </select>
 </template>

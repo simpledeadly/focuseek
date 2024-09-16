@@ -1,7 +1,24 @@
 {
+  /** Files */
+  "files.eol": "\n",
+  "files.encoding": "utf8",
+
+  /** Editor */
+  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+
+  /** ESLint */
+  "eslint.validate": ["typescript", "javascript", "vue"],
+
+  /** Stylelint */
+  "scss.validate": false,
+  "stylelint.enable": true,
+  "stylelint.validate": [
+    "scss",
+    "vue"
+  ]
 }

@@ -5,9 +5,9 @@ const model = defineModel()
 <template>
   <div>
     <input
+      v-model="model"
       type="checkbox"
       class="hide-toggle"
-      v-model="model"
     />
     <label>Hide checked</label>
   </div>

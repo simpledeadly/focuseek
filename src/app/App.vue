@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MainLayout } from '@/shared/ui/layouts/main-layout'
-import { Navbar } from '@/widgets/navbar'
+import { AppNavbar } from '@/widgets/navbar'
 import { RouterView } from 'vue-router'
 </script>
 
@@ -8,7 +8,7 @@ import { RouterView } from 'vue-router'
   <div class="app">
     <MainLayout>
       <template #nav>
-        <Navbar />
+        <AppNavbar />
       </template>
       <template #main>
         <RouterView />

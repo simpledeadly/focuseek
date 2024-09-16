@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ItemList } from '@/widgets/item-list'
+import { ItemListGroup } from '@/widgets/item-list'
 </script>
 
 <template>
   <div class="home-page">
-    <ItemList />
+    <ItemListGroup />
   </div>
 </template>
 

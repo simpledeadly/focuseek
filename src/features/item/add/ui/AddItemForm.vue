@@ -5,8 +5,8 @@ const emit = defineEmits<{
   (e: 'submit', value: string): void
 }>()
 
-defineSlots<{
-  select: () => unknown
+const slots = defineSlots<{
+  select?: () => unknown
 }>()
 
 const itemTitle = ref<string>('')
@@ -27,11 +27,14 @@ const handleSubmit = () => {
     @submit.prevent="handleSubmit"
   >
     <input
-      type="text"
       v-model="itemTitle"
+      type="text"
       class="add-item-form__input"
     />
-    <slot name="select" />
+    <slot
+      v-if="slots.select"
+      name="select"
+    />
   </form>
 </template>
 

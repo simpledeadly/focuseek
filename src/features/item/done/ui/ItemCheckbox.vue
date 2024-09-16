@@ -4,10 +4,14 @@ const model = defineModel<boolean>()
 
 <template>
   <input
-    type="checkbox"
     v-model="model"
+    type="checkbox"
     class="item-checkbox"
   />
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.item-checkbox {
+  cursor: pointer;
+}
+</style>

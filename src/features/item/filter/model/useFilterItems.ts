@@ -9,11 +9,11 @@ export const useItemType = () => {
   const itemType = computed<ItemType>({
     get: () => {
       const type = route.query.type
-      return isItemType(type) ? type : 'inbox'
+      return isItemType(type) ? type : 'todo'
     },
     set: (type) => {
       router.push({ query: { type } })
-    }
+    },
   })
 
   return { itemType }

@@ -1,9 +1,16 @@
-export type ItemType = 'inbox' | 'material' | 'todo' | 'project'
+export type ItemType = 'todo' | 'material' | 'project'
 
 export type Item = {
   id: number
   title: string
   type: ItemType
   isDone?: boolean
-  subtodos?: []
+  subtodos?: Item[]
+}
+
+export type SubItem = {
+  id: number
+  type: Omit<ItemType, 'project'>
+  title: string
+  isDone?: boolean
 }

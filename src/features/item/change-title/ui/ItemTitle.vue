@@ -3,6 +3,7 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   title: string
+  isDone?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -34,7 +35,9 @@ const cancelChanges = () => {
       v-if="!isEdit"
       class="item-title__inner"
     >
-      <div class="item-title__label">{{ props.title }}</div>
+      <div :class="props.isDone ? 'item-title__label_done' : 'item-title__label'">
+        {{ props.title }}
+      </div>
       <button
         type="button"
         class="item-title__edit-button"
@@ -48,8 +51,8 @@ const cancelChanges = () => {
       class="item-title__inner-editable"
     >
       <input
-        type="text"
         v-model="newTitle"
+        type="text"
         class="item-title__input"
       />
       <button
@@ -75,6 +78,13 @@ const cancelChanges = () => {
   &__inner {
     display: flex;
     gap: 6px;
+  }
+
+  &__label {
+    &_done {
+      color: #999;
+      text-decoration: line-through;
+    }
   }
 }
 </style>

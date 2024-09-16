@@ -1,7 +1,7 @@
 import type { Item, ItemType } from '../types/item'
 
 export const isItemType = (value: unknown): value is ItemType => {
-  const types: unknown[] = ['inbox', 'material', 'todo', 'project']
+  const types: unknown[] = ['todo', 'material', 'project']
   return types.includes(value)
 }
 

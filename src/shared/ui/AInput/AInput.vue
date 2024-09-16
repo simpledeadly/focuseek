@@ -19,26 +19,26 @@ function handleEnter() {
 
 <template>
   <input
-    @keyup.enter="handleEnter"
     v-model="text"
     type="text"
     name="title"
     placeholder="type and press enter"
     class="input"
+    @keyup.enter="handleEnter"
   />
 </template>
 
 <style lang="scss">
 .input {
-  background: $darkBg;
-  color: #f0f0f0;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  cursor: pointer;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
+  padding: 0.5rem 1rem;
+  background: $dark-bg;
+  color: #f0f0f0;
+  cursor: pointer;
+  font-size: 16px;
   outline: none;
 }
 </style>
