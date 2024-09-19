@@ -35,10 +35,10 @@ function handleEnter() {
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  background: $dark-bg;
+  font-size: 16px;
   color: #f0f0f0;
   cursor: pointer;
-  font-size: 16px;
+  background: $dark-bg;
   outline: none;
 }
 </style>

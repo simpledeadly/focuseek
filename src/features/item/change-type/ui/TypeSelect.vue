@@ -8,5 +8,3 @@ const model = defineModel<ItemType>()
 <template>
   <ASelect v-model="model" />
 </template>
-
-<style lang="scss"></style>

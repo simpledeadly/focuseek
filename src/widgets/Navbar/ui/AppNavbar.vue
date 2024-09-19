@@ -30,7 +30,7 @@
 <style lang="scss">
 .app-navbar {
   display: flex;
-  margin-bottom: 1.5rem;
   gap: 4px;
+  margin-bottom: 1.5rem;
 }
 </style>

@@ -14,4 +14,8 @@ const emit = defineEmits<{
   </button>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.item-remove-button {
+  /** keep */
+}
+</style>

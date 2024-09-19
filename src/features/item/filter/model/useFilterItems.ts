@@ -1,5 +1,5 @@
-import { filterItemsByType, isItemType, useItems, type ItemType } from '@/entities/item'
-import { computed } from 'vue'
+import { filterItemsByType, isItemType, Item, type ItemType } from '@/entities/item'
+import { computed, ShallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 export const useItemType = () => {
@@ -19,9 +19,8 @@ export const useItemType = () => {
   return { itemType }
 }
 
-export const useFilterItems = () => {
+export const useFilterItems = (items: ShallowRef<Item[]>) => {
   const { itemType } = useItemType()
-  const { items } = useItems()
 
   const filteredItems = computed(() => {
     return filterItemsByType(items.value, itemType.value)

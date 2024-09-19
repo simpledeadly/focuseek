@@ -1,11 +1,11 @@
-import { updateItem, useItems, type Item } from '@/entities/item'
+import { updateItem, type Item } from '@/entities/item'
+import { replaceItemInList } from '@/entities/item/lib/item'
+import { ShallowRef } from 'vue'
 
-export const useDoneItem = () => {
-  const { replaceItemInStorage } = useItems()
-
+export const useDoneItem = (items: ShallowRef<Item[]>) => {
   const toggleDoneItem = (item: Item) => {
     const newItem = updateItem(item, { isDone: !item.isDone })
-    replaceItemInStorage(newItem)
+    items.value = replaceItemInList(items.value, newItem)
   }
 
   return { toggleDoneItem }

@@ -7,7 +7,7 @@ const model = defineModel<ItemType>()
 <template>
   <select
     v-model="model"
-    class="select"
+    class="item-type-select"
   >
     <option value="todo">Todo</option>
     <option value="material">Material</option>
@@ -15,4 +15,8 @@ const model = defineModel<ItemType>()
   </select>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.item-type-select {
+  /** keep */
+}
+</style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ItemEntity, useItems, type Item } from '@/entities/item'
+import { ItemEntity, useItems } from '@/entities/item'
 import { AddItemForm, useAddItem } from '@/features/item/add'
 import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
 import { TypeSelect, useChangeItemType } from '@/features/item/change-type'
@@ -8,22 +8,22 @@ import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
 import { ref } from 'vue'
 
-const props = defineProps<{
-  items: Item[]
-  // items: Array<{ subtodos?: Item[] }>
-}>()
+// const props = defineProps<{
+// items: Item[]
+// items: Array<{ subtodos?: Item[] }>
+// }>()
 
-const slots = defineSlots<{
-  default?: () => unknown
-}>()
+// const slots = defineSlots<{
+//   default?: () => unknown
+// }>()
 
-const { itemType } = useFilterItems()
-const { addItem } = useAddItem()
-const { removeItem } = useRemoveItem()
-const { toggleDoneItem } = useDoneItem()
-const { changeItemTitle } = useChangeItemTitle()
-const { changeItemType } = useChangeItemType()
-const { replaceItemInStorage } = useItems()
+const { items } = useItems()
+const { itemType, filteredItems } = useFilterItems(items)
+const { addItem } = useAddItem(items)
+const { removeItem } = useRemoveItem(items)
+const { toggleDoneItem } = useDoneItem(items)
+const { changeItemTitle } = useChangeItemTitle(items)
+const { changeItemType } = useChangeItemType(items)
 
 const showTodosToggle = ref<boolean>(false)
 
@@ -40,11 +40,11 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
     </template>
   </AddItemForm>
   <div
-    v-if="props.items.length > 0"
+    v-if="filteredItems.length > 0"
     class="item-list"
   >
     <ItemEntity
-      v-for="item in props.items"
+      v-for="item in filteredItems"
       :key="item.id"
       :type="item.type"
     >
@@ -84,12 +84,12 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
           @update:model-value="changeItemType(item, $event)"
         />
       </template>
-      <div
+      <!-- <div
         v-if="slots.default && showTodosToggle && item.subtodos && item.subtodos.length > 0"
         class="item-list__subtodos"
       >
         <ItemEntity
-          v-for="subtodo in props.items"
+          v-for="subtodo in filteredItems"
           :key="subtodo.id"
         >
           <template
@@ -105,11 +105,11 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
             {{ subtodo.subtodos }}
           </template>
         </ItemEntity>
-        <!-- <slot :subtodos="item.subtodos" /> -->
+        <slot :subtodos="item.subtodos" />
       </div>
-      <div v-else-if="showTodosToggle && props.items.length === 0">
+      <div v-else-if="showTodosToggle && filteredItems.length === 0">
         <p>No subtodos!</p>
-      </div>
+      </div> -->
     </ItemEntity>
   </div>
   <div v-else>
@@ -117,4 +117,8 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.item-list {
+  /** keep */
+}
+</style>

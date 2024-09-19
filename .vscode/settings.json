@@ -7,17 +7,19 @@
   "editor.formatOnSave": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
   },
 
   /** ESLint */
   "eslint.validate": ["typescript", "javascript", "vue"],
 
   /** Stylelint */
+  "css.validate": false,
   "scss.validate": false,
-  "stylelint.enable": true,
   "stylelint.validate": [
+    "css",
     "scss",
     "vue"
   ]

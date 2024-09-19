@@ -8,4 +8,8 @@ import { ItemListGroup } from '@/widgets/item-list'
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.home-page {
+  /** keep */
+}
+</style>

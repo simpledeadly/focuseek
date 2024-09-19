@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const model = defineModel()
+const model = defineModel<boolean>()
 </script>
 
 <template>
@@ -13,4 +13,8 @@ const model = defineModel()
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.hide-toggle {
+  /** keep */
+}
+</style>

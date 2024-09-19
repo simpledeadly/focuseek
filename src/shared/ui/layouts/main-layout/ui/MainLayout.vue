@@ -5,5 +5,3 @@
   <slot name="main" />
   <slot name="footer" />
 </template>
-
-<style lang="scss"></style>

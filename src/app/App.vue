@@ -20,7 +20,7 @@ import { RouterView } from 'vue-router'
 
 <style lang="scss">
 body {
-  background: $bg;
   color: $color;
+  background: $bg;
 }
 </style>

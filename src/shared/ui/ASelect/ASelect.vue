@@ -17,10 +17,10 @@ const model = defineModel<ItemType>()
 
 <style lang="scss">
 .select {
-  background: $dark-bg;
+  font-size: 16px;
   color: #f0f0f0;
   cursor: pointer;
-  font-size: 16px;
+  background: $dark-bg;
   outline: none;
 }
 </style>
