@@ -1,36 +1,43 @@
+<script setup lang="ts">
+import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
+// import { useItemType } from '@/features/item/filter'
+// import { useColorMode } from '@vueuse/core'
+
+// const mode = useColorMode()
+// const { itemType } = useItemType()
+// console.log(itemType.value)
+</script>
+
 <template>
   <nav class="app-navbar">
-    <RouterLink to="/">
-      <button
-        type="button"
-        class="navbar__link"
-      >
-        Todos
-      </button>
-    </RouterLink>
-    <RouterLink to="/?type=material">
-      <button
-        type="button"
-        class="navbar__link"
-      >
-        Materials
-      </button>
-    </RouterLink>
-    <RouterLink to="/?type=project">
-      <button
-        type="button"
-        class="navbar__link"
-      >
-        Projects
-      </button>
-    </RouterLink>
+    <Tabs
+      default-value="todo"
+      class="w-[400px] app-navbar__container"
+    >
+      <TabsList>
+        <RouterLink to="/">
+          <TabsTrigger value="todo">Todos</TabsTrigger>
+        </RouterLink>
+        <RouterLink to="/?type=material">
+          <TabsTrigger value="material">Materials</TabsTrigger>
+        </RouterLink>
+        <RouterLink to="/?type=project">
+          <TabsTrigger value="project">Projects</TabsTrigger>
+        </RouterLink>
+      </TabsList>
+    </Tabs>
+    <!-- <button @click="mode = 'light'">light</button> |
+    <button @click="mode = 'dark'">dark</button> -->
   </nav>
 </template>
 
 <style lang="scss">
 .app-navbar {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 1.5rem;
+  &__container {
+    margin: 0 auto;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
 }
 </style>

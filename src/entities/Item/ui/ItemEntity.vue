@@ -4,54 +4,88 @@ const slots = defineSlots<{
   title: () => unknown
   removeButton: () => unknown
   typeSelect?: () => unknown
-  showTodosToggle?: () => unknown
+  showSubtodosToggle?: () => unknown
+  subtodos?: () => unknown
   default?: () => unknown
 }>()
 </script>
 
 <template>
-  <div class="item-entity">
-    <div class="item-entity_row">
-      <div
-        v-if="slots.checkbox"
-        class="item-entity__checkbox"
-      >
-        <slot name="checkbox" />
+  <div class="item-entity flex items-center space-x-4 rounded-md border p-2">
+    <div class="item-entity__row">
+      <div class="item-entity__row_part">
+        <div
+          v-if="slots.checkbox"
+          class="item-entity__checkbox"
+        >
+          <slot name="checkbox" />
+        </div>
+        <div class="item-entity__title">
+          <slot name="title" />
+        </div>
       </div>
-      <div class="item-entity__title">
-        <slot name="title" />
-      </div>
-      <div class="item-entity__remove-button">
-        <slot name="removeButton" />
-      </div>
-      <div
-        v-if="slots.showTodosToggle"
-        class="item-entity__show-todos-toggle"
-      >
-        <slot name="showTodosToggle" />
-      </div>
-      <div
-        v-if="slots.typeSelect"
-        class="item-entity__type-select"
-      >
-        <slot name="typeSelect" />
+      <div class="item-entity__row_part">
+        <div
+          v-if="slots.showSubtodosToggle"
+          class="item-entity__show-todos-toggle"
+        >
+          <slot name="showSubtodosToggle" />
+        </div>
+        <div class="item-entity__remove-button">
+          <slot name="removeButton" />
+        </div>
+        <div
+          v-if="slots.typeSelect"
+          class="item-entity__type-select"
+        >
+          <slot name="typeSelect" />
+        </div>
       </div>
     </div>
-    <ul class="item-entity__subtodos-list">
-      <slot />
+    <ul
+      v-if="slots.subtodos"
+      class="item-entity__subtodos-list"
+    >
+      <slot name="subtodos" />
     </ul>
   </div>
 </template>
 
 <style lang="scss">
 .item-entity {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  background: hsl(var(--primary-foreground));
+  border-bottom: none;
+  border-radius: 0;
 
-  &_row {
+  &__row {
     display: flex;
     flex-direction: row;
+    gap: calc(var(--radius) * 2);
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    &_part {
+      display: flex;
+      flex-direction: row;
+      gap: calc(var(--radius) - 2px);
+      align-items: center;
+    }
+  }
+
+  &__checkbox {
+    display: flex;
+  }
+
+  &:first-child {
+    border-top-left-radius: calc(var(--radius) - 2px);
+    border-top-right-radius: calc(var(--radius) - 2px);
+  }
+
+  &:last-child {
+    border-bottom: 1px solid hsl(var(--border));
+    border-bottom-right-radius: calc(var(--radius) - 2px);
+    border-bottom-left-radius: calc(var(--radius) - 2px);
   }
 }
 </style>

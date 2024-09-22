@@ -17,14 +17,16 @@
     "prettier-fix": "prettier . \"!**/*.{vue,js,ts,css,scss}\" --write"
   },
   "dependencies": {
+    "@vueuse/core": "^11.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lodash-es": "^4.17.21",
-    "lucide-vue-next": "^0.441.0",
+    "lucide-vue-next": "^0.445.0",
     "pinia": "^2.1.7",
     "radix-vue": "^1.9.5",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "vaul-vue": "^0.2.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },

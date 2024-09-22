@@ -77,13 +77,38 @@ const cancelChanges = () => {
 .item-title {
   &__inner {
     display: flex;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: calc(var(--radius) - 2px);
+    margin-left: 1px;
+    text-align: left;
+  }
+
+  &__input {
+    min-width: 190px;
+    max-width: 800px;
+    margin-right: calc(var(--radius) - 2px);
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    outline: none;
+  }
+
+  &__save-button {
+    margin-right: calc(var(--radius) - 2px);
   }
 
   &__label {
     &_done {
-      color: #999;
+      color: hsl(var(--muted-foreground));
       text-decoration: line-through;
+    }
+  }
+
+  &__edit-button {
+    color: hsl(var(--primary-foreground));
+
+    &:hover {
+      color: hsl(var(--foreground));
     }
   }
 }

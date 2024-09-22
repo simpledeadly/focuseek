@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { Checkbox } from '@/shared/ui/checkbox'
+
 const model = defineModel<boolean>()
 </script>
 
 <template>
-  <input
+  <Checkbox
     v-model="model"
-    type="checkbox"
     class="item-checkbox"
   />
 </template>
 
 <style lang="scss">
 .item-checkbox {
-  cursor: pointer;
+  border-radius: 100%;
 }
 </style>

@@ -6,7 +6,8 @@ import { TypeSelect, useChangeItemType } from '@/features/item/change-type'
 import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
-import { ref } from 'vue'
+import { ProjectDrawer } from '@/widgets/projects-drawer'
+// import { Separator } from '@/shared/ui/separator'
 
 // const props = defineProps<{
 // items: Item[]
@@ -24,10 +25,6 @@ const { removeItem } = useRemoveItem(items)
 const { toggleDoneItem } = useDoneItem(items)
 const { changeItemTitle } = useChangeItemTitle(items)
 const { changeItemType } = useChangeItemType(items)
-
-const showTodosToggle = ref<boolean>(false)
-
-const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
 </script>
 
 <template>
@@ -69,14 +66,52 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
       </template>
       <template
         v-if="item.type === 'project'"
-        #showTodosToggle
+        #showSubtodosToggle
       >
-        <button
-          type="button"
-          @click="handleToggle"
-        >
-          {{ showTodosToggle ? 'Hide' : 'Show' }}
-        </button>
+        <ProjectDrawer>
+          <template #title>
+            <ItemTitle
+              :is-done="item.isDone"
+              :title="item.title"
+              @save="changeItemTitle(item, $event)"
+            />
+          </template>
+          <template #form>
+            <AddItemForm
+              v-model:type="itemType"
+              @submit="addItem($event, itemType)"
+            >
+              <template #select>
+                <ItemTypeSelect v-model="itemType" />
+              </template>
+            </AddItemForm>
+          </template>
+          <template #stats>
+            {{ item.subtodos!.filter((item) => item.type === 'todo').length }} todos,
+            {{ item.subtodos!.filter((item) => item.type === 'material').length }} materials
+          </template>
+          <template #content>
+            <div class="mt-2">
+              <strong>Todos</strong>
+              <p
+                v-for="subitem in item.subtodos!.filter((item) => item.type === 'todo')"
+                :key="subitem.id"
+              >
+                {{ subitem.title }}
+              </p>
+            </div>
+            <!-- <Separator class="mt-4 mb-2" /> -->
+            <div class="mt-4 mb-2">
+              <strong>Materials</strong>
+              <p
+                v-for="subitem in item.subtodos!.filter((item) => item.type === 'material')"
+                :key="subitem.id"
+              >
+                {{ subitem.title }}
+              </p>
+            </div>
+          </template>
+        </ProjectDrawer>
       </template>
       <template #typeSelect>
         <TypeSelect
@@ -85,7 +120,7 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
         />
       </template>
       <!-- <div
-        v-if="slots.default && showTodosToggle && item.subtodos && item.subtodos.length > 0"
+        v-if="slots.default && showSubtodosToggle && item.subtodos && item.subtodos.length > 0"
         class="item-list__subtodos"
       >
         <ItemEntity
@@ -107,18 +142,22 @@ const handleToggle = () => (showTodosToggle.value = !showTodosToggle.value)
         </ItemEntity>
         <slot :subtodos="item.subtodos" />
       </div>
-      <div v-else-if="showTodosToggle && filteredItems.length === 0">
+      <div v-else-if="showSubtodosToggle && filteredItems.length === 0">
         <p>No subtodos!</p>
       </div> -->
     </ItemEntity>
   </div>
-  <div v-else>
-    <p>No items!</p>
+  <div
+    v-else
+    class="mt-4"
+  >
+    <strong>No items</strong>
   </div>
 </template>
 
 <style lang="scss">
 .item-list {
-  /** keep */
+  min-width: 350px;
+  max-width: 60% or 1024px;
 }
 </style>

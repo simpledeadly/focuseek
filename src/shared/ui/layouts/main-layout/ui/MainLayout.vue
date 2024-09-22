@@ -2,6 +2,9 @@
 
 <template>
   <slot name="nav" />
-  <slot name="main" />
+  <slot
+    name="main"
+    class="centered"
+  />
   <slot name="footer" />
 </template>

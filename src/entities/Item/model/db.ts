@@ -27,21 +27,20 @@ export const db: Item[] = [
     subtodos: [
       {
         id: Date.now() + 4,
-        title: 'first subtodo',
-        type: 'todo',
+        title: 'first subitem, this is todo',
         isDone: false,
+        type: 'todo',
       },
       {
         id: Date.now() + 5,
-        title: 'second subtodo',
+        title: 'second subitem, todo too',
         isDone: true,
         type: 'todo',
       },
       {
         id: Date.now() + 6,
-        title: 'third subtodo',
-        isDone: false,
-        type: 'todo',
+        title: 'third subitem but this is material',
+        type: 'material',
       },
     ],
   },

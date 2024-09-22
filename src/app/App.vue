@@ -11,7 +11,7 @@ import { RouterView } from 'vue-router'
         <AppNavbar />
       </template>
       <template #main>
-        <RouterView />
+        <RouterView class="app__main" />
       </template>
       <!-- <template #footer></template> -->
     </MainLayout>
@@ -22,5 +22,13 @@ import { RouterView } from 'vue-router'
 body {
   color: $color;
   background: $bg;
+}
+
+.app__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 </style>
