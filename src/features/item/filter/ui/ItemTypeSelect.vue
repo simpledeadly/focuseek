@@ -34,10 +34,10 @@ const model = defineModel<ItemType>()
           Todo
         </SelectItem>
         <SelectItem
-          value="material"
+          value="note"
           class="item-type-select__item"
         >
-          Material
+          Note
         </SelectItem>
         <SelectItem
           value="project"

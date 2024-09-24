@@ -1,4 +1,4 @@
-export type ItemType = 'todo' | 'material' | 'project'
+export type ItemType = 'todo' | 'note' | 'project'
 
 export type Item = {
   id: number

@@ -39,9 +39,19 @@ export const db: Item[] = [
       },
       {
         id: Date.now() + 6,
-        title: 'third subitem but this is material',
-        type: 'material',
+        title: 'third subitem but this is note',
+        type: 'note',
       },
     ],
+  },
+  {
+    id: Date.now() + 7,
+    title: 'This item is note',
+    type: 'note',
+  },
+  {
+    id: Date.now() + 8,
+    title: 'The same situation',
+    type: 'note',
   },
 ]

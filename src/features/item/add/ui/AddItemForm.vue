@@ -37,7 +37,7 @@ const handleSubmit = () => {
         <Input
           v-model="itemTitle"
           type="text"
-          placeholder="Enter item's title"
+          :placeholder="`Enter ${itemType}'s title`"
           class="add-item-form__input"
         />
         <slot

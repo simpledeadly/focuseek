@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 // import { useItemType } from '@/features/item/filter'
-// import { useColorMode } from '@vueuse/core'
+import { useColorMode } from '@vueuse/core'
 
-// const mode = useColorMode()
+const mode = useColorMode()
 // const { itemType } = useItemType()
 // console.log(itemType.value)
 </script>
@@ -18,8 +18,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
         <RouterLink to="/">
           <TabsTrigger value="todo">Todos</TabsTrigger>
         </RouterLink>
-        <RouterLink to="/?type=material">
-          <TabsTrigger value="material">Materials</TabsTrigger>
+        <RouterLink to="/?type=note">
+          <TabsTrigger value="note">Notes</TabsTrigger>
         </RouterLink>
         <RouterLink to="/?type=project">
           <TabsTrigger value="project">Projects</TabsTrigger>

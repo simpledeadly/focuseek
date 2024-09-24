@@ -7,7 +7,6 @@ import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
 import { ProjectDrawer } from '@/widgets/projects-drawer'
-// import { Separator } from '@/shared/ui/separator'
 
 // const props = defineProps<{
 // items: Item[]
@@ -46,7 +45,7 @@ const { changeItemType } = useChangeItemType(items)
       :type="item.type"
     >
       <template
-        v-if="itemType !== 'material'"
+        v-if="itemType !== 'note'"
         #checkbox
       >
         <ItemCheckbox
@@ -88,7 +87,7 @@ const { changeItemType } = useChangeItemType(items)
           </template>
           <template #stats>
             {{ item.subtodos!.filter((item) => item.type === 'todo').length }} todos,
-            {{ item.subtodos!.filter((item) => item.type === 'material').length }} materials
+            {{ item.subtodos!.filter((item) => item.type === 'note').length }} notes
           </template>
           <template #content>
             <div class="mt-2">
@@ -102,9 +101,9 @@ const { changeItemType } = useChangeItemType(items)
             </div>
             <!-- <Separator class="mt-4 mb-2" /> -->
             <div class="mt-4 mb-2">
-              <strong>Materials</strong>
+              <strong>Notes</strong>
               <p
-                v-for="subitem in item.subtodos!.filter((item) => item.type === 'material')"
+                v-for="subitem in item.subtodos!.filter((item) => item.type === 'note')"
                 :key="subitem.id"
               >
                 {{ subitem.title }}
@@ -128,7 +127,7 @@ const { changeItemType } = useChangeItemType(items)
           :key="subtodo.id"
         >
           <template
-            v-if="itemType !== 'material'"
+            v-if="itemType !== 'note'"
             #checkbox
           >
             <ItemCheckbox

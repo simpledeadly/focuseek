@@ -23,7 +23,7 @@ const model = defineModel<ItemType>()
     <SelectContent>
       <SelectGroup>
         <SelectItem value="todo"> T </SelectItem>
-        <SelectItem value="material"> M </SelectItem>
+        <SelectItem value="note"> N </SelectItem>
         <SelectItem value="project"> P </SelectItem>
       </SelectGroup>
     </SelectContent>

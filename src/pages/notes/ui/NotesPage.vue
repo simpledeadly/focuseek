@@ -3,13 +3,13 @@ import { ItemListGroup } from '@/widgets/item-list'
 </script>
 
 <template>
-  <div class="materials-page">
+  <div class="notes-page">
     <ItemListGroup />
   </div>
 </template>
 
 <style lang="scss">
-.materials-page {
+.notes-page {
   /** keep */
 }
 </style>
