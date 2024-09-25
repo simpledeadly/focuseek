@@ -39,112 +39,92 @@ const { changeItemType } = useChangeItemType(items)
     v-if="filteredItems.length > 0"
     class="item-list"
   >
-    <ItemEntity
-      v-for="item in filteredItems"
-      :key="item.id"
-      :type="item.type"
-    >
-      <template
-        v-if="itemType !== 'note'"
-        #checkbox
+    <TransitionGroup name="fade">
+      <ItemEntity
+        v-for="item in filteredItems"
+        :key="item.id"
+        :type="item.type"
       >
-        <ItemCheckbox
-          :model-value="item.isDone"
-          @update:model-value="toggleDoneItem(item)"
-        />
-      </template>
-      <template #title>
-        <ItemTitle
-          :is-done="item.isDone"
-          :title="item.title"
-          @save="changeItemTitle(item, $event)"
-        />
-      </template>
-      <template #removeButton>
-        <ItemRemoveButton @remove="removeItem(item)" />
-      </template>
-      <template
-        v-if="item.type === 'project'"
-        #showSubtodosToggle
-      >
-        <ProjectDrawer>
-          <template #title>
-            <ItemTitle
-              :is-done="item.isDone"
-              :title="item.title"
-              @save="changeItemTitle(item, $event)"
-            />
-          </template>
-          <template #form>
-            <AddItemForm
-              v-model:type="itemType"
-              @submit="addItem($event, itemType)"
-            >
-              <template #select>
-                <ItemTypeSelect v-model="itemType" />
-              </template>
-            </AddItemForm>
-          </template>
-          <template #stats>
-            {{ item.subtodos!.filter((item) => item.type === 'todo').length }} todos,
-            {{ item.subtodos!.filter((item) => item.type === 'note').length }} notes
-          </template>
-          <template #content>
-            <div class="mt-2">
-              <strong>Todos</strong>
-              <p
-                v-for="subitem in item.subtodos!.filter((item) => item.type === 'todo')"
-                :key="subitem.id"
-              >
-                {{ subitem.title }}
-              </p>
-            </div>
-            <!-- <Separator class="mt-4 mb-2" /> -->
-            <div class="mt-4 mb-2">
-              <strong>Notes</strong>
-              <p
-                v-for="subitem in item.subtodos!.filter((item) => item.type === 'note')"
-                :key="subitem.id"
-              >
-                {{ subitem.title }}
-              </p>
-            </div>
-          </template>
-        </ProjectDrawer>
-      </template>
-      <template #typeSelect>
-        <TypeSelect
-          :model-value="item.type"
-          @update:model-value="changeItemType(item, $event)"
-        />
-      </template>
-      <!-- <div
-        v-if="slots.default && showSubtodosToggle && item.subtodos && item.subtodos.length > 0"
-        class="item-list__subtodos"
-      >
-        <ItemEntity
-          v-for="subtodo in filteredItems"
-          :key="subtodo.id"
+        <template
+          v-if="itemType !== 'note'"
+          #checkbox
         >
-          <template
-            v-if="itemType !== 'note'"
-            #checkbox
-          >
-            <ItemCheckbox
-              :model-value="subtodo.isDone"
-              @update:model-value="replaceItemInStorage(subtodo)"
-            />
-          </template>
-          <template #title>
-            {{ subtodo.subtodos }}
-          </template>
-        </ItemEntity>
-        <slot :subtodos="item.subtodos" />
-      </div>
-      <div v-else-if="showSubtodosToggle && filteredItems.length === 0">
-        <p>No subtodos!</p>
-      </div> -->
-    </ItemEntity>
+          <ItemCheckbox
+            :model-value="item.isDone"
+            @update:model-value="toggleDoneItem(item)"
+          />
+        </template>
+        <template #title>
+          <ItemTitle
+            :is-done="item.isDone"
+            :title="item.title"
+            @save="changeItemTitle(item, $event)"
+          />
+        </template>
+        <template #removeButton>
+          <!-- <ItemRemoveButton @remove="removeItem(item)" /> -->
+          <ItemRemoveButton
+            :item="item"
+            @remove="removeItem(item)"
+          />
+        </template>
+        <template
+          v-if="item.type === 'project'"
+          #showSubtodosToggle
+        >
+          <ProjectDrawer>
+            <template #title>
+              <ItemTitle
+                :is-done="item.isDone"
+                :title="item.title"
+                @save="changeItemTitle(item, $event)"
+              />
+            </template>
+            <template #form>
+              <AddItemForm
+                v-model:type="itemType"
+                @submit="addItem($event, itemType)"
+              >
+                <template #select>
+                  <ItemTypeSelect v-model="itemType" />
+                </template>
+              </AddItemForm>
+            </template>
+            <template #stats>
+              {{ item.subtodos!.filter((item) => item.type === 'todo').length }} todos,
+              {{ item.subtodos!.filter((item) => item.type === 'note').length }} notes
+            </template>
+            <template #content>
+              <div class="mt-2">
+                <strong>Todos</strong>
+                <p
+                  v-for="subitem in item.subtodos!.filter((item) => item.type === 'todo')"
+                  :key="subitem.id"
+                >
+                  {{ subitem.title }}
+                </p>
+              </div>
+              <!-- <Separator class="mt-4 mb-2" /> -->
+              <div class="mt-4 mb-2">
+                <strong>Notes</strong>
+                <p
+                  v-for="subitem in item.subtodos!.filter((item) => item.type === 'note')"
+                  :key="subitem.id"
+                >
+                  {{ subitem.title }}
+                </p>
+              </div>
+            </template>
+          </ProjectDrawer>
+        </template>
+        <template #typeSelect>
+          <TypeSelect
+            :model-value="item.type"
+            @update:model-value="changeItemType(item, $event)"
+          />
+        </template>
+      </ItemEntity>
+    </TransitionGroup>
   </div>
   <div
     v-else
@@ -156,7 +136,24 @@ const { changeItemType } = useChangeItemType(items)
 
 <style lang="scss">
 .item-list {
+  // position: relative;
   min-width: 350px;
   max-width: 60% or 1024px;
+}
+
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scaleY(0.01) translate(30px, 0);
+}
+
+.fade-leave-active {
+  position: absolute;
 }
 </style>

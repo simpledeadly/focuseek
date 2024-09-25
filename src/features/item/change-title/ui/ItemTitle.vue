@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip'
+import { useItemType } from '@/features/item/filter'
 
 const props = defineProps<{
   title: string
@@ -12,6 +14,7 @@ const emit = defineEmits<{
 
 const isEdit = ref<boolean>(false)
 const newTitle = ref<string>('')
+const { itemType } = useItemType()
 
 const toEdit = () => {
   newTitle.value = props.title
@@ -38,13 +41,22 @@ const cancelChanges = () => {
       <div :class="props.isDone ? 'item-title__label_done' : 'item-title__label'">
         {{ props.title }}
       </div>
-      <button
-        type="button"
-        class="item-title__edit-button"
-        @click="toEdit"
-      >
-        ✎
-      </button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <button
+              type="button"
+              class="item-title__edit-button"
+              @click="toEdit"
+            >
+              ✎
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Edit {{ itemType }}'s title</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
     <div
       v-else
@@ -87,8 +99,9 @@ const cancelChanges = () => {
     min-width: 190px;
     max-width: 800px;
     margin-right: calc(var(--radius) - 2px);
-    background: hsl(var(--background));
-    border: 1px solid hsl(var(--border));
+    margin-left: calc(var(--radius) - 7px);
+    background: hsl(var(--primary-background));
+    border: none;
     border-radius: calc(var(--radius) - 2px);
     outline: none;
   }
@@ -105,10 +118,12 @@ const cancelChanges = () => {
   }
 
   &__edit-button {
-    color: hsl(var(--primary-foreground));
+    color: hsl(var(--muted-foreground));
+    opacity: 0.5;
 
     &:hover {
       color: hsl(var(--foreground));
+      opacity: 1;
     }
   }
 }

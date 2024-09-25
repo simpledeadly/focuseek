@@ -5,6 +5,8 @@ import { Button } from '@/shared/ui/button'
 import { Separator } from '@/shared/ui/separator'
 import { useItemType } from '@/features/item/filter'
 import { capitalizeAndAppendS } from '@/shared/lib/utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip'
+import { CirclePlus } from 'lucide-vue-next'
 
 const emit = defineEmits<{
   (e: 'submit', value: string): void
@@ -44,14 +46,24 @@ const handleSubmit = () => {
           v-if="slots.select"
           name="select"
         />
-        <Button
-          type="button"
-          variant="secondary"
-          class="add-item-form__input-button"
-          @click="handleSubmit"
-        >
-          Add
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Button
+                type="button"
+                variant="secondary"
+                class="add-item-form__input-button"
+                @click="handleSubmit"
+              >
+                <CirclePlus class="w-4 h-4" />
+                <!-- Add -->
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Add new {{ itemType }}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </form>
     </div>
     <Separator :label="capitalizeAndAppendS(itemType)" />

@@ -6,7 +6,6 @@ const slots = defineSlots<{
   typeSelect?: () => unknown
   showSubtodosToggle?: () => unknown
   subtodos?: () => unknown
-  default?: () => unknown
 }>()
 </script>
 
@@ -75,6 +74,7 @@ const slots = defineSlots<{
 
   &__checkbox {
     display: flex;
+    opacity: 0.8;
   }
 
   &:first-child {

@@ -54,6 +54,11 @@ defineSlots<{
 .projects-drawer {
   &__trigger {
     display: flex;
+    color: hsl(var(--muted-foreground));
+
+    &:hover {
+      color: hsl(var(--foreground));
+    }
   }
 
   &__content {

@@ -35,7 +35,7 @@ const mode = useColorMode()
 .app-navbar {
   &__container {
     margin: 0 auto;
-    margin-top: 1rem;
+    margin-top: 0.25rem;
     margin-bottom: 1.5rem;
     text-align: center;
   }

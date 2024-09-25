@@ -2,26 +2,26 @@ import type { Item } from '../types/item'
 
 export const db: Item[] = [
   {
-    id: Date.now(),
-    title: 'First todo to do :)',
+    id: Date.now() + 0,
+    title: 'Добавить настройки',
     type: 'todo',
     isDone: false,
   },
   {
     id: Date.now() + 1,
-    title: 'Second todo to do ;D',
+    title: 'Валидировать ошибки по приложению',
     type: 'todo',
     isDone: false,
   },
   {
     id: Date.now() + 2,
-    title: 'Third todo already done :3',
+    title: 'Добавить хоткеи',
     type: 'todo',
-    isDone: true,
+    isDone: false,
   },
   {
     id: Date.now() + 3,
-    title: 'Some cool project',
+    title: 'Очень крутой проект',
     type: 'project',
     isDone: false,
     subtodos: [
@@ -46,12 +46,17 @@ export const db: Item[] = [
   },
   {
     id: Date.now() + 7,
-    title: 'This item is note',
+    title: 'Затемнить цвет чекбоксов',
     type: 'note',
   },
   {
     id: Date.now() + 8,
-    title: 'The same situation',
+    title: 'Подобрать цвета для типов, сделать рамку',
+    type: 'note',
+  },
+  {
+    id: Date.now() + 9,
+    title: 'Сделать карандаш видимым',
     type: 'note',
   },
 ]
