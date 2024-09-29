@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 // import { useItemType } from '@/features/item/filter'
-import { useColorMode } from '@vueuse/core'
-
-const mode = useColorMode()
 // const { itemType } = useItemType()
 // console.log(itemType.value)
 </script>
@@ -26,8 +23,6 @@ const mode = useColorMode()
         </RouterLink>
       </TabsList>
     </Tabs>
-    <!-- <button @click="mode = 'light'">light</button> |
-    <button @click="mode = 'dark'">dark</button> -->
   </nav>
 </template>
 

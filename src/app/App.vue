@@ -3,6 +3,7 @@ import { MainLayout } from '@/shared/ui/layouts/main-layout'
 import { AppNavbar } from '@/widgets/navbar'
 import { RouterView } from 'vue-router'
 import { Toaster } from '@/shared/ui/sonner'
+import SettingsPage from '@/pages/settings'
 </script>
 
 <template>
@@ -10,17 +11,19 @@ import { Toaster } from '@/shared/ui/sonner'
   <div class="app">
     <MainLayout>
       <template #logo>
-        <a
-          href="https://github.com/simpledeadly/vue-from-scratch/tree/focuseek"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="@/assets/logo_dark.png"
-            class="app__logo"
-            alt="logo"
-          />
-        </a>
+        <div class="app__logo-and-system-settings">
+          <a
+            href="https://github.com/simpledeadly/vue-from-scratch/tree/focuseek"
+            target="_blank"
+          >
+            <img
+              src="@/assets/logo_dark.png"
+              class="app__logo"
+              alt="logo"
+            />
+          </a>
+          <SettingsPage />
+        </div>
       </template>
       <template #nav>
         <AppNavbar />
@@ -34,16 +37,32 @@ import { Toaster } from '@/shared/ui/sonner'
 </template>
 
 <style lang="scss">
-body {
-  color: $color;
-  background: $bg;
-}
-
 .app {
+  margin-top: 1rem;
+  // font-family: $font, $family;
+
   &__logo {
     width: 88px;
     margin: 0 auto;
-    margin-top: 1rem;
+    margin-left: 1.5rem;
+
+    &-and-system-settings {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__bolt-icon {
+    margin-left: 0.5rem;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    opacity: 0.5;
+
+    &:hover {
+      color: hsl(var(--foreground));
+      opacity: 1;
+    }
   }
 
   &__main {
