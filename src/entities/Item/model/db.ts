@@ -2,7 +2,7 @@ import type { Item } from '../types/item'
 
 export const db: Item[] = [
   {
-    id: Date.now() + 0,
+    id: Date.now(),
     title: 'Добавить настройки',
     type: 'todo',
     isDone: false,

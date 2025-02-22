@@ -1,12 +1,33 @@
 import { defineStore, storeToRefs } from 'pinia'
 import { shallowRef } from 'vue'
 import type { Item } from '../types/item'
-import { db } from './db'
+import { fetchItemsFromServer } from '@/shared/api/api'
+
+const fetchItems = async (): Promise<Item[]> => {
+  try {
+    return await fetchItemsFromServer()
+  } catch (e) {
+    console.error('Ошибка при загрузке данных:', e)
+    return []
+  }
+}
 
 export const useItemsStore = defineStore('items', () => {
-  const items = shallowRef<Item[]>(db)
+  const items = shallowRef<Item[]>([])
 
-  return { items }
+  const loadItems = async () => {
+    try {
+      items.value = await fetchItems()
+    } catch (error) {
+      console.error('Ошибка при загрузке данных:', error)
+    }
+  }
+
+  if (!items.value.length) {
+    loadItems()
+  }
+
+  return { items, loadItems }
 })
 
 export const useItems = () => {

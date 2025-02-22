@@ -7,15 +7,7 @@ import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
 import { ProjectDrawer } from '@/widgets/projects-drawer'
-
-// const props = defineProps<{
-// items: Item[]
-// items: Array<{ subtodos?: Item[] }>
-// }>()
-
-// const slots = defineSlots<{
-//   default?: () => unknown
-// }>()
+// import { watch } from 'vue'
 
 const { items } = useItems()
 const { itemType, filteredItems } = useFilterItems(items)
@@ -24,6 +16,9 @@ const { removeItem } = useRemoveItem(items)
 const { toggleDoneItem } = useDoneItem(items)
 const { changeItemTitle } = useChangeItemTitle(items)
 const { changeItemType } = useChangeItemType(items)
+
+// watch(items, () => console.log(items.value))
+// watch(filteredItems, () => console.log(filteredItems.value))
 </script>
 
 <template>
@@ -120,7 +115,7 @@ const { changeItemType } = useChangeItemType(items)
         <template #typeSelect>
           <TypeSelect
             :model-value="item.type"
-            @update:model-value="changeItemType(item, $event)"
+            @update:model-value="changeItemType(item, $event!)"
           />
         </template>
       </ItemEntity>
