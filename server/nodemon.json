@@ -1,0 +1,9 @@
+{
+	"execMap": {
+		"ts": "node -r ts-node/register"
+	},
+	"watch": ["src/**/*"],
+	"ext": "ts",
+	"ignore": ["src/**/*.spec.ts"],
+	"exec": "ts-node ./src/server.ts"
+}
