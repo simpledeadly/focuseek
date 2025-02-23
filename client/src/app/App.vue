@@ -13,7 +13,7 @@ import SettingsPage from '@/pages/settings'
       <template #logo>
         <div class="app__logo-and-system-settings">
           <a
-            href="https://github.com/simpledeadly/vue-from-scratch/tree/focuseek"
+            href="https://github.com/simpledeadly/Focuseek"
             target="_blank"
           >
             <img
@@ -39,7 +39,6 @@ import SettingsPage from '@/pages/settings'
 <style lang="scss">
 .app {
   margin-top: 1rem;
-  // font-family: $font, $family;
 
   &__logo {
     width: 88px;
