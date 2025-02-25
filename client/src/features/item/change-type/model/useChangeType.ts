@@ -4,10 +4,14 @@ import { updateItemOnServer } from '@/shared/api/api'
 import { ShallowRef } from 'vue'
 
 export const useChangeItemType = (items: ShallowRef<Item[]>) => {
-  const changeItemType = (item: Item, type: ItemType) => {
+  const changeItemType = async (item: Item, type: ItemType) => {
     const newItem = updateItem(item, { type })
-    items.value = replaceItemInList(items.value, newItem)
-    updateItemOnServer(item.id, newItem)
+    try {
+      await updateItemOnServer(item.id, newItem)
+      items.value = replaceItemInList(items.value, newItem)
+    } catch (error) {
+      console.error('Ошибка при изменении типа элемента:', error)
+    }
   }
 
   return { changeItemType }

@@ -4,10 +4,10 @@ import { updateItemOnServer } from '@/shared/api/api'
 import { ShallowRef } from 'vue'
 
 export const useDoneItem = (items: ShallowRef<Item[]>) => {
-  const toggleDoneItem = (item: Item) => {
+  const toggleDoneItem = async (item: Item) => {
     const newItem = updateItem(item, { isDone: !item.isDone })
+    await updateItemOnServer(item.id, newItem)
     items.value = replaceItemInList(items.value, newItem)
-    updateItemOnServer(item.id, newItem)
   }
 
   return { toggleDoneItem }

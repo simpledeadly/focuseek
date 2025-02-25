@@ -5,8 +5,8 @@ export const isItemType = (value: unknown): value is ItemType => {
   return types.includes(value)
 }
 
-export const createItem = (title: string, type: ItemType): Item => {
-  return { id: Date.now(), type, title }
+export const createItem = (userId: number, title: string, type: ItemType): Item => {
+  return { id: Date.now(), userId, type, title }
 }
 
 export const updateItem = (item: Item, changes: Partial<Item>): Item => {
@@ -34,5 +34,5 @@ export const replaceItemInList = (itemList: Item[], newItem: Item): Item[] => {
 }
 
 export const filterItemsByType = (itemList: Item[], type: ItemType): Item[] => {
-  return itemList.filter((item) => item.type === type)
+  return itemList.filter((item) => item.type === type).sort((a, b) => a.id - b.id) // * при .sort элементы на месте при их изменении
 }

@@ -2,10 +2,11 @@ export type ItemType = 'todo' | 'note' | 'project'
 
 export type Item = {
   id: number
+  userId: number
   title: string
   type: ItemType
   isDone?: boolean
-  subtodos?: Item[]
+  subtodos?: SubItem[]
 }
 
 export type SubItem = {
