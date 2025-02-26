@@ -16,8 +16,14 @@ export const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
+    // loader.show()
     next({ name: 'login' })
   } else {
+    // loader.show()
     next()
   }
 })
+
+// router.afterEach((to, from) => {
+//   loader.hide()
+// })

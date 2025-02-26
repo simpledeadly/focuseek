@@ -3,7 +3,7 @@ defineSlots<{
   logo: () => unknown
   nav: () => unknown
   main: () => unknown
-  footer?: () => unknown
+  default?: () => unknown
 }>()
 </script>
 
@@ -12,7 +12,7 @@ defineSlots<{
     <slot name="logo" />
     <slot name="nav" />
     <slot name="main" />
-    <slot name="footer" />
+    <slot default />
   </div>
 </template>
 

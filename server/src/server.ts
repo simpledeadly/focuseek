@@ -160,14 +160,39 @@ app.post('/api/login', async (req, res) => {
 
 // == ITEMS ==
 
-app.get('/api/items', async (req, res) => {
+// Middleware
+const authenticate = async (req: any, res: any, next: any) => {
+  const token = req.headers.authorization
+  if (!token) {
+    return res.status(401).json({ message: 'Неавторизованный доступ' })
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'your_jwt_secret')
+    console.log('DECODED:', decoded)
+
+    if (typeof decoded === 'object' && decoded !== null) {
+      req.userId = decoded.id
+      console.log(req.userId)
+      next()
+    } else {
+      console.error('Проблема с decoded в middleware')
+    }
+  } catch (error) {
+    console.error('Ошибка при проверке токена:', error)
+    res.status(401).json({ message: 'Неправильный формат токена' })
+  }
+}
+
+app.get('/api/items', authenticate, async (req, res) => {
   try {
     const token = req.headers.authorization
     if (!token) {
       return res.status(401).json({ message: 'Неавторизованный доступ' })
     }
-
+    
     const decoded = jwt.verify(token, 'your_jwt_secret')
+    console.log('GET ITEMS: ', decoded)
     if (typeof decoded === 'object' && decoded !== null) {
       const userId = decoded.id
       const items = await prisma.item.findMany({
@@ -191,7 +216,7 @@ app.get('/api/items', async (req, res) => {
 })
 
 
-app.post('/api/items', async (req, res) => {
+app.post('/api/items', authenticate, async (req, res) => {
   try {
     const token = req.headers.authorization
     if (!token) {

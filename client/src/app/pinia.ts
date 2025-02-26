@@ -1,6 +1,6 @@
-import { createPinia } from 'pinia'
-import persist from 'pinia-plugin-persistedstate'
+// import { createPinia } from 'pinia'
+// import persist from 'pinia-plugin-persistedstate'
 
-const pinia = createPinia().use(persist)
+// const pinia = createPinia().use(persist)
 
-export default pinia
+// export default pinia

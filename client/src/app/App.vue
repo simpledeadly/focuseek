@@ -3,11 +3,20 @@ import { MainLayout } from '@/shared/ui/layouts/main-layout'
 import { AppNavbar } from '@/widgets/navbar'
 import { RouterView } from 'vue-router'
 import { Toaster } from '@/shared/ui/sonner'
+import { isAuthenticated } from './auth'
+import { ArrowRightSquare } from 'lucide-vue-next'
 import SettingsPage from '@/pages/settings'
+
+const leftApp = async () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('auth')
+  window.location.reload()
+}
 </script>
 
 <template>
   <Toaster />
+  <!-- <Loader :show="isLoading" /> -->
   <div class="app">
     <MainLayout>
       <template #logo>
@@ -23,15 +32,19 @@ import SettingsPage from '@/pages/settings'
             />
           </a>
           <SettingsPage />
+          <ArrowRightSquare
+            :size="18"
+            class="app__left-icon"
+            @click="leftApp"
+          />
         </div>
       </template>
-      <template #nav>
+      <template v-if="isAuthenticated()" #nav>
         <AppNavbar />
       </template>
       <template #main>
         <RouterView class="app__main" />
       </template>
-      <!-- <template #footer></template> -->
     </MainLayout>
   </div>
 </template>
@@ -43,7 +56,7 @@ import SettingsPage from '@/pages/settings'
   &__logo {
     width: 88px;
     margin: 0 auto;
-    margin-left: 1.5rem;
+    margin-left: 3rem;
 
     &-and-system-settings {
       display: flex;
@@ -52,7 +65,7 @@ import SettingsPage from '@/pages/settings'
     }
   }
 
-  &__bolt-icon {
+  &__bolt-icon, &__left-icon {
     margin-left: 0.5rem;
     color: hsl(var(--muted-foreground));
     cursor: pointer;

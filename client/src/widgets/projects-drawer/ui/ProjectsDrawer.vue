@@ -20,7 +20,7 @@ defineSlots<{
 </script>
 
 <template>
-  <Drawer class="projects-drawer">
+  <Drawer>
     <DrawerTrigger class="projects-drawer__trigger">
       <PanelBottomOpen :size="17" />
     </DrawerTrigger>

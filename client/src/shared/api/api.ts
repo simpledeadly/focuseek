@@ -5,18 +5,20 @@ import { User } from '@/entities/user/types/user'
 
 const API_URL = 'http://localhost:3000/api'
 
-// === USERS ===
-
 const { setUserId, getUserId } = useAuth()
+
+// === USERS ===
 
 export const registerUser = async (username: string, password: string): Promise<User> => {
   try {
     const response = await axios.post(`${API_URL}/register`, { username, password })
     const userId = response.data.userId
-    console.log('response.data register:', response.data)
+    const token = response.data.token
+    console.log('register userId:', userId)
+    console.log('register token:', token)
 
+    localStorage.setItem('token', token)
     setUserId(userId)
-    console.log(userId, 'reg SETTED!')
 
     return response.data
   } catch (e) {
@@ -29,12 +31,13 @@ export const loginUser = async (username: string, password: string): Promise<Use
   try {
     const response = await axios.post(`${API_URL}/login`, { username, password })
     const userId = response.data.userId
-    console.log('response.data login:', response.data)
+    const token = response.data.token
+    console.log('login userId:', userId)
+    console.log('login token:', token)
 
+    localStorage.setItem('token', token)
     setUserId(userId)
-    console.log(userId, 'log SETTED!')
-    
-    localStorage.setItem('token', response.data.token)
+
     return response.data
   } catch (error) {
     throw new Error('Ошибка входа')
@@ -45,7 +48,6 @@ export const loginUser = async (username: string, password: string): Promise<Use
 
 export const fetchItemsFromServer = async () => {
   try {
-    console.log('GET Items', getUserId)
     const token = localStorage.getItem('token')
     const response = await axios.get(`${API_URL}/items`, {
       headers: {
@@ -64,20 +66,17 @@ export const addItemToServer = async (item: Item): Promise<Item> => {
   try {
     const token = localStorage.getItem('token')
     console.log('item:', item)
-    const authStore = useAuth()
 
-    if (authStore.userId === null) {
-      throw new Error('Пользователь не авторизован')
-    }
-    item.userId = authStore.userId as number
-    console.log('POST Item', item.userId)
-
+    console.log('POST Item before', item.userId, getUserId)
+    
     const response = await axios.post(`${API_URL}/items`, item, {
       headers: {
         Authorization: token,
       },
     })
     console.log('Элемент успешно добавлен на сервер:', response.data)
+    console.log('POST Item after 2', item.userId, getUserId, response.data.item.userId)
+
     return response.data.item
   } catch (e) {
     console.error('Ошибка при добавлении элемента на сервер:', e)

@@ -8,13 +8,13 @@ const { getUserId } = useAuth()
 
 export const useAddItem = (items: ShallowRef<Item[]>) => {
   const addItem = async (title: string, type: ItemType) => {
-    if (getUserId !== null) {
-      const item = createItem(getUserId, title, type)
+    // if (getUserId !== null) {
+      const item = createItem(getUserId!, title, type)
       const serverItem = await addItemToServer(item)
       items.value = addItemToList(items.value, serverItem)
-    } else {
-      console.log('Пользователь не авторизован')
-    }
+    // } else {
+    //   console.log('Пользователь не авторизован')
+    // }
   }
 
   return { addItem }

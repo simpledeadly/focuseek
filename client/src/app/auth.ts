@@ -1,13 +1,7 @@
-// export const isAuthenticated = () => {
-//   const token = localStorage.getItem('token')
-//   return token !== null
-// }
-
-// import axios from 'axios'
-
 export const isAuthenticated = () => {
   // console.log('Проверка авторизации...')
   const token = localStorage.getItem('token')
+  const auth = localStorage.getItem('auth')
   // console.log('Токен:', token)
 
   if (!token) {
@@ -15,10 +9,16 @@ export const isAuthenticated = () => {
     return false
   }
 
+  if (!auth) {
+    console.log('userId не найден')
+    return false
+  }
+
   try {
     const parts = token.split('.')
+
     if (parts.length !== 3) {
-      console.log('Невалидный токен')
+      console.log('Невалидный токен, token:', token)
       return false
     }
 
