@@ -7,6 +7,7 @@ import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
 import { ProjectDrawer } from '@/widgets/projects-drawer'
+import { StickyNote } from 'lucide-vue-next'
 // import { watch } from 'vue'
 
 const { items } = useItems()
@@ -123,17 +124,30 @@ const { changeItemType } = useChangeItemType(items)
   </div>
   <div
     v-else
-    class="mt-4"
+    class="empty"
   >
-    <strong>No items</strong>
+    <StickyNote :size="40" />
+    <strong class="empty__message">No {{ itemType }}s</strong>
   </div>
 </template>
 
 <style lang="scss">
 .item-list {
-  // position: relative;
   min-width: 350px;
   max-width: 60% or 1024px;
+}
+
+.empty {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #acacac;
+
+  &__message {
+    margin-top: 0.5rem;
+    font-size: 20px;
+  }
 }
 
 .fade-move,

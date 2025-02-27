@@ -1,17 +1,9 @@
-import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useLoading = defineStore('loader', {
-  // persist: true,
-  state: () => ({
-    loading: false as boolean
-  }),
-  getters: {
-    isLoadingHook: (state) => state.loading
-  },
-  actions: {
-    setLoading(bool: boolean) {
-      this.loading = bool
-      console.log('setLoading:', this.$state.loading, this.loading)
-    },
-  },
-})
+export const useLoading = () => {
+  const isLoading = ref(false)
+  
+  const setLoading = (value: boolean) => isLoading.value = value
+
+  return { isLoading, setLoading }
+}

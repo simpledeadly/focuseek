@@ -9,6 +9,8 @@ const { setUserId, getUserId } = useAuth()
 
 // === USERS ===
 
+// ! clean up logs
+
 export const registerUser = async (username: string, password: string): Promise<User> => {
   try {
     const response = await axios.post(`${API_URL}/register`, { username, password })

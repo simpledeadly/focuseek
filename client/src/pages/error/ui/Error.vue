@@ -1,10 +1,6 @@
 <template>
   <div class="loader-overlay">
-    <div class="loader">
-      <!-- <h1>хэй а я загружаюся :)</h1> -->
-      <span></span>
-      <span></span>
-    </div>
+    <h1 style="font-size: 60px;"><strong>УПС! Ошибочка вышла!</strong></h1>
   </div>
 </template>
 
@@ -84,4 +80,39 @@
     background: #3b4252;
   }
 }
+
+// .loader-overlay {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   position: fixed;
+//   z-index: 2;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background: #f15f79;
+//   animation: grader 1s linear infinite;
+
+//   &__loader {
+//     width: 100px;
+//     height: 100px;
+
+
+//   }
+
+//   &__loader span {
+//     position: absolute;
+//     width: 100px;
+//     height: 100px;
+//     border-radius: 100%;
+//     background: #fff;
+//     animation: loader 1.5s linear infinite;
+//   }
+
+//   &__loader span:last-child {
+//     animation-delay: -0.9s;
+//     -webkit-animation-delay: -0.9s;
+//   }
+// }
 </style>

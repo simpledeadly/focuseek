@@ -7,6 +7,8 @@ const routes = [
   { path: '/?type=project', component: () => import('@/pages/projects'), name: 'projects', meta: { requiresAuth: true } },
   { path: '/register', component: () => import('@/pages/auth/register'), name: 'register' },
   { path: '/login', component: () => import('@/pages/auth/login'), name: 'login' },
+  { path: '/404', component: () => import('@/pages/not-found'), name: '404' },
+  { path: '/:catchAll(.*)', redirect: { name: '404' } }
 ]
 
 export const router = createRouter({
@@ -16,14 +18,8 @@ export const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
-    // loader.show()
     next({ name: 'login' })
   } else {
-    // loader.show()
     next()
   }
 })
-
-// router.afterEach((to, from) => {
-//   loader.hide()
-// })

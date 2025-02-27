@@ -16,7 +16,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
 import { Card, CardContent } from '@/shared/ui/card'
 
 const mode = useColorMode()
-const themes = ['light', 'dark']
+const themes = ['light', 'dark', 'dark', 'dark', 'dark']
 const switchMode = (theme: any) => mode.value = theme
 </script>
 
@@ -26,10 +26,10 @@ const switchMode = (theme: any) => mode.value = theme
       <DialogTrigger as-child>
         <Bolt
           :size="18"
-          class="app__bolt-icon"
+          class="app__bolt-icon icon"
         />
       </DialogTrigger>
-      <DialogContent class="sm:min-w-[90vw] sm:min-h-[90vh]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>Here you can change theme</DialogDescription>

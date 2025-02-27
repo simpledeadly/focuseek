@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { MainLayout } from '@/shared/ui/layouts/main-layout'
 import { AppNavbar } from '@/widgets/navbar'
 import { RouterView } from 'vue-router'
@@ -6,17 +7,22 @@ import { Toaster } from '@/shared/ui/sonner'
 import { isAuthenticated } from './auth'
 import { ArrowRightSquare } from 'lucide-vue-next'
 import SettingsPage from '@/pages/settings'
+import Loader from '@/widgets/loader'
+import ProfilePage from '@/pages/profile/ui/ProfilePage.vue'
 
-const leftApp = async () => {
+const quitApp = async () => {
   localStorage.removeItem('token')
   localStorage.removeItem('auth')
   window.location.reload()
 }
+
+const isLoading = ref(false)
+const setLoading = (value: boolean) => isLoading.value = value
 </script>
 
 <template>
   <Toaster />
-  <!-- <Loader :show="isLoading" /> -->
+  <Loader v-if="isLoading" />
   <div class="app">
     <MainLayout>
       <template #logo>
@@ -31,19 +37,22 @@ const leftApp = async () => {
               alt="logo"
             />
           </a>
-          <SettingsPage />
-          <ArrowRightSquare
-            :size="18"
-            class="app__left-icon"
-            @click="leftApp"
-          />
+          <div :style="{ visibility: !isAuthenticated() ? 'hidden' : 'visible' }" class="app__icons">
+            <ProfilePage />
+            <SettingsPage />
+            <ArrowRightSquare
+              :size="18"
+              class="app__icons_quit-icon icon"
+              @click="quitApp"
+            />
+          </div>
         </div>
       </template>
       <template v-if="isAuthenticated()" #nav>
         <AppNavbar />
       </template>
       <template #main>
-        <RouterView class="app__main" />
+        <RouterView @loading="(value: boolean) => setLoading(value)" class="app__main" />
       </template>
     </MainLayout>
   </div>
@@ -56,7 +65,7 @@ const leftApp = async () => {
   &__logo {
     width: 88px;
     margin: 0 auto;
-    margin-left: 3rem;
+    margin-left: 4.5rem;
 
     &-and-system-settings {
       display: flex;
@@ -65,7 +74,12 @@ const leftApp = async () => {
     }
   }
 
-  &__bolt-icon, &__left-icon {
+  &__icons {
+    display: flex;
+  }
+
+  .icon {
+    transition: 0.05s;
     margin-left: 0.5rem;
     color: hsl(var(--muted-foreground));
     cursor: pointer;
