@@ -90,10 +90,15 @@ const cancelChanges = () => {
     gap: calc(var(--radius) - 2px);
     margin-left: 1px;
     text-align: left;
+    
+    &-editable {
+      width: 60vw;
+    }
   }
 
   &__input {
     min-width: 190px;
+    width: 100%;
     margin-right: calc(var(--radius) - 2px);
     margin-left: calc(var(--radius) - 7px);
     background: hsl(var(--primary-background));

@@ -36,7 +36,7 @@ const { filteredItems } = useFilterItems(items)
 
 <template>
   <div class="add-item-wrapper">
-    <div class="flex w-full max-w-sm items-center gap-1.5">
+    <div class="flex items-center gap-1.5">
       <form
         class="add-item-form"
         @submit.prevent="handleSubmit"
@@ -45,13 +45,13 @@ const { filteredItems } = useFilterItems(items)
           v-model="itemTitle"
           type="text"
           :placeholder="`Enter title`"
-          class="add-item-form__input"
+          class="add-item-form__input-title"
         />
         <Input
           v-model="parentId"
-          type="text"
-          placeholder="parentId"
-          class="add-item-form__input"
+          type="number"
+          placeholder="pID"
+          class="add-item-form__input-parentId"
         />
         <slot
           v-if="slots.select"
@@ -88,17 +88,26 @@ const { filteredItems } = useFilterItems(items)
 <style lang="scss">
 .add-item-wrapper {
   margin-bottom: 1.5rem;
+  width: 70vw;
 }
 
 .add-item-form {
   display: flex;
   margin: 0 auto;
   margin-bottom: 1.5rem;
+  width: 100%;
 
   &__input {
-    // margin-right: 2px;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    &-title {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    
+    &-parentId {
+      border-left: none;
+      border-radius: 0;
+      width: 4.5rem;
+    }
 
     &-button {
       border: 1px solid hsl(var(--border));

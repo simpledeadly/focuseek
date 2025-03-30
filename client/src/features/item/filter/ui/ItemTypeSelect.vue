@@ -50,6 +50,7 @@ const model = defineModel<ItemType>()
     border-right: none;
     border-left: none;
     border-radius: 0;
+    width: 5.5rem;
   }
 
   &__item {
