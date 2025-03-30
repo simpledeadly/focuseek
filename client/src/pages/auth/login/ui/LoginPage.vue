@@ -28,7 +28,7 @@ const login = async () => {
       console.log('Пользователь авторизован!', res)
       console.log('localStorage:', localStorage.getItem('auth'))
       password.value = ''
-      router.push({ name: 'todos' }).then(() => {
+      router.push({ name: 'collections' }).then(() => {
         window.location.reload()
       })
     }

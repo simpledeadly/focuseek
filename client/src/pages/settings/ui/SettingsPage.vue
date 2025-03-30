@@ -14,8 +14,6 @@ import { useColorMode } from '@vueuse/core'
 import DialogClose from '@/shared/ui/dialog/DialogClose.vue'
 import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
 import { Card, CardContent } from '@/shared/ui/card'
-import { Switch } from '@/shared/ui/switch'
-import { Label } from '@/shared/ui/label'
 import { ref, watch } from 'vue'
 import { HideToggle } from '@/widgets/hide-toggle'
 

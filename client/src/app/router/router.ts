@@ -1,10 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 import { isAuthenticated } from '../auth/auth'
 
 const routes = [
   { path: '/register', component: () => import('@/pages/auth/register'), name: 'register' },
   { path: '/login', component: () => import('@/pages/auth/login'), name: 'login' },
-  { path: '/collections', component: () => import('@/pages/collections'), name: 'collections' },
+  {
+    path: '/collections',
+    component: () => import('@/pages/collections'),
+    name: 'collections',
+    meta: { requiresAuth: true },
+  },
   {
     path: '/:collection',
     component: () => import('@/pages/todos'),
@@ -12,12 +17,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/:collection?type=note',
+    path: '/:collection',
     component: () => import('@/pages/notes'),
     name: 'notes',
     meta: { requiresAuth: true },
+    props: (route: RouteLocationNormalized) => ({ type: route.query.type }),
   },
-  // { path: '/collections/:collection/info', component: () => import('@/pages/collection'), name: 'collection' },
   {
     path: '/profile',
     component: () => import('@/pages/profile'),
@@ -42,6 +47,8 @@ export const router = createRouter({
 router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
     next({ name: 'login' })
+  } else if (to.params.collection === undefined && (to.name === 'todos' || to.name === 'notes')) {
+    next({ name: '404' }) // или перенаправьте на другой маршрут
   } else {
     next()
   }

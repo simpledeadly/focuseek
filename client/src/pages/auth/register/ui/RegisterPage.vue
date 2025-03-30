@@ -28,7 +28,7 @@ const register = async () => {
       console.log('Пользователь зарегистрирован!', res)
       console.log('localStorage:', localStorage.getItem('auth'))
       password.value = ''
-      router.push({ name: 'todos' }).then(() => window.location.reload())
+      router.push({ name: 'collections' }).then(() => window.location.reload())
     }
   } catch (e: any) {
     alert(e)

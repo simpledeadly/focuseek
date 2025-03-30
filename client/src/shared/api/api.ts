@@ -6,6 +6,46 @@ import type { Item } from '../../entities/item/types/item'
 
 const API_URL = 'http://localhost:3000/api'
 
+// === USERS ===
+
+const { setUserId, getUserId } = useAuth()
+
+export const registerUser = async (username: string, password: string): Promise<User> => {
+  try {
+    const response = await axios.post(`${API_URL}/register`, { username, password })
+    const userId = response.data.userId
+    const token = response.data.token
+    console.log('register userId:', userId)
+    console.log('register token:', token)
+
+    localStorage.setItem('token', token)
+    setUserId(userId)
+
+    return response.data
+  } catch (e) {
+    console.error('Ошибка при регистрации:', e)
+    throw new Error('Ошибка при регистрации')
+  }
+}
+
+export const loginUser = async (username: string, password: string): Promise<User> => {
+  try {
+    const response = await axios.post(`${API_URL}/login`, { username, password })
+    const userId = response.data.userId
+    const token = response.data.token
+    console.log('login userId:', userId)
+    console.log('login token:', token)
+
+    localStorage.setItem('token', token)
+    setUserId(userId)
+
+    return response.data
+  } catch (e) {
+    console.error('Ошибка при входе:', e)
+    throw new Error('Ошибка входа')
+  }
+}
+
 // === COLLECTIONS ===
 
 export const fetchCollectionsFromServer = async () => {
@@ -80,50 +120,6 @@ export const deleteCollectionFromServer = async (id: number) => {
   } catch (e) {
     console.error('Ошибка при удалении коллекции с сервера:', e)
     throw new Error('Ошибка при удалении коллекции с сервера')
-  }
-}
-
-// === USERS ===
-
-const { setUserId, getUserId } = useAuth()
-
-export const registerUser = async (username: string, password: string): Promise<User> => {
-  try {
-    const response = await axios.post(`${API_URL}/register`, { username, password })
-    const userId = response.data.userId
-    const token = response.data.token
-    console.log('register userId:', userId)
-    console.log('register token:', token)
-
-    localStorage.setItem('token', token)
-    setUserId(userId)
-
-    await axios.post('/collections', {
-      collections: [{ title: 'inbox' }, { title: 'today' }],
-    })
-
-    return response.data
-  } catch (e) {
-    console.error('Ошибка при регистрации:', e)
-    throw new Error('Ошибка при регистрации')
-  }
-}
-
-export const loginUser = async (username: string, password: string): Promise<User> => {
-  try {
-    const response = await axios.post(`${API_URL}/login`, { username, password })
-    const userId = response.data.userId
-    const token = response.data.token
-    console.log('login userId:', userId)
-    console.log('login token:', token)
-
-    localStorage.setItem('token', token)
-    setUserId(userId)
-
-    return response.data
-  } catch (e) {
-    console.error('Ошибка при входе:', e)
-    throw new Error('Ошибка входа')
   }
 }
 

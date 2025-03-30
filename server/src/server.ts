@@ -43,6 +43,93 @@ app.use(express.json())
 
 // === Endpoints ===
 
+// == AUTH ==
+
+app.post('/api/register', async (req, res) => {
+  const { username, password } = req.body
+
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: { username },
+    })
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'Пользователь с таким именем уже существует' })
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        password_hash: hashedPassword,
+      },
+    })
+    console.log('REGGAAAAA', newUser.id)
+
+    await prisma.collection.createMany({
+      data: [
+        {
+          userId: newUser.id,
+          title: 'Inbox',
+          createdAt: new Date(),
+          editedAt: new Date(),
+        },
+        {
+          userId: newUser.id,
+          title: 'Today',
+          createdAt: new Date(),
+          editedAt: new Date(),
+        },
+      ],
+    })
+
+    const token = jwt.sign({ id: newUser.id }, 'your_jwt_secret', {
+      expiresIn: '30d',
+    })
+
+    res.status(201).json({
+      message: 'Пользователь зарегистрирован',
+      token,
+      userId: newUser.id,
+    })
+  } catch (error) {
+    console.error('Ошибка при регистрации:', error)
+    res.status(500).json({ message: 'Ошибка сервера' })
+  }
+})
+
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    })
+
+    if (!user) {
+      return res.status(401).json({ message: 'Неверные учетные данные' })
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash)
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Неверные учетные данные' })
+    }
+
+    console.log('LOOOGAAAAA', user.id)
+
+    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
+      expiresIn: '30d',
+    })
+
+    res.json({ token, userId: user.id })
+  } catch (error) {
+    console.error('Ошибка при входе:', error)
+    res.status(500).json({ message: 'Ошибка сервера' })
+  }
+})
+
 // == COLLECTIONS ==
 
 app.get('/api/collections', authenticate, async (req, res) => {
@@ -142,93 +229,6 @@ app.delete('/api/collections/:id', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при удалении коллекции:', error)
     res.status(404).json({ message: 'Коллекция не найдена' })
-  }
-})
-
-// == AUTH ==
-
-app.post('/api/register', async (req, res) => {
-  const { username, password } = req.body
-
-  try {
-    const existingUser = await prisma.user.findUnique({
-      where: { username },
-    })
-
-    if (existingUser) {
-      return res.status(400).json({ message: 'Пользователь с таким именем уже существует' })
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    const newUser = await prisma.user.create({
-      data: {
-        username,
-        password_hash: hashedPassword,
-      },
-    })
-    console.log('REGGAAAAA', newUser.id)
-
-    await prisma.collection.createMany({
-      data: [
-        {
-          userId: newUser.id,
-          title: 'Inbox',
-          createdAt: new Date(),
-          editedAt: new Date(),
-        },
-        {
-          userId: newUser.id,
-          title: 'Today',
-          createdAt: new Date(),
-          editedAt: new Date(),
-        },
-      ],
-    })
-
-    const token = jwt.sign({ id: newUser.id }, 'your_jwt_secret', {
-      expiresIn: '30d',
-    })
-
-    res.status(201).json({
-      message: 'Пользователь зарегистрирован',
-      token,
-      userId: newUser.id,
-    })
-  } catch (error) {
-    console.error('Ошибка при регистрации:', error)
-    res.status(500).json({ message: 'Ошибка сервера' })
-  }
-})
-
-app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { username },
-    })
-
-    if (!user) {
-      return res.status(401).json({ message: 'Неверные учетные данные' })
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash)
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Неверные учетные данные' })
-    }
-
-    console.log('LOOOGAAAAA', user.id)
-
-    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
-      expiresIn: '30d',
-    })
-
-    res.json({ token, userId: user.id })
-  } catch (error) {
-    console.error('Ошибка при входе:', error)
-    res.status(500).json({ message: 'Ошибка сервера' })
   }
 })
 
