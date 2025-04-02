@@ -1,14 +1,15 @@
-import { useCollection } from '@/features/collection/filter'
+import { computed, ref, ShallowRef } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import {
+  filterItemsByCollection,
+  filterParentItems,
   filterItemsByType,
   filterDoneItems,
   isItemType,
   Item,
   type ItemType,
 } from '@/entities/item'
-import { filterItemsByCollection, filterParentItems } from '@/entities/item/lib/item'
-import { computed, ref, ShallowRef } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useCollection } from '@/features/collection/filter'
 
 export const useItemType = () => {
   const route = useRoute()
@@ -38,35 +39,28 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   const { isHideDone } = useHideDone()
   const { collections, collection, collectionId } = useCollection()
 
+  if (!collectionId) {
+    console.log('collectionId not found', collections.value, collection, collectionId)
+    throw new Error('collectionId not found')
+  }
+
+  const filteredDoneItems = filterDoneItems(items.value)
+
   const filteredParentItems = computed(() => {
-    const itemsToFilter = items.value
+    const filteredItemsByCollection = filterItemsByCollection(items.value, collectionId.value)
 
-    if (!collectionId) {
-      console.log('collectionId not found', collections.value, collection, collectionId)
-      throw new Error('collectionId not found')
-    }
-
-    const filteredDoneItems = filterDoneItems(itemsToFilter)
-    const filteredItemsByCollection = filterItemsByCollection(itemsToFilter, collectionId.value)
-
-    return filterParentItems(filterItemsByType(
-      isHideDone.value
-        ? filterItemsByCollection(filteredDoneItems, collectionId.value)
-        : filteredItemsByCollection,
-      itemType.value
-    ))
+    return filterParentItems(
+      filterItemsByType(
+        isHideDone.value
+          ? filterItemsByCollection(filteredDoneItems, collectionId.value)
+          : filteredItemsByCollection,
+        itemType.value
+      )
+    )
   })
 
   const filteredItems = computed(() => {
-    const itemsToFilter = items.value
-
-    if (!collectionId) {
-      console.log('collectionId not found', collections.value, collection, collectionId)
-      throw new Error('collectionId not found')
-    }
-
-    const filteredDoneItems = filterDoneItems(itemsToFilter)
-    const filteredItemsByCollection = filterItemsByCollection(itemsToFilter, collectionId.value)
+    const filteredItemsByCollection = filterItemsByCollection(items.value, collectionId.value)
 
     return filterItemsByType(
       isHideDone.value
@@ -76,5 +70,12 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
     )
   })
 
-  return { itemType, filteredItems, filteredParentItems, collectionId, isHideDone }
+  return {
+    itemType,
+    filteredItems,
+    filteredDoneItems,
+    filteredParentItems,
+    collectionId,
+    isHideDone,
+  }
 }

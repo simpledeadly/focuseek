@@ -11,6 +11,7 @@ import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
 import { Checkbox } from '@/shared/ui/checkbox'
 import { StickyNote } from 'lucide-vue-next'
 import { useShowSubItems } from '@/features/item/show-sub-items'
+import AddItemFormInline from '@/features/item/add/ui/AddItemFormInline.vue'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)
@@ -46,6 +47,7 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
           #checkbox
         >
           <ItemCheckbox
+            :priority="item.priority"
             :model-value="item.isDone"
             @update:model-value="toggleDoneItem(item)"
           />
@@ -56,6 +58,7 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
             :title="item.title"
             @save="changeItemTitle(item, $event)"
           />
+          <!-- <p v-if="item.description" style="color: hsl(var(--muted-foreground))">{{ item.description }}</p> -->
         </template>
         <template
           #showSubItemsToggle
@@ -174,6 +177,15 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
         </template>
       </ItemEntity>
     </TransitionGroup>
+    
+    <AddItemFormInline
+      v-model:type="itemType"
+      @submit="addItem(collectionId, $event.itemTitle, itemType, $event.parentId)"
+    >
+      <template #select>
+        <ItemTypeSelect v-model="itemType" />
+      </template>
+    </AddItemFormInline>
   </div>
   <div
     v-else

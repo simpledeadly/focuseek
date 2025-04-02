@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Separator } from '@/shared/ui/separator'
-import { useFilterItems, useItemType } from '@/features/item/filter'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import { useItems } from '@/entities/item'
+import { useFilterItems, useItemType } from '@/features/item/filter'
 
 const emit = defineEmits<{
   (e: 'submit', data: { itemTitle: string; parentId?: number }): void
@@ -44,7 +44,7 @@ const { filteredItems } = useFilterItems(items)
         <Input
           v-model="itemTitle"
           type="text"
-          :placeholder="`Enter title`"
+          placeholder="Enter title"
           class="add-item-form__input-title"
         />
         <Input
@@ -102,7 +102,7 @@ const { filteredItems } = useFilterItems(items)
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
-    
+
     &-parentId {
       border-left: none;
       border-radius: 0;

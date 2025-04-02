@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { Button } from '@/shared/ui/button'
 import { Checkbox } from '@/shared/ui/checkbox'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import { toast } from 'vue-sonner'
 
 const model = defineModel<boolean>()
+
+const props = defineProps<{
+  priority?: number
+}>()
 
 const quotes: string[] = [
   '«Все победы начинаются с победы над самим собой»',
@@ -146,15 +151,14 @@ const toaster = () => {
   <Tooltip>
     <TooltipTrigger as-child>
       <Checkbox
-        v-model="model"
         class="item-checkbox"
-        @click="model === false && toaster()"
+        v-model="model"
+        @click="!model && toaster()"
       />
     </TooltipTrigger>
     <TooltipContent>
       <p>Mark as done</p>
-      <br />
-      <p @click="console.log(shownQuotes)">(show opened quotes)</p>
+      <Button variant="secondary" @click="console.log(shownQuotes)">show opened quotes</Button>
     </TooltipContent>
   </Tooltip>
 </template>

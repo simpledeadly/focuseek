@@ -17,7 +17,7 @@ const props = defineProps<{
 const { itemType } = useItemType()
 
 const toaster = () => {
-  toast.info(capitalize(itemType.value) + ' deleted', {
+  toast(capitalize(itemType.value) + ' deleted', {
     description: 'It was: "' + props.item.title + '" and all sub-items',
     class: 'toast',
   })

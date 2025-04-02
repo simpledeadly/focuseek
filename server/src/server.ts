@@ -19,8 +19,14 @@ type Item = {
   createdAt: number
   editedAt: number
   isDone?: boolean
-  showSubItems?: boolean
+  description?: string
+  priority?: number
+  durationPlanned?: number
+  durationReal?: number
+  tags?: string[]
+  date?: number
   deadline?: string
+  showSubItems?: boolean
 }
 
 type Collection = {
@@ -276,7 +282,6 @@ app.post('/api/items', authenticate, async (req, res) => {
 
       const item: Item = req.body
 
-      // Проверка наличия обязательного поля
       if (!item.title) {
         return res.status(400).json({ message: 'Поле "title" обязательно' })
       } else {
@@ -293,8 +298,14 @@ app.post('/api/items', authenticate, async (req, res) => {
           createdAt: new Date(item.createdAt),
           editedAt: new Date(item.editedAt),
           isDone: item.isDone,
-          showSubItems: item.showSubItems,
+          description: item.description,
+          priority: item.priority,
+          durationPlanned: item.durationPlanned,
+          durationReal: item.durationReal,
+          tags: item.tags,
+          date: item.date ? new Date(item.date) : undefined,
           deadline: item.deadline,
+          showSubItems: item.showSubItems,
         },
       })
 
@@ -318,15 +329,21 @@ app.put('/api/items/:id', async (req, res) => {
     const updatedItemData = await prisma.item.update({
       where: { id },
       data: {
-        collectionId: updatedItem.collectionId,
+        collectionId: Number(updatedItem.collectionId),
         parentItemId: updatedItem.parentItemId,
         title: updatedItem.title,
         type: updatedItem.type,
         createdAt: new Date(updatedItem.createdAt),
         editedAt: new Date(updatedItem.editedAt),
         isDone: updatedItem.isDone,
-        showSubItems: updatedItem.showSubItems,
+        description: updatedItem.description,
+        priority: updatedItem.priority,
+        durationPlanned: updatedItem.durationPlanned,
+        durationReal: updatedItem.durationReal,
+        tags: updatedItem.tags,
+        date: updatedItem.date ? new Date(updatedItem.date) : undefined,
         deadline: updatedItem.deadline,
+        showSubItems: updatedItem.showSubItems,
       },
     })
     console.log(chalk.hex('#fff').bold(`PUT item:`), updatedItemData)

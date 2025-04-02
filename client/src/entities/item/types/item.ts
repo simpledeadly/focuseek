@@ -10,6 +10,12 @@ export type Item = {
   createdAt: number
   editedAt: number
   isDone?: boolean
-  showSubItems?: boolean
+  description?: string
+  priority?: number
+  durationPlanned?: number
+  durationReal?: number
+  tags?: string[]
+  date?: number
   deadline?: string
+  showSubItems?: boolean
 }

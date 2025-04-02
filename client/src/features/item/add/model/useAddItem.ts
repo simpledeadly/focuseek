@@ -10,9 +10,27 @@ export const useAddItem = (items: ShallowRef<Item[]>) => {
     collectionId: number,
     title: string,
     type: ItemType,
-    parentItemId?: number
+    parentItemId?: number,
+    description?: string,
+    priority?: number,
+    durationPlanned?: number,
+    tags?: string[],
+    date?: number,
+    deadline?: string
   ) => {
-    const item = createItem(getUserId!, collectionId, title, type, parentItemId)
+    const item = createItem(
+      getUserId!,
+      collectionId,
+      title,
+      type,
+      parentItemId,
+      description,
+      priority,
+      durationPlanned,
+      tags,
+      date,
+      deadline
+    )
     const serverItem = await addItemToServer(item)
     items.value = addItemToList(items.value, serverItem)
   }

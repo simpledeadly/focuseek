@@ -10,7 +10,13 @@ export const createItem = (
   collectionId: number,
   title: string,
   type: ItemType,
-  parentItemId?: number
+  parentItemId?: number,
+  description?: string,
+  priority?: number,
+  durationPlanned?: number,
+  tags?: string[],
+  date?: number,
+  deadline?: string
 ): Item => {
   return {
     id: Date.now(),
@@ -21,6 +27,12 @@ export const createItem = (
     createdAt: Date.now(),
     editedAt: Date.now(),
     parentItemId,
+    description,
+    priority,
+    durationPlanned,
+    tags,
+    date,
+    deadline,
   }
 }
 

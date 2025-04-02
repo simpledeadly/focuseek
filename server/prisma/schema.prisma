@@ -17,11 +17,6 @@ model User {
   Collection Collection[]
 }
 
-enum ItemType {
-  todo
-  note
-}
-
 model Collection {
   id         Int      @id @default(autoincrement())
   userId     Int
@@ -34,26 +29,34 @@ model Collection {
   @@map(name: "collections")
 }
 
+enum ItemType {
+  todo
+  note
+}
+
 model Item {
-  id           Int       @id @default(autoincrement())
-  userId       Int
-  collectionId Int
-  parentItemId Int?
-  title        String
-  type         ItemType
-  isDone       Boolean?
-  showSubItems Boolean?
-  deadline     String?
-  createdAt    DateTime  @default(now()) @map("created_at")
-  editedAt     DateTime  @updatedAt @map("edited_at")
-  
-  user         User      @relation(fields: [userId], references: [id])
-  
-  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  
-  parentItem   Item?      @relation("ItemToSubItems", fields: [parentItemId], references: [id])
-  
-  subItems     Item[]     @relation("ItemToSubItems")
-  
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  collectionId    Int
+  parentItemId    Int?
+  title           String
+  type            ItemType
+  isDone          Boolean?
+  description     String?
+  priority        Int?
+  durationPlanned Int?
+  durationReal    Int?
+  tags            String[]
+  date            DateTime?
+  deadline        String?
+  showSubItems    Boolean?
+  createdAt       DateTime   @default(now()) @map("created_at")
+  editedAt        DateTime   @updatedAt @map("edited_at")
+
+  user            User       @relation(fields: [userId], references: [id])
+  collection      Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  parentItem      Item?      @relation("ItemToSubItems", fields: [parentItemId], references: [id])
+  subItems        Item[]     @relation("ItemToSubItems")
+
   @@map(name: "items")
 }
