@@ -28,7 +28,7 @@ const login = async () => {
       console.log('Пользователь авторизован!', res)
       console.log('localStorage:', localStorage.getItem('auth'))
       password.value = ''
-      router.push({ name: 'collections' }).then(() => {
+      router.push({ path: '/inbox' }).then(() => {
         window.location.reload()
       })
     }
@@ -99,7 +99,6 @@ const login = async () => {
 
 <style lang="scss">
 .login-page {
-  height: 85vh;
-  margin: auto 0;
+  /** keep */
 }
 </style>

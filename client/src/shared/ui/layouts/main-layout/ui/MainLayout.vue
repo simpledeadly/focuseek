@@ -1,23 +1,24 @@
 <script setup lang="ts">
 defineSlots<{
-  logo: () => unknown
-  nav: () => unknown
-  main: () => unknown
-  default?: () => unknown
+  content: () => unknown
 }>()
 </script>
-
 <template>
   <div class="main-layout">
-    <slot name="logo" />
-    <slot name="nav" />
-    <slot name="main" />
-    <slot default />
+    <div class="main-layout__content">
+      <slot name="content" />
+    </div>
   </div>
 </template>
 
 <style lang="scss">
 .main-layout {
-  /** keep */
+  width: 100%;
+  
+  &__content {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
 }
 </style>

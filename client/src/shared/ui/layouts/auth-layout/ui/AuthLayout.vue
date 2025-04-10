@@ -1,23 +1,23 @@
 <script setup lang="ts">
 defineSlots<{
-  logo: () => unknown
-  nav: () => unknown
-  main: () => unknown
-  footer?: () => unknown
+  form: () => unknown
 }>()
 </script>
-
 <template>
   <div class="auth-layout">
-    <slot name="logo" />
-    <slot name="nav" />
-    <slot name="main" />
-    <slot name="footer" />
+    <div class="auth-layout__form">
+      <slot name="form" />
+    </div>
   </div>
 </template>
 
 <style lang="scss">
 .auth-layout {
-  /** keep */
+  &__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 }
 </style>

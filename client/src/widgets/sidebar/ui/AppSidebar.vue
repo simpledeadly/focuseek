@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger
 } from '@/shared/ui/sidebar'
 import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'reka-ui'
 import {
@@ -34,6 +35,7 @@ const quitApp = async () => {
 
 <template>
   <Sidebar class="sidebar">
+    <SidebarTrigger />
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>

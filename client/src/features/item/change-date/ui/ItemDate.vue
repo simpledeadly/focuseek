@@ -7,22 +7,21 @@ import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 
 const props = defineProps<{
-  deadline?: string
+  date?: number
 }>()
 
 const emit = defineEmits<{
-  (e: 'change', value: string): void
+  (e: 'change', value: number): void
 }>()
 
-const dateInput = ref<string>(props.deadline || '')
+const dateInput = ref<number>(props.date || 0)
 
 const intervalId = ref<NodeJS.Timeout>()
 const targetDate = ref<Date>(new Date())
 
-const deadlineText = ref<string>('loading...')
-const timeLeft = ref<string>('Deadline will be here')
+const dateText = ref<string>('loading...')
+const timeLeft = ref<string>('Date will be here')
 
-// Обновляем targetDate при изменении dateInput
 watch(dateInput, (newValue) => {
   try {
     const parsedDate = new Date(newValue)
@@ -35,11 +34,11 @@ watch(dateInput, (newValue) => {
 })
 
 onMounted(() => {
-  if (props.deadline) {
+  if (props.date) {
     try {
-      targetDate.value = new Date(props.deadline)
+      targetDate.value = new Date(props.date)
     } catch (e) {
-      console.error('Error parsing initial deadline:', e)
+      console.error('Error parsing initial date:', e)
     }
   }
 
@@ -47,17 +46,17 @@ onMounted(() => {
     const now = new Date()
     const diff = targetDate.value.getTime() - now.getTime()
 
-    if (!props.deadline) {
-      deadlineText.value = 'Add DL'
+    if (!props.date) {
+      dateText.value = 'Add DL'
       return
     }
 
     const minutesAll = Math.floor(diff / (1000 * 60))
 
     if (diff < 0) {
-      deadlineText.value = 'Expired 😵: ' + minutesAll * -1 + 'm'
+      dateText.value = 'Expired 😵: ' + minutesAll * -1 + 'm'
     } else {
-      deadlineText.value = `${minutesAll}m`
+      dateText.value = `${minutesAll}m`
 
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
@@ -77,11 +76,11 @@ const handleSave = () => {
 }
 
 const handleBadgeVariant = () => {
-  if (!props.deadline) {
+  if (!props.date) {
     return 'outline'
   } else if (
-    parseInt(deadlineText.value.replace(/\D+/g, '')) <= 960 &&
-    !deadlineText.value.includes('Expired')
+    parseInt(dateText.value.replace(/\D+/g, '')) <= 960 &&
+    !dateText.value.includes('Expired')
   ) {
     return 'destructive'
   } else {
@@ -95,10 +94,10 @@ const handleBadgeVariant = () => {
     <PopoverTrigger as-child>
       <Badge
         :variant="handleBadgeVariant()"
-        class="item-deadline"
+        class="item-date"
         :title="timeLeft"
       >
-        {{ deadlineText }}
+        {{ dateText }}
       </Badge>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-2 space-y-2">
@@ -112,7 +111,7 @@ const handleBadgeVariant = () => {
 </template>
 
 <style lang="scss">
-.item-deadline {
+.item-date {
   display: flex;
   cursor: pointer;
 }

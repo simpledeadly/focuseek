@@ -8,7 +8,7 @@ import { useItems } from '@/entities/item'
 import { useFilterItems, useItemType } from '@/features/item/filter'
 
 const emit = defineEmits<{
-  (e: 'submit', data: { itemTitle: string; parentId?: number }): void
+  (e: 'submit', data: { itemTitle: string; parentId?: number, date?: number }): void
 }>()
 
 const slots = defineSlots<{
@@ -21,7 +21,7 @@ const { itemType } = useItemType()
 
 const handleSubmit = () => {
   if (itemTitle.value.length > 0) {
-    const data = { itemTitle: itemTitle.value, parentId: Number(parentId.value) }
+    const data = { itemTitle: itemTitle.value, parentId: Number(parentId.value), date: Date.now() + 999999 }
     emit('submit', data)
   } else {
     alert('Введите заголовок')

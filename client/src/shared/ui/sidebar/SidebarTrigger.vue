@@ -23,8 +23,10 @@ const { toggleSidebar } = useSidebar()
 
 <style lang="scss" scoped>
 .icon {
-  margin-top: 0.5rem;
-  margin-left: 0.5rem;
+  position: absolute;
+  top: 0.5rem;
+  left: 15rem;
+  z-index: 999;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
   opacity: 0.5;

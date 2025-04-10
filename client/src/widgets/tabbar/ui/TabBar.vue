@@ -15,12 +15,12 @@ const activeTab = computed({
 </script>
 
 <template>
-  <nav class="app-navbar">
+  <nav class="tab-bar">
     <Tabs
       v-model="activeTab"
-      class="w-[400px] app-navbar__container"
+      class="w-[400px] tab-bar__container"
     >
-      <TabsList class="app-navbar__tabs">
+      <TabsList class="tab-bar__tabs">
         <TabsTrigger
           @click="router.push({ query: { ...$route.query, type: 'todo' } })"
           value="todo"
@@ -37,7 +37,7 @@ const activeTab = computed({
 </template>
 
 <style lang="scss">
-.app-navbar {
+.tab-bar {
   &__container {
     margin: 0 auto;
     margin-top: 0.25rem;

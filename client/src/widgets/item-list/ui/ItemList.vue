@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ItemEntity, useItems, filterNestedItems } from '@/entities/item'
 import { AddItemForm, useAddItem } from '@/features/item/add'
-import { useChangeItemDeadline } from '@/features/item/change-deadline'
+import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
 import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
-import { Deadline } from '@/features/item/change-deadline'
+import { ItemDescription, useChangeItemDescription } from '@/features/item/change-description'
+import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
 import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
+import { useShowSubItems } from '@/features/item/show-sub-items'
 
 import { Checkbox } from '@/shared/ui/checkbox'
 import { StickyNote } from 'lucide-vue-next'
-import { useShowSubItems } from '@/features/item/show-sub-items'
-import AddItemFormInline from '@/features/item/add/ui/AddItemFormInline.vue'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)
@@ -20,13 +20,15 @@ const { removeItem } = useRemoveItem(items)
 const { toggleDoneItem } = useDoneItem(items)
 const { toggleShowSubItems, hasSubItems } = useShowSubItems(items)
 const { changeItemTitle } = useChangeItemTitle(items)
+const { changeItemDescription } = useChangeItemDescription(items)
 const { changeItemDeadline } = useChangeItemDeadline(items)
+const { changeItemDate } = useChangeItemDate(items)
 </script>
 
 <template>
   <AddItemForm
     v-model:type="itemType"
-    @submit="addItem(collectionId, $event.itemTitle, itemType, $event.parentId)"
+    @submit="addItem(collectionId, $event.itemTitle, itemType, $event.parentId, $event.date)"
   >
     <template #select>
       <ItemTypeSelect v-model="itemType" />
@@ -58,7 +60,15 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
             :title="item.title"
             @save="changeItemTitle(item, $event)"
           />
-          <!-- <p v-if="item.description" style="color: hsl(var(--muted-foreground))">{{ item.description }}</p> -->
+        </template>
+        <template
+          #description
+          v-if="item.description"
+        >
+          <ItemDescription
+            :description="item.description"
+            @save="changeItemDescription(item, $event)"
+          />
         </template>
         <template
           #showSubItemsToggle
@@ -73,9 +83,18 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
           v-if="itemType !== 'note' && !item.isDone"
           #timeLeft
         >
-          <Deadline
+          <ItemDeadline
             :deadline="item.deadline"
             @change="changeItemDeadline(item, $event)"
+          />
+        </template>
+        <template
+          v-if="item.date"
+          #date
+        >
+          <ItemDate
+            :date="item.date"
+            @change="changeItemDate(item, $event)"
           />
         </template>
         <template #removeButton>
@@ -177,15 +196,15 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
         </template>
       </ItemEntity>
     </TransitionGroup>
-    
-    <AddItemFormInline
+
+    <!-- <AddItemFormInline
       v-model:type="itemType"
       @submit="addItem(collectionId, $event.itemTitle, itemType, $event.parentId)"
     >
       <template #select>
         <ItemTypeSelect v-model="itemType" />
       </template>
-    </AddItemFormInline>
+    </AddItemFormInline> -->
   </div>
   <div
     v-else

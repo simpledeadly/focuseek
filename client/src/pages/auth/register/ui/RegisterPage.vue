@@ -28,7 +28,7 @@ const register = async () => {
       console.log('Пользователь зарегистрирован!', res)
       console.log('localStorage:', localStorage.getItem('auth'))
       password.value = ''
-      router.push({ name: 'collections' }).then(() => window.location.reload())
+      router.push({ path: '/inbox' }).then(() => window.location.reload())
     }
   } catch (e: any) {
     alert(e)
@@ -97,7 +97,6 @@ const register = async () => {
 
 <style lang="scss">
 .register-page {
-  height: 85vh;
-  margin: auto 0;
+  /** keep */
 }
 </style>
