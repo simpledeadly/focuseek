@@ -9,6 +9,12 @@ const slots = defineSlots<{
   date?: () => unknown
   showSubItemsToggle?: () => unknown
   subItems?: () => unknown
+  priority?: () => unknown
+  durationPlanned?: () => unknown
+}>()
+
+const props = defineProps<{
+  showParams?: boolean
 }>()
 </script>
 
@@ -38,45 +44,57 @@ const slots = defineSlots<{
         >
           <slot name="description" />
         </div>
-        <div class="item-entity__params">
+        <div
+          class="item-entity__params"
+          v-if="props.showParams"
+        >
           <div
-            class="item-entity__param item-entity__param_timeLeft"
+            class="item-entity__param"
+            v-if="slots.date"
+          >
+            <slot name="date" />
+          </div>
+          <div
+            class="item-entity__param"
             v-if="slots.timeLeft"
           >
             <slot name="timeLeft" />
           </div>
           <div
-            class="item-entity__param item-entity__param_date"
-            v-if="slots.date"
+            class="item-entity__param"
+            v-if="slots.priority"
           >
-            <slot name="date" />
+            <slot name="priority" />
           </div>
-          <div class="item-entity__param item-entity__param_remove-button">
-            <slot name="removeButton" />
+          <div
+            class="item-entity__param"
+            v-if="slots.durationPlanned"
+          >
+            <slot name="durationPlanned" />
           </div>
         </div>
       </div>
     </div>
+    <ul
+      v-if="slots.subItems"
+      class="subitems-list"
+    >
+      <slot name="subItems" />
+    </ul>
   </div>
-
-  <ul
-    v-if="slots.subItems"
-    class="subitems-list"
-  >
-    <slot name="subItems" />
-  </ul>
 </template>
 
 <style lang="scss">
 .item-entity-wrapper {
   position: relative;
+  display: block;
 }
 
 .item-entity {
-  border-bottom: 1px solid hsl(var(--border));
   display: flex;
   flex-grow: 1;
   gap: 6px;
+  border-bottom: 1px solid hsl(var(--border));
 
   &__show-subitems-toggle {
     position: absolute;
@@ -95,18 +113,20 @@ const slots = defineSlots<{
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    gap: 2px;
   }
 
   &__params {
-    margin-top: 4px;
+    margin-top: 2px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 6px;
   }
 
-  &:last-child {
-    border-bottom: 1px solid hsl(var(--border));
+  &__param {
+    display: flex;
+    max-width: 8rem;
+    cursor: pointer;
   }
 }
 
