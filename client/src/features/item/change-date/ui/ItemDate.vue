@@ -1,90 +1,48 @@
 <script setup lang="ts">
-import { Badge } from '@/shared/ui/badge'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
-
+import { onMounted, ref, watch } from 'vue'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
-import { Input } from '@/shared/ui/input'
+import { Badge } from '@/shared/ui/badge'
+import { cn } from '@/shared/lib/utils'
+import {
+  CalendarDate,
+  DateFormatter,
+  type DateValue,
+  getLocalTimeZone,
+} from '@internationalized/date'
+import { Calendar } from '@/shared/ui/calendar'
 import { Button } from '@/shared/ui/button'
 
-const props = defineProps<{
-  date?: number
-}>()
-
 const emit = defineEmits<{
-  (e: 'change', value: number): void
+  (e: 'change', value: number | undefined): void
 }>()
 
-const dateInput = ref<number>(props.date || 0)
+const model = defineModel<number>()
+const dateValue = ref<DateValue>()
 
-const intervalId = ref<NodeJS.Timeout>()
-const targetDate = ref<Date>(new Date())
-
-const dateText = ref<string>('loading...')
-const timeLeft = ref<string>('Date will be here')
-
-watch(dateInput, (newValue) => {
-  try {
-    const parsedDate = new Date(newValue)
-    if (!isNaN(parsedDate.getTime())) {
-      targetDate.value = parsedDate
-    }
-  } catch (e) {
-    console.error('Error parsing date:', e)
-  }
+const df = new DateFormatter('ru-RU', {
+  dateStyle: 'long',
 })
 
 onMounted(() => {
-  if (props.date) {
-    try {
-      targetDate.value = new Date(props.date)
-    } catch (e) {
-      console.error('Error parsing initial date:', e)
-    }
+  if (model.value) {
+    const date = new Date(model.value)
+    dateValue.value = new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
   }
-
-  intervalId.value = setInterval(() => {
-    const now = new Date()
-    const diff = targetDate.value.getTime() - now.getTime()
-
-    if (!props.date) {
-      dateText.value = 'Add DL'
-      return
-    }
-
-    const minutesAll = Math.floor(diff / (1000 * 60))
-
-    if (diff < 0) {
-      dateText.value = 'Expired 😵: ' + minutesAll * -1 + 'm'
-    } else {
-      dateText.value = `${minutesAll}m`
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-      timeLeft.value = `Remained ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`
-    }
-  }, 100)
 })
 
-onUnmounted(() => {
-  clearInterval(intervalId.value)
-})
-
-const handleSave = () => {
-  emit('change', dateInput.value)
-}
-
-const handleBadgeVariant = () => {
-  if (!props.date) {
-    return 'outline'
-  } else if (
-    parseInt(dateText.value.replace(/\D+/g, '')) <= 960 &&
-    !dateText.value.includes('Expired')
-  ) {
-    return 'destructive'
+watch(dateValue, (newVal) => {
+  if (newVal) {
+    model.value = new Date(newVal.year, newVal.month - 1, newVal.day).getTime()
   } else {
-    return 'secondary'
+    model.value = undefined
+  }
+})
+
+const handleSaveChanges = () => {
+  if (model.value) {
+    model.value = undefined
+    dateValue.value = undefined
+    emit('change', model.value)
   }
 }
 </script>
@@ -93,19 +51,23 @@ const handleBadgeVariant = () => {
   <Popover>
     <PopoverTrigger as-child>
       <Badge
-        :variant="handleBadgeVariant()"
-        class="item-date"
-        :title="timeLeft"
+        :variant="model ? 'secondary' : 'outline'"
+        :class="cn('justify-start text-left font-normal', !dateValue && 'text-muted-foreground')"
       >
-        {{ dateText }}
+        {{ dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : 'Date' }}
       </Badge>
     </PopoverTrigger>
-    <PopoverContent class="w-auto p-2 space-y-2">
-      <Input
-        v-model="dateInput"
-        placeholder="YYYY-M-DD HH:mm"
+    <PopoverContent class="flex w-auto flex-col gap-y-2 p-2">
+      <Calendar
+        v-model="dateValue"
+        @click="emit('change', model)"
       />
-      <Button @click="handleSave">Save</Button>
+      <Button
+        @click="handleSaveChanges"
+        :variant="model ? 'secondary' : 'outline'"
+      >
+        Clear
+      </Button>
     </PopoverContent>
   </Popover>
 </template>
@@ -114,5 +76,7 @@ const handleBadgeVariant = () => {
 .item-date {
   display: flex;
   cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  font-weight: normal;
 }
 </style>
