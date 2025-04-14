@@ -48,7 +48,7 @@ model Item {
   durationReal    Int?
   tags            String[]
   date            DateTime?
-  deadline        String?
+  deadline        DateTime?
   showSubItems    Boolean?
   createdAt       DateTime   @default(now()) @map("created_at")
   editedAt        DateTime   @updatedAt @map("edited_at")

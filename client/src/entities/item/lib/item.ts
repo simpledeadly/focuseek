@@ -16,7 +16,7 @@ export const createItem = (
   durationPlanned?: number,
   tags?: string[],
   date?: number,
-  deadline?: string
+  deadline?: number
 ): Item => {
   return {
     id: Date.now(),

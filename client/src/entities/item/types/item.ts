@@ -16,6 +16,6 @@ export type Item = {
   durationReal?: number
   tags?: string[]
   date?: number
-  deadline?: string
+  deadline?: number
   showSubItems?: boolean
 }

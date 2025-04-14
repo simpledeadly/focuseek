@@ -25,7 +25,7 @@ type Item = {
   durationReal?: number
   tags?: string[]
   date?: number
-  deadline?: string
+  deadline?: number
   showSubItems?: boolean
 }
 
@@ -304,7 +304,7 @@ app.post('/api/items', authenticate, async (req, res) => {
           durationReal: item.durationReal,
           tags: item.tags,
           date: item.date ? new Date(item.date) : undefined,
-          deadline: item.deadline,
+          deadline: item.deadline ? new Date(item.deadline) : undefined,
           showSubItems: item.showSubItems,
         },
       })
@@ -341,8 +341,8 @@ app.put('/api/items/:id', async (req, res) => {
         durationPlanned: updatedItem.durationPlanned,
         durationReal: updatedItem.durationReal,
         tags: updatedItem.tags,
-        date: updatedItem.date ? new Date(updatedItem.date) : undefined,
-        deadline: updatedItem.deadline,
+        date: updatedItem.date ? new Date(updatedItem.date) : null,
+        deadline: updatedItem.deadline ? new Date(updatedItem.deadline) : null,
         showSubItems: updatedItem.showSubItems,
       },
     })

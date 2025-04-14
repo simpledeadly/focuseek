@@ -11,12 +11,12 @@ export const useAddItem = (items: ShallowRef<Item[]>) => {
     title: string,
     type: ItemType,
     parentItemId?: number,
-    date?: number,
     description?: string,
+    deadline?: number,
+    date?: number,
     priority?: number,
     durationPlanned?: number,
-    tags?: string[],
-    deadline?: string
+    tags?: string[]
   ) => {
     const item = createItem(
       getUserId!,
