@@ -1,16 +1,18 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { ItemEntity, useItems, filterNestedItems } from '@/entities/item'
-import { AddItemForm, useAddItem } from '@/features/item/add'
-import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
+import { AddItemFormInline, useAddItem } from '@/features/item/add'
 import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
 import { ItemDescription, useChangeItemDescription } from '@/features/item/change-description'
+import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
+import { ItemPriority, useChangeItemPriority } from '@/features/item/change-priority'
 import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
 import { ItemCheckbox, useDoneItem } from '@/features/item/done'
-import { ItemTypeSelect, useFilterItems } from '@/features/item/filter'
+import { useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
-import { useShowSubItems } from '@/features/item/show-sub-items'
-
+import { ItemShowSubItems, useShowSubItems } from '@/features/item/show-sub-items'
 import { Checkbox } from '@/shared/ui/checkbox'
+import { Label } from '@/shared/ui/label'
 import { StickyNote } from 'lucide-vue-next'
 
 const { items } = useItems()
@@ -23,17 +25,20 @@ const { changeItemTitle } = useChangeItemTitle(items)
 const { changeItemDescription } = useChangeItemDescription(items)
 const { changeItemDeadline } = useChangeItemDeadline(items)
 const { changeItemDate } = useChangeItemDate(items)
+const { changeItemPriority } = useChangeItemPriority(items)
+
+const showAllParams = ref<boolean>(true)
 </script>
 
 <template>
-  <AddItemForm
-    v-model:type="itemType"
-    @submit="addItem(collectionId, $event.itemTitle, itemType, $event.parentId, $event.date)"
-  >
-    <template #select>
-      <ItemTypeSelect v-model="itemType" />
-    </template>
-  </AddItemForm>
+  <div class="flex items-center space-x-2">
+    <Checkbox
+      id="show-params"
+      v-model="showAllParams"
+    />
+    <Label for="show-params">Show all params</Label>
+  </div>
+  <br />
 
   <div
     v-if="filteredParentItems.length > 0"
@@ -43,7 +48,21 @@ const { changeItemDate } = useChangeItemDate(items)
       <ItemEntity
         v-for="item in filteredParentItems"
         :key="item.id"
+        :showParams="
+          item.type !== 'note' &&
+          !item.isDone &&
+          !!(item.date || item.deadline || item.priority || item.durationPlanned || showAllParams)
+        "
       >
+        <template
+          #showSubItemsToggle
+          v-if="hasSubItems(item.id)"
+        >
+          <ItemShowSubItems
+            :model-value="item.showSubItems"
+            @update:model-value="toggleShowSubItems(item)"
+          />
+        </template>
         <template
           v-if="itemType !== 'note'"
           #checkbox
@@ -62,8 +81,8 @@ const { changeItemDate } = useChangeItemDate(items)
           />
         </template>
         <template
-          #description
           v-if="item.description"
+          #description
         >
           <ItemDescription
             :description="item.description"
@@ -71,36 +90,30 @@ const { changeItemDate } = useChangeItemDate(items)
           />
         </template>
         <template
-          #showSubItemsToggle
-          v-if="hasSubItems(item.id)"
+          v-if="showAllParams || item.date"
+          #date
         >
-          <Checkbox
-            v-model="item.showSubItems"
-            @click="toggleShowSubItems(item)"
+          <ItemDate
+            :model-value="item.date"
+            @change="changeItemDate(item, $event)"
           />
         </template>
         <template
-          v-if="itemType !== 'note' && !item.isDone"
+          v-if="showAllParams || item.deadline"
           #timeLeft
         >
           <ItemDeadline
-            :deadline="item.deadline"
+            :model-value="item.deadline"
             @change="changeItemDeadline(item, $event)"
           />
         </template>
         <template
-          v-if="item.date"
-          #date
+          v-if="showAllParams || item.priority"
+          #priority
         >
-          <ItemDate
-            :date="item.date"
-            @change="changeItemDate(item, $event)"
-          />
-        </template>
-        <template #removeButton>
-          <ItemRemoveButton
-            :item="item"
-            @remove="removeItem(item)"
+          <ItemPriority
+            :model-value="item.priority"
+            @update:model-value="changeItemPriority(item, $event)"
           />
         </template>
         <template
@@ -136,11 +149,8 @@ const { changeItemDate } = useChangeItemDate(items)
                 @click="toggleShowSubItems(subItem)"
               />
             </template>
-            <template
-              v-if="itemType !== 'note' && !subItem.isDone"
-              #timeLeft
-            >
-              <Deadline
+            <template #timeLeft>
+              <ItemDeadline
                 :deadline="subItem.deadline"
                 @change="changeItemDeadline(subItem, $event)"
               />
@@ -179,7 +189,7 @@ const { changeItemDate } = useChangeItemDate(items)
                   v-if="itemType !== 'note' && !subItem2.isDone"
                   #timeLeft
                 >
-                  <Deadline
+                  <ItemDeadline
                     :deadline="subItem2.deadline"
                     @change="changeItemDeadline(subItem2, $event)"
                   />
@@ -195,16 +205,25 @@ const { changeItemDate } = useChangeItemDate(items)
           </ItemEntity>
         </template>
       </ItemEntity>
+      <AddItemFormInline
+        v-model:type="itemType"
+        key="add-item-form"
+        @submit="
+          addItem(
+            collectionId,
+            $event.itemTitle,
+            itemType,
+            $event.parentId,
+            $event.description,
+            $event.deadline,
+            $event.date,
+            $event.priority,
+            $event.durationPlanned
+          )
+        "
+      >
+      </AddItemFormInline>
     </TransitionGroup>
-
-    <!-- <AddItemFormInline
-      v-model:type="itemType"
-      @submit="addItem(collectionId, $event.itemTitle, itemType, $event.parentId)"
-    >
-      <template #select>
-        <ItemTypeSelect v-model="itemType" />
-      </template>
-    </AddItemFormInline> -->
   </div>
   <div
     v-else
@@ -237,7 +256,7 @@ const { changeItemDate } = useChangeItemDate(items)
 
 .pagination {
   opacity: 0;
-  transition: all 0.1s;
+  transition: all 0.05s;
 
   &:hover {
     opacity: 1;
@@ -247,7 +266,7 @@ const { changeItemDate } = useChangeItemDate(items)
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: all 0.05s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 .fade-enter-from,
