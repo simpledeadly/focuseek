@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import { useItemType } from '@/features/item/filter'
+import { Check, Edit3, X } from 'lucide-vue-next'
 
 const props = defineProps<{
   title: string
@@ -48,7 +49,7 @@ const cancelChanges = () => {
             class="item-title__edit-button"
             @click="toEdit"
           >
-            ✎
+            <Edit3 class="item-title__edit-button_icon" />
           </button>
         </TooltipTrigger>
         <TooltipContent>
@@ -70,14 +71,14 @@ const cancelChanges = () => {
         class="item-title__save-button"
         @click="saveChanges"
       >
-        ✓
+        <Check class="item-title__save-button_icon" />
       </button>
       <button
         type="button"
         class="item-title__cancel-button"
         @click="cancelChanges"
       >
-        &times;
+        <X class="item-title__cancel-button_icon" />
       </button>
     </div>
   </div>
@@ -90,9 +91,11 @@ const cancelChanges = () => {
     gap: calc(var(--radius) - 2px);
     margin-left: 1px;
     text-align: left;
-    
+
     &-editable {
       width: 60vw;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -102,31 +105,36 @@ const cancelChanges = () => {
     margin-right: calc(var(--radius) - 2px);
     margin-left: calc(var(--radius) - 7px);
     background: hsl(var(--primary-background));
-    // border: 1px solid hsl(var(--muted-foreground));
     border-radius: calc(var(--radius) - 2px);
     outline: none;
   }
 
   &__save-button {
-    // color: #00b749;
     margin-right: calc(var(--radius) - 2px);
     color: hsl(var(--muted-foreground));
     transition: all 0.05s;
 
+    &_icon {
+      width: 16px;
+      height: 16px;
+    }
+
     &:hover {
       color: hsl(var(--foreground));
-      // color: #08db59;
     }
   }
 
   &__cancel-button {
     color: hsl(var(--muted-foreground));
-    // color: #ad0303;
     transition: all 0.05s;
+
+    &_icon {
+      width: 16px;
+      height: 16px;
+    }
 
     &:hover {
       color: hsl(var(--foreground));
-      // color: #e01111;
     }
   }
 
@@ -141,6 +149,11 @@ const cancelChanges = () => {
     color: hsl(var(--muted-foreground));
     opacity: 0.5;
     transition: all 0.05s;
+
+    &_icon {
+      width: 16px;
+      height: 16px;
+    }
 
     &:hover {
       color: hsl(var(--foreground));
