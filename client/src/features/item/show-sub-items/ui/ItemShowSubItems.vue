@@ -17,7 +17,7 @@ const model = defineModel<boolean>()
           />
           <span class="checkbox-icon-toggle">
             <ChevronRight
-              class="h-4 w-4 transition-transform duration-200"
+              class="h-4 w-4 transition-transform duration-100"
               :class="{ 'rotate-90': model }"
             />
           </span>
@@ -33,8 +33,7 @@ const model = defineModel<boolean>()
 <style lang="scss">
 .item-show-sub-items {
   cursor: pointer;
-  transition: color 0.1s ease;
-  margin-right: 0.5rem;
+  transition: all 0.1s ease;
   border-radius: 4px;
 
   &:hover {
