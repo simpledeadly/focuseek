@@ -3,11 +3,11 @@ const slots = defineSlots<{
   checkbox?: () => unknown
   title: () => unknown
   description?: () => unknown
-  removeButton: () => unknown
   typeSelect?: () => unknown
   timeLeft?: () => unknown
   date?: () => unknown
   showSubItemsToggle?: () => unknown
+  showItemOptions: () => unknown
   subItems?: () => unknown
   priority?: () => unknown
   durationPlanned?: () => unknown
@@ -75,6 +75,12 @@ const props = defineProps<{
         </div>
       </div>
     </div>
+    <div
+      v-if="slots.showItemOptions"
+      class="item-entity__show-item-options"
+    >
+      <slot name="showItemOptions" />
+    </div>
     <ul
       v-if="slots.subItems"
       class="subitems-list"
@@ -99,6 +105,13 @@ const props = defineProps<{
   &__show-subitems-toggle {
     position: absolute;
     left: -1.5rem;
+    top: 12px;
+    display: flex;
+  }
+
+  &__show-item-options {
+    position: absolute;
+    right: -0rem;
     top: 12px;
     display: flex;
   }
