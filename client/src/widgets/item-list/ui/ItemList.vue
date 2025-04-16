@@ -14,6 +14,7 @@ import { ItemShowSubItems, useShowSubItems } from '@/features/item/show-sub-item
 import { Checkbox } from '@/shared/ui/checkbox'
 import { Label } from '@/shared/ui/label'
 import { StickyNote } from 'lucide-vue-next'
+import { ItemShowOptions } from '@/features/item/show-options'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)
@@ -27,7 +28,7 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
 const { changeItemDate } = useChangeItemDate(items)
 const { changeItemPriority } = useChangeItemPriority(items)
 
-const showAllParams = ref<boolean>(true)
+const showAllParams = ref<boolean>(false)
 </script>
 
 <template>
@@ -114,6 +115,14 @@ const showAllParams = ref<boolean>(true)
           <ItemPriority
             :model-value="item.priority"
             @update:model-value="changeItemPriority(item, $event)"
+          />
+        </template>
+        <template #showItemOptions>
+          <ItemShowOptions
+            :item="item"
+            @remove="removeItem(item)"
+            @add-description="changeItemDescription(item, 'new')"
+            @remove-description="changeItemDescription(item, '')"
           />
         </template>
         <template
