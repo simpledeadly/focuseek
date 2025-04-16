@@ -42,7 +42,7 @@ const cancelChanges = () => {
       <div :class="props.isDone ? 'item-title__label_done' : 'item-title__label'">
         {{ props.title }}
       </div>
-      <Tooltip>
+      <Tooltip v-if="!props.isDone">
         <TooltipTrigger as-child>
           <button
             type="button"
