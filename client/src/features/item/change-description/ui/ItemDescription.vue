@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import { useItemType } from '@/features/item/filter'
+import { Check, Edit3, X } from 'lucide-vue-next'
 
 const props = defineProps<{
   description: string
@@ -12,22 +13,49 @@ const emit = defineEmits<{
 }>()
 
 const isEdit = ref<boolean>(false)
-const newTitle = ref<string>('')
+const newDescription = ref<string>('')
+const inputRef = ref<HTMLInputElement | null>(null)
 const { itemType } = useItemType()
 
 const toEdit = () => {
-  newTitle.value = props.description
+  newDescription.value = props.description
   isEdit.value = true
+  nextTick(() => {
+    if (inputRef.value) {
+      inputRef.value.focus()
+      if (newDescription.value) {
+        inputRef.value.select()
+      }
+      setTimeout(() => {
+        if (document.activeElement !== inputRef.value) {
+          inputRef.value?.focus()
+          if (newDescription.value) inputRef.value?.select()
+        }
+      }, 100)
+    } else {
+      console.warn('inputRef is null')
+    }
+  })
 }
 
+watch(
+  () => props.description,
+  (newVal) => {
+    if (newVal === 'new') {
+      toEdit()
+    }
+  },
+  { immediate: true }
+)
+
 const saveChanges = () => {
-  emit('save', newTitle.value)
+  emit('save', newDescription.value)
   cancelChanges()
 }
 
 const cancelChanges = () => {
   isEdit.value = false
-  newTitle.value = ''
+  newDescription.value = ''
 }
 </script>
 
@@ -47,7 +75,7 @@ const cancelChanges = () => {
             class="item-description__edit-button"
             @click="toEdit"
           >
-            ✎
+            <Edit3 class="item-title__edit-button_icon" />
           </button>
         </TooltipTrigger>
         <TooltipContent>
@@ -57,26 +85,27 @@ const cancelChanges = () => {
     </div>
     <div
       v-else
-      class="item-description__inner-editable"
+      class="item-title__inner-editable"
     >
       <input
-        v-model="newTitle"
+        ref="inputRef"
+        v-model="newDescription"
         type="text"
-        class="item-description__input"
+        class="item-title__input"
       />
       <button
         type="button"
-        class="item-description__save-button"
+        class="item-title__save-button"
         @click="saveChanges"
       >
-        ✓
+        <Check class="item-title__save-button_icon" />
       </button>
       <button
         type="button"
-        class="item-description__cancel-button"
+        class="item-title__cancel-button"
         @click="cancelChanges"
       >
-        &times;
+        <X class="item-title__cancel-button_icon" />
       </button>
     </div>
   </div>
@@ -92,9 +121,11 @@ const cancelChanges = () => {
     gap: calc(var(--radius) - 2px);
     margin-left: 1px;
     text-align: left;
-    
+
     &-editable {
       width: 60vw;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -104,31 +135,26 @@ const cancelChanges = () => {
     margin-right: calc(var(--radius) - 2px);
     margin-left: calc(var(--radius) - 7px);
     background: hsl(var(--primary-background));
-    // border: 1px solid hsl(var(--muted-foreground));
     border-radius: calc(var(--radius) - 2px);
     outline: none;
   }
 
   &__save-button {
-    // color: #00b749;
     margin-right: calc(var(--radius) - 2px);
     color: hsl(var(--muted-foreground));
     transition: all 0.05s;
 
     &:hover {
       color: hsl(var(--foreground));
-      // color: #08db59;
     }
   }
 
   &__cancel-button {
     color: hsl(var(--muted-foreground));
-    // color: #ad0303;
     transition: all 0.05s;
 
     &:hover {
       color: hsl(var(--foreground));
-      // color: #e01111;
     }
   }
 
