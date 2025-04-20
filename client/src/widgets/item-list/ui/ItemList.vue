@@ -50,9 +50,7 @@ const showAllParams = ref<boolean>(false)
         v-for="item in filteredParentItems"
         :key="item.id"
         :showParams="
-          item.type !== 'note' &&
-          !item.isDone &&
-          !!(item.date || item.deadline || item.durationPlanned || showAllParams)
+          !item.isDone && !!(item.date || item.deadline || item.durationPlanned || showAllParams)
         "
       >
         <template
