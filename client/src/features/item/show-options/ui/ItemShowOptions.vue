@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { Ref, ref, watch } from 'vue'
 import { Item } from '@/entities/item'
 import { Collection } from '@/entities/collection'
 import {
@@ -20,6 +20,7 @@ import {
 import { Calendar } from '@/shared/ui/calendar'
 import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
+import { useItemShortcuts } from '../model/useItemShortcuts'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -47,55 +48,54 @@ const isMenuOpen = ref(false)
 const priority = ref(props.item.priority)
 const collectionId = ref(props.item.collectionId)
 
-watch(collectionId, (newVal) => {
-  if (newVal) {
-    modelCollectionId.value = collectionId.value
-    emit('change-collection', modelCollectionId.value)
-    isMenuOpen.value = false
-  }
+const dropdownRef = ref<HTMLElement | null>(null)
+
+useItemShortcuts({
+  dropdownRef,
+  isMenuOpen,
+  priority,
+  modelPriority,
+  props,
+  emit,
 })
 
-watch(priority, (newVal) => {
-  if (newVal) {
-    modelPriority.value = priority.value
-    emit('edit-priority', modelPriority.value)
+const watchAndEmit = <T, U = T>(
+  src: Ref<T | undefined>,
+  emitTitle: any,
+  model: Ref<U | undefined>,
+  isMenuOpen: Ref<boolean>,
+  transform?: (val: T) => U
+) => {
+  watch(src, (newVal) => {
+    if (!newVal) return
+    const valueToEmit: any = transform ? transform(newVal) : (newVal as unknown as U)
+    model.value = valueToEmit
+    emit(emitTitle, valueToEmit)
     isMenuOpen.value = false
-  }
-})
-
-watch(dateValue, (newVal) => {
-  if (newVal) {
-    const newDate = new Date(newVal.year, newVal.month - 1, newVal.day).getTime()
-    modelDate.value = newDate
-    emit('edit-date', newDate)
-    isMenuOpen.value = false
-  }
-})
-
-watch(deadlineValue, (newVal) => {
-  if (newVal) {
-    const newDeadline = new Date(newVal.year, newVal.month - 1, newVal.day).getTime()
-    modelDeadline.value = newDeadline
-    emit('edit-deadline', newDeadline)
-    isMenuOpen.value = false
-  }
-})
-
-const handleRemoveDate = () => {
-  modelDate.value = undefined
-  dateValue.value = undefined
-  emit('edit-date', modelDate.value)
+  })
 }
 
-const handleRemoveDeadline = () => {
-  modelDeadline.value = undefined
-  deadlineValue.value = undefined
-  emit('edit-deadline', modelDeadline.value)
+watchAndEmit(collectionId, 'change-collection', modelCollectionId, isMenuOpen)
+watchAndEmit(priority, 'edit-priority', modelPriority, isMenuOpen)
+watchAndEmit(dateValue, 'edit-date', modelDate, isMenuOpen, (val) =>
+  new Date(val.year, val.month - 1, val.day).getTime()
+)
+watchAndEmit(deadlineValue, 'edit-deadline', modelDeadline, isMenuOpen, (val) =>
+  new Date(val.year, val.month - 1, val.day).getTime()
+)
+
+const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
+  modelValue = undefined
+  modelValue = undefined
+  emit(emitTitle, modelValue)
 }
 </script>
 
 <template>
-  <DropdownMenu v-model:open="isMenuOpen">
+  <DropdownMenu
+    v-model:open="isMenuOpen"
+    ref="dropdownRef"
+  >
     <DropdownMenuTrigger as-child>
       <div class="item-show-options">
         <span class="checkbox-icon-toggle">
@@ -110,12 +110,14 @@ const handleRemoveDeadline = () => {
           @click="emit('add-description')"
         >
           <span>Add description</span>
+          <DropdownMenuShortcut>D</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem
           v-else
           @click="emit('remove-description')"
         >
           <span>Remove description</span>
+          <DropdownMenuShortcut>⇧D</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSub v-if="!item.date">
           <DropdownMenuSubTrigger>
@@ -129,7 +131,7 @@ const handleRemoveDeadline = () => {
         </DropdownMenuSub>
         <DropdownMenuItem
           v-else
-          @click="handleRemoveDate"
+          @click="handleRemove('edit-date', modelDate)"
         >
           <span>Remove date</span>
         </DropdownMenuItem>
@@ -145,7 +147,7 @@ const handleRemoveDeadline = () => {
         </DropdownMenuSub>
         <DropdownMenuItem
           v-else
-          @click="handleRemoveDeadline"
+          @click="handleRemove('edit-deadline', modelDeadline)"
         >
           <span>Remove deadline</span>
         </DropdownMenuItem>
@@ -154,20 +156,41 @@ const handleRemoveDeadline = () => {
             <span>{{ item.priority ? 'Edit priority' : 'Set priority' }}</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent class="w-40">
               <DropdownMenuRadioGroup
                 :modelValue="priority?.toString()"
                 @update:modelValue="(value) => (priority = Number(value))"
               >
-                <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="1">
+                  High
+                  <DropdownMenuShortcut>
+                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    1
+                  </DropdownMenuShortcut>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="2">
+                  Medium
+                  <DropdownMenuShortcut>
+                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    2
+                  </DropdownMenuShortcut> </DropdownMenuRadioItem
+                ><DropdownMenuRadioItem value="3">
+                  Low
+                  <DropdownMenuShortcut>
+                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    3
+                  </DropdownMenuShortcut>
+                </DropdownMenuRadioItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioItem
                   value="0"
                   @click="emit('edit-priority', 0)"
                 >
                   No priority
+                  <DropdownMenuShortcut>
+                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    0
+                  </DropdownMenuShortcut>
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
@@ -197,7 +220,7 @@ const handleRemoveDeadline = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="emit('remove')">
         <span>Delete</span>
-        <DropdownMenuShortcut>⌘D</DropdownMenuShortcut>
+        <DropdownMenuShortcut>R</DropdownMenuShortcut>
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
