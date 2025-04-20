@@ -198,7 +198,7 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         </DropdownMenuSub>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <span>Switch collection</span>
+            <span>Move to</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
