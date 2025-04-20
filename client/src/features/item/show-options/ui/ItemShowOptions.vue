@@ -19,6 +19,7 @@ import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
 
 const modelDate = defineModel<number>('date')
+const modelDeadline = defineModel<number>('deadline')
 
 const props = defineProps<{
   item: Item
@@ -29,9 +30,11 @@ const emit = defineEmits<{
   (e: 'add-description'): void
   (e: 'remove-description'): void
   (e: 'edit-date', value: number | undefined): void
+  (e: 'edit-deadline', value: number | undefined): void
 }>()
 
 const dateValue = ref<DateValue>()
+const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
 
 watch(dateValue, (newVal) => {
@@ -43,10 +46,25 @@ watch(dateValue, (newVal) => {
   }
 })
 
-const handleSaveChanges = () => {
+watch(deadlineValue, (newVal) => {
+  if (newVal) {
+    const newDeadline = new Date(newVal.year, newVal.month - 1, newVal.day).getTime()
+    modelDeadline.value = newDeadline
+    emit('edit-deadline', newDeadline)
+    isMenuOpen.value = false
+  }
+})
+
+const handleRemoveDate = () => {
   modelDate.value = undefined
   dateValue.value = undefined
   emit('edit-date', modelDate.value)
+}
+
+const handleRemoveDeadline = () => {
+  modelDeadline.value = undefined
+  deadlineValue.value = undefined
+  emit('edit-deadline', modelDeadline.value)
 }
 </script>
 
@@ -85,12 +103,25 @@ const handleSaveChanges = () => {
         </DropdownMenuSub>
         <DropdownMenuItem
           v-else
-          @click="handleSaveChanges"
+          @click="handleRemoveDate"
         >
           <span>Remove date</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <span>Edit deadline</span>
+        <DropdownMenuSub v-if="!item.deadline">
+          <DropdownMenuSubTrigger>
+            <span>Set deadline</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <Calendar v-model="deadlineValue" />
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+        <DropdownMenuItem
+          v-else
+          @click="handleRemoveDeadline"
+        >
+          <span>Remove deadline</span>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <span>Edit priority</span>
