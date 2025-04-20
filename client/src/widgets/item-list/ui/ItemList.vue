@@ -5,7 +5,7 @@ import { AddItemFormInline, useAddItem } from '@/features/item/add'
 import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
 import { ItemDescription, useChangeItemDescription } from '@/features/item/change-description'
 import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
-import { useChangeItemPriority } from '@/features/item/change-priority'
+import { ItemPriority, useChangeItemPriority } from '@/features/item/change-priority'
 import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
 import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { useFilterItems } from '@/features/item/filter'
@@ -106,6 +106,15 @@ const showAllParams = ref<boolean>(false)
           <ItemDeadline
             :model-value="item.deadline"
             @change="changeItemDeadline(item, $event)"
+          />
+        </template>
+        <template
+          v-if="showAllParams || item.priority"
+          #priority
+        >
+          <ItemPriority
+            :model-value="item.priority"
+            @update:model-value="changeItemPriority(item, $event)"
           />
         </template>
         <template #showItemOptions>
