@@ -40,6 +40,7 @@ const emit = defineEmits<{
   (e: 'edit-deadline', value: number | undefined): void
   (e: 'edit-priority', value: number | undefined): void
   (e: 'change-collection', value: number): void
+  (e: 'change-type'): void
 }>()
 
 const dateValue = ref<DateValue>()
@@ -118,6 +119,10 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         >
           <span>Remove description</span>
           <DropdownMenuShortcut>⇧D</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem @click="emit('change-type')">
+          <span>Turn into {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
+          <DropdownMenuShortcut>T</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSub v-if="!item.date">
           <DropdownMenuSubTrigger>

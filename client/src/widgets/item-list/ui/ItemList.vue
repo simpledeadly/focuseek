@@ -15,6 +15,7 @@ import { ItemShowOptions } from '@/features/item/show-options'
 import { useCollections } from '@/entities/collection'
 import { useChangeItemCollection } from '@/features/item/change-collection'
 import { StickyNote } from 'lucide-vue-next'
+import { useChangeItemType } from '@/features/item/change-type'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)
@@ -27,6 +28,7 @@ const { changeItemDescription } = useChangeItemDescription(items)
 const { changeItemDeadline } = useChangeItemDeadline(items)
 const { changeItemDate } = useChangeItemDate(items)
 const { changeItemPriority } = useChangeItemPriority(items)
+const { changeItemType } = useChangeItemType(items)
 
 const { collections } = useCollections()
 const { changeItemCollection } = useChangeItemCollection(items)
@@ -124,6 +126,7 @@ const showAllParams = ref<boolean>(false)
             @edit-deadline="changeItemDeadline(item, $event)"
             :model-value:priority="item.priority"
             @edit-priority="changeItemPriority(item, $event)"
+            @change-type="changeItemType(item, item.type === 'todo' ? 'note' : 'todo')"
           />
         </template>
         <template

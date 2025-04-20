@@ -7,6 +7,7 @@ export type Emit = {
   (e: 'add-description'): void
   (e: 'remove-description'): void
   (e: 'edit-priority', value: number | undefined): void
+  (e: 'change-type'): void
 }
 
 interface UseItemShortcutsParams {
@@ -70,6 +71,14 @@ export const useItemShortcuts = ({
         guard: () => isMenuOpen.value && !isPriorityMode.value && !props.item.description,
         action: () => {
           emit('add-description')
+          isMenuOpen.value = false
+        },
+      },
+      {
+        keys: 't',
+        guard: () => isMenuOpen.value && !isPriorityMode.value,
+        action: () => {
+          emit('change-type')
           isMenuOpen.value = false
         },
       },
