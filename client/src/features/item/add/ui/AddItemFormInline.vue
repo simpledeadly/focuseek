@@ -4,12 +4,13 @@ import { Badge } from '@/shared/ui/badge'
 import { Calendar } from '@/shared/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-} from '@/shared/ui/select'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { cn } from '@/shared/lib/utils'
 import { useItemType } from '../../filter'
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
@@ -127,7 +128,7 @@ watch(deadlineValue, () => {
             <Popover>
               <PopoverTrigger as-child>
                 <Badge
-                  variant="outline"
+                  :variant="dateValue ? 'secondary' : 'outline'"
                   :class="
                     cn('justify-start text-left font-normal', !dateValue && 'text-muted-foreground')
                   "
@@ -144,7 +145,7 @@ watch(deadlineValue, () => {
             <Popover>
               <PopoverTrigger as-child>
                 <Badge
-                  variant="outline"
+                  :variant="deadlineValue ? 'secondary' : 'outline'"
                   :class="
                     cn(
                       'justify-start text-left font-normal',
@@ -163,10 +164,10 @@ watch(deadlineValue, () => {
             </Popover>
           </div>
           <div class="item-entity__param">
-            <Select v-model="itemPriority">
-              <SelectTrigger badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
                 <Badge
-                  variant="outline"
+                  :variant="itemPriority ? 'secondary' : 'outline'"
                   :class="
                     cn(
                       'flex justify-start text-left font-normal',
@@ -176,16 +177,20 @@ watch(deadlineValue, () => {
                 >
                   {{ itemPriority ? itemPriority : 'Priority' }}
                 </Badge>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="1">High</SelectItem>
-                  <SelectItem value="2">Medium</SelectItem>
-                  <SelectItem value="3">Low</SelectItem>
-                  <SelectItem value="0">Clear</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuRadioGroup
+                  :modelValue="itemPriority?.toString()"
+                  @update:modelValue="(value) => (itemPriority = Number(value))"
+                >
+                  <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuRadioItem value="0"> No priority </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div class="item-entity__param">
             <Badge variant="outline">

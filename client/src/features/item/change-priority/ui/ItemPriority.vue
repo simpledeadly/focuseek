@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from '@/shared/ui/select'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { cn } from '@/shared/lib/utils'
 import { Badge } from '@/shared/ui/badge'
 
@@ -8,27 +15,30 @@ const model = defineModel<number>()
 
 <template>
   <div class="item-priority">
-    <Select
-      :modelValue="model?.toString()"
-      @update:modelValue="(value) => (model = Number(value))"
-    >
-      <SelectTrigger badge>
+    <DropdownMenu>
+      <DropdownMenuTrigger as-child>
         <Badge
           :variant="model ? 'secondary' : 'outline'"
-          :class="cn('flex justify-start text-left font-normal', !model && 'text-muted-foreground')"
+          :class="
+            cn('flex justify-start text-left font-normal', !model && 'text-muted-foreground')
+          "
         >
           {{ model ? model : 'Priority' }}
         </Badge>
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectItem value="1">High</SelectItem>
-          <SelectItem value="2">Medium</SelectItem>
-          <SelectItem value="3">Low</SelectItem>
-          <SelectItem value="0">Clear</SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuRadioGroup
+          :modelValue="model?.toString()"
+          @update:modelValue="(value) => (model = Number(value))"
+        >
+          <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuRadioItem value="0">No priority</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   </div>
 </template>
 
