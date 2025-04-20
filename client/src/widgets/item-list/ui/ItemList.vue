@@ -11,10 +11,10 @@ import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
 import { ItemShowSubItems, useShowSubItems } from '@/features/item/show-sub-items'
-import { Checkbox } from '@/shared/ui/checkbox'
-import { Label } from '@/shared/ui/label'
-import { StickyNote } from 'lucide-vue-next'
 import { ItemShowOptions } from '@/features/item/show-options'
+import { useCollections } from '@/entities/collection'
+import { useChangeItemCollection } from '@/features/item/change-collection'
+import { StickyNote } from 'lucide-vue-next'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)
@@ -28,19 +28,13 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
 const { changeItemDate } = useChangeItemDate(items)
 const { changeItemPriority } = useChangeItemPriority(items)
 
+const { collections } = useCollections()
+const { changeItemCollection } = useChangeItemCollection(items)
+
 const showAllParams = ref<boolean>(false)
 </script>
 
 <template>
-  <div class="flex items-center space-x-2">
-    <Checkbox
-      id="show-params"
-      v-model="showAllParams"
-    />
-    <Label for="show-params">Show all params</Label>
-  </div>
-  <br />
-
   <div
     v-if="filteredParentItems.length > 0"
     class="item-list"
@@ -118,6 +112,9 @@ const showAllParams = ref<boolean>(false)
         <template #showItemOptions>
           <ItemShowOptions
             :item="item"
+            :collections="collections"
+            :model-value:collectionId="item.collectionId"
+            @change-collection="changeItemCollection(item, $event)"
             @remove="removeItem(item)"
             @add-description="changeItemDescription(item, 'new')"
             @remove-description="changeItemDescription(item, '')"

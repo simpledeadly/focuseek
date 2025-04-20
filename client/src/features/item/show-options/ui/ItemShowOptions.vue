@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Item } from '@/entities/item'
+import { Collection } from '@/entities/collection'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +24,11 @@ import { Ellipsis } from 'lucide-vue-next'
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
 const modelPriority = defineModel<number>('priority')
+const modelCollectionId = defineModel<number>('collectionId')
 
 const props = defineProps<{
   item: Item
+  collections: Collection[]
 }>()
 
 const emit = defineEmits<{
@@ -35,12 +38,22 @@ const emit = defineEmits<{
   (e: 'edit-date', value: number | undefined): void
   (e: 'edit-deadline', value: number | undefined): void
   (e: 'edit-priority', value: number | undefined): void
+  (e: 'change-collection', value: number): void
 }>()
 
 const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
 const priority = ref(props.item.priority)
+const collectionId = ref(props.item.collectionId)
+
+watch(collectionId, (newVal) => {
+  if (newVal) {
+    modelCollectionId.value = collectionId.value
+    emit('change-collection', modelCollectionId.value)
+    isMenuOpen.value = false
+  }
+})
 
 watch(priority, (newVal) => {
   if (newVal) {
@@ -155,6 +168,26 @@ const handleRemoveDeadline = () => {
                   @click="emit('edit-priority', 0)"
                 >
                   No priority
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <span>Switch collection</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                :modelValue="collectionId?.toString()"
+                @update:modelValue="(value) => (collectionId = Number(value))"
+              >
+                <DropdownMenuRadioItem
+                  v-for="col in props.collections"
+                  :value="col.id.toString()"
+                >
+                  {{ col.title }}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
