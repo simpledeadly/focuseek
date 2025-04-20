@@ -192,28 +192,6 @@ watch(deadlineValue, () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div class="item-entity__param">
-            <Badge variant="outline">
-              <input
-                v-model="itemDurationPlanned"
-                type="number"
-                placeholder="Duration"
-                class="font-normal"
-                style="width: 4rem"
-              />
-            </Badge>
-          </div>
-          <div class="item-entity__param">
-            <Badge variant="outline">
-              <input
-                v-model="itemParentId"
-                type="number"
-                placeholder="pID"
-                class="font-normal"
-                style="width: 3rem"
-              />
-            </Badge>
-          </div>
         </div>
       </div>
     </div>
