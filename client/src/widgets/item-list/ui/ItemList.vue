@@ -123,6 +123,8 @@ const showAllParams = ref<boolean>(false)
             @remove="removeItem(item)"
             @add-description="changeItemDescription(item, 'new')"
             @remove-description="changeItemDescription(item, '')"
+            :model-value:date="item.date"
+            @edit-date="changeItemDate(item, $event)"
           />
         </template>
         <template

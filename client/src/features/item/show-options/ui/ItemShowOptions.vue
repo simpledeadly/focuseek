@@ -1,15 +1,24 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { Item } from '@/entities/item'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
+import { Calendar } from '@/shared/ui/calendar'
+import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
+
+const modelDate = defineModel<number>('date')
 
 const props = defineProps<{
   item: Item
@@ -19,11 +28,30 @@ const emit = defineEmits<{
   (e: 'remove'): void
   (e: 'add-description'): void
   (e: 'remove-description'): void
+  (e: 'edit-date', value: number | undefined): void
 }>()
+
+const dateValue = ref<DateValue>()
+const isMenuOpen = ref(false)
+
+watch(dateValue, (newVal) => {
+  if (newVal) {
+    const newDate = new Date(newVal.year, newVal.month - 1, newVal.day).getTime()
+    modelDate.value = newDate
+    emit('edit-date', newDate)
+    isMenuOpen.value = false
+  }
+})
+
+const handleSaveChanges = () => {
+  modelDate.value = undefined
+  dateValue.value = undefined
+  emit('edit-date', modelDate.value)
+}
 </script>
 
 <template>
-  <DropdownMenu>
+  <DropdownMenu v-model:open="isMenuOpen">
     <DropdownMenuTrigger as-child>
       <div class="item-show-options">
         <span class="checkbox-icon-toggle">
@@ -45,8 +73,21 @@ const emit = defineEmits<{
         >
           <span>Remove description</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <span>Edit date</span>
+        <DropdownMenuSub v-if="!item.date">
+          <DropdownMenuSubTrigger>
+            <span>Set date</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <Calendar v-model="dateValue" />
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+        <DropdownMenuItem
+          v-else
+          @click="handleSaveChanges"
+        >
+          <span>Remove date</span>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <span>Edit deadline</span>
