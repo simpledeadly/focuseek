@@ -7,6 +7,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
@@ -20,6 +22,7 @@ import { Ellipsis } from 'lucide-vue-next'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
+const modelPriority = defineModel<number>('priority')
 
 const props = defineProps<{
   item: Item
@@ -31,11 +34,21 @@ const emit = defineEmits<{
   (e: 'remove-description'): void
   (e: 'edit-date', value: number | undefined): void
   (e: 'edit-deadline', value: number | undefined): void
+  (e: 'edit-priority', value: number | undefined): void
 }>()
 
 const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
+const priority = ref(props.item.priority)
+
+watch(priority, (newVal) => {
+  if (newVal) {
+    modelPriority.value = priority.value
+    emit('edit-priority', modelPriority.value)
+    isMenuOpen.value = false
+  }
+})
 
 watch(dateValue, (newVal) => {
   if (newVal) {
@@ -123,9 +136,30 @@ const handleRemoveDeadline = () => {
         >
           <span>Remove deadline</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <span>Edit priority</span>
-        </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <span>{{ item.priority ? 'Edit priority' : 'Set priority' }}</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                :modelValue="priority?.toString()"
+                @update:modelValue="(value) => (priority = Number(value))"
+              >
+                <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioItem
+                  value="0"
+                  @click="emit('edit-priority', 0)"
+                >
+                  No priority
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="emit('remove')">

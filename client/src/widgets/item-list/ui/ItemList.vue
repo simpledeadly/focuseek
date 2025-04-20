@@ -5,7 +5,7 @@ import { AddItemFormInline, useAddItem } from '@/features/item/add'
 import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
 import { ItemDescription, useChangeItemDescription } from '@/features/item/change-description'
 import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
-import { ItemPriority, useChangeItemPriority } from '@/features/item/change-priority'
+import { useChangeItemPriority } from '@/features/item/change-priority'
 import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
 import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { useFilterItems } from '@/features/item/filter'
@@ -52,7 +52,7 @@ const showAllParams = ref<boolean>(false)
         :showParams="
           item.type !== 'note' &&
           !item.isDone &&
-          !!(item.date || item.deadline || item.priority || item.durationPlanned || showAllParams)
+          !!(item.date || item.deadline || item.durationPlanned || showAllParams)
         "
       >
         <template
@@ -108,15 +108,6 @@ const showAllParams = ref<boolean>(false)
             @change="changeItemDeadline(item, $event)"
           />
         </template>
-        <template
-          v-if="showAllParams || item.priority"
-          #priority
-        >
-          <ItemPriority
-            :model-value="item.priority"
-            @update:model-value="changeItemPriority(item, $event)"
-          />
-        </template>
         <template #showItemOptions>
           <ItemShowOptions
             :item="item"
@@ -127,6 +118,8 @@ const showAllParams = ref<boolean>(false)
             @edit-date="changeItemDate(item, $event)"
             :model-value:deadline="item.deadline"
             @edit-deadline="changeItemDeadline(item, $event)"
+            :model-value:priority="item.priority"
+            @edit-priority="changeItemPriority(item, $event)"
           />
         </template>
         <template
