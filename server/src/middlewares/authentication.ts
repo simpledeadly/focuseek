@@ -12,7 +12,6 @@ export const authenticate = async (req: any, res: any, next: any) => {
 
     if (typeof decoded === 'object' && decoded !== null) {
       req.userId = decoded.id
-      console.log(req.userId)
       next()
     } else {
       console.error('Проблема с decoded в middleware')
