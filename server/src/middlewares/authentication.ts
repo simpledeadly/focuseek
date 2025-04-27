@@ -8,7 +8,6 @@ export const authenticate = async (req: any, res: any, next: any) => {
 
   try {
     const decoded = jsonwebtoken.verify(token, 'your_jwt_secret')
-    console.log('DECODED:', decoded)
 
     if (typeof decoded === 'object' && decoded !== null) {
       req.userId = decoded.id
