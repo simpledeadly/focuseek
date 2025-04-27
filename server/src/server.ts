@@ -37,6 +37,16 @@ type Collection = {
   editedAt: number
 }
 
+type Timer = {
+  id: number
+  userId: number
+  collectionId: number
+  itemId: number
+  startTime: number | null
+  trackedDuration: number
+  isRunning: boolean
+}
+
 const app = express()
 const PORT: string | number = process.env.PORT || 3000
 
@@ -376,6 +386,143 @@ app.delete('/api/items/:id', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при удалении элемента:', error)
     res.status(404).json({ message: 'Элемент не найден' })
+  }
+})
+
+// == TIMERS ==
+
+app.get('/api/items/:id/timer', authenticate, async (req, res) => {
+  try {
+    const token = req.headers.authorization
+    if (!token) {
+      return res.status(401).json({ message: 'Неавторизованный доступ' })
+    }
+
+    const decoded = jwt.verify(token, 'your_jwt_secret')
+    if (typeof decoded === 'object' && decoded !== null) {
+      const userId = decoded.id
+      const itemId = +req.params.id
+
+      const item = await prisma.item.findFirst({
+        where: { id: itemId, userId },
+      })
+      if (!item) {
+        return res
+          .status(404)
+          .json({ message: 'Элемент не найден или не принадлежит пользователю' })
+      }
+
+      const timer = await prisma.timer.findUnique({
+        where: { itemId },
+      })
+
+      console.log(chalk.hex('#fff').bold(`GET timer for item ${itemId}:`), timer)
+
+      if (!timer) {
+        return res.json({
+          itemId,
+          startTime: null,
+          trackedDuration: 0,
+          isRunning: false,
+        })
+      }
+
+      res.json({
+        itemId,
+        startTime: timer.startTime ? Number(timer.startTime) : null,
+        trackedDuration: Number(timer.trackedDuration),
+        isRunning: timer.isRunning,
+      })
+    } else {
+      console.error('Неправильный формат токена')
+      return res.status(401).json({ message: 'Неправильный формат токена' })
+    }
+  } catch (error) {
+    console.error('Ошибка при получении состояния таймера:', error)
+    res.status(500).json({ message: 'Ошибка сервера' })
+  }
+})
+
+app.post('/api/items/:id/timer', authenticate, async (req, res) => {
+  try {
+    const token = req.headers.authorization
+    if (!token) {
+      return res.status(401).json({ message: 'Неавторизованный доступ' })
+    }
+
+    const decoded = jwt.verify(token, 'your_jwt_secret')
+    if (typeof decoded === 'object' && decoded !== null) {
+      const userId = decoded.id
+      const itemId = +req.params.id
+      const { collectionId, startTime, trackedDuration, isRunning }: Timer = req.body
+
+      const item = await prisma.item.findFirst({
+        where: { id: itemId, userId },
+      })
+      if (!item) {
+        return res
+          .status(404)
+          .json({ message: 'Элемент не найден или не принадлежит пользователю' })
+      }
+
+      if (
+        (startTime !== null && typeof startTime !== 'number') ||
+        typeof trackedDuration !== 'number' ||
+        typeof isRunning !== 'boolean'
+      ) {
+        return res.status(400).json({ message: 'Некорректные данные таймера' })
+      }
+
+      const timer = await prisma.timer.upsert({
+        where: { itemId },
+        update: {
+          userId,
+          collectionId,
+          itemId,
+          startTime: startTime ? BigInt(startTime) : null,
+          trackedDuration: BigInt(trackedDuration),
+          isRunning,
+        },
+        create: {
+          userId,
+          collectionId,
+          itemId,
+          startTime: startTime ? BigInt(startTime) : null,
+          trackedDuration: BigInt(trackedDuration),
+          isRunning,
+        },
+      })
+
+      console.log(chalk.hex('#fff').bold(`POST timer for item ${itemId}:`), timer)
+
+      res.json({
+        userId,
+        collectionId,
+        itemId,
+        startTime: timer.startTime ? Number(timer.startTime) : null,
+        trackedDuration: Number(timer.trackedDuration),
+        isRunning: timer.isRunning,
+      })
+    } else {
+      console.error('Неправильный формат токена')
+      return res.status(401).json({ message: 'Неправильный формат токена' })
+    }
+  } catch (error) {
+    console.error('Ошибка при сохранении состояния таймера:', error)
+    res.status(500).json({ message: 'Ошибка сервера' })
+  }
+})
+
+app.delete('/api/items/:id/timer', async (req, res) => {
+  const id = +req.params.id
+
+  try {
+    await prisma.timer.delete({ where: { itemId: id } })
+    console.log(chalk.hex('#fff').bold(`DELETE timer, id:`), id)
+    res.status(204).json({ message: 'Таймер успешно удалён' })
+  } catch (error) {
+    console.error('Ошибка при удалении таймера:', error)
+    res.status(404).json({ message: 'Таймер не найден' })
   }
 })
 
