@@ -10,7 +10,7 @@ const slots = defineSlots<{
   showItemOptions: () => unknown
   subItems?: () => unknown
   priority?: () => unknown
-  durationPlanned?: () => unknown
+  duration?: () => unknown
 }>()
 
 const props = defineProps<{
@@ -50,6 +50,12 @@ const props = defineProps<{
         >
           <div
             class="item-entity__param"
+            v-if="slots.duration"
+          >
+            <slot name="duration" />
+          </div>
+          <div
+            class="item-entity__param"
             v-if="slots.date"
           >
             <slot name="date" />
@@ -65,12 +71,6 @@ const props = defineProps<{
             v-if="slots.priority"
           >
             <slot name="priority" />
-          </div>
-          <div
-            class="item-entity__param"
-            v-if="slots.durationPlanned"
-          >
-            <slot name="durationPlanned" />
           </div>
         </div>
       </div>
