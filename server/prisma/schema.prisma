@@ -12,9 +12,11 @@ model User {
   username      String @unique
   password_hash String
 
+  items Item[]
+  collections Collection[]
+  timers Timer[]
+  
   @@map(name: "users")
-  Item Item[]
-  Collection Collection[]
 }
 
 model Collection {
@@ -25,6 +27,7 @@ model Collection {
   editedAt   DateTime @updatedAt @map("edited_at")
   user       User     @relation(fields: [userId], references: [id])
   items      Item[]
+  timers     Timer[]
   
   @@map(name: "collections")
 }
@@ -57,6 +60,22 @@ model Item {
   collection      Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   parentItem      Item?      @relation("ItemToSubItems", fields: [parentItemId], references: [id])
   subItems        Item[]     @relation("ItemToSubItems")
+  timer           Timer? @relation("ItemToItemTimer")
 
   @@map(name: "items")
+}
+
+model Timer {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  collectionId    Int       @map("collection_id")
+  itemId          Int       @unique @map("item_id")
+  startTime       BigInt?   @map("start_time")
+  trackedDuration BigInt    @default(0) @map("tracked_duration")
+  isRunning       Boolean   @default(false) @map("is_running")
+  user            User      @relation(fields: [userId], references: [id])
+  collection      Collection @relation(fields: [collectionId], references: [id])
+  item            Item      @relation("ItemToItemTimer", fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@map(name: "timers")
 }
