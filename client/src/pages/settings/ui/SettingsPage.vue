@@ -24,7 +24,7 @@ watch(isHideDone, () => localStorage.setItem('hide', isHideDone.value.toString()
 const handleReload = () => window.location.reload()
 
 const mode = useColorMode()
-const themes = ['dark', 'light']
+const themes = ['auto', 'dark', 'light']
 const switchMode = (theme: any) => (mode.value = theme)
 </script>
 
@@ -36,9 +36,6 @@ const switchMode = (theme: any) => (mode.value = theme)
           :size="18"
           class="app__bolt-icon icon"
         />
-        <!-- <DropdownMenuItem>
-          <span>Settings</span>
-        </DropdownMenuItem> -->
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -71,10 +68,8 @@ const switchMode = (theme: any) => (mode.value = theme)
                 </div>
               </CarouselItem>
             </CarouselContent>
-            <!-- <CarouselPrevious />
-            <CarouselNext /> -->
           </Carousel>
-         <HideToggle v-model="isHideDone" />
+          <HideToggle v-model="isHideDone" />
         </div>
         <DialogFooter class="settings-page__footer">
           <DialogClose as-child>
