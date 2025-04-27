@@ -17,7 +17,7 @@ import { useChangeItemCollection } from '@/features/item/change-collection'
 import { StickyNote } from 'lucide-vue-next'
 import { useChangeItemType } from '@/features/item/change-type'
 import { ItemDuration, useChangeItemDuration } from '@/features/item/change-duration'
-import Search from '@/widgets/search'
+import { Search } from '@/widgets/search'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)

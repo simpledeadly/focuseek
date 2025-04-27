@@ -1,1 +1,1 @@
-export { default } from './ui/Loader.vue'
+export { default as Loader} from './ui/Loader.vue'

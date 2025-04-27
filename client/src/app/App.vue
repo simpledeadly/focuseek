@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { RouterView } from 'vue-router'
 import { Toaster } from '@/shared/ui/sonner'
 import { TooltipProvider } from '@/shared/ui/tooltip'
-import { MainLayout } from '@/shared/ui/layouts/main-layout'
-import { AppSidebar } from '@/widgets/sidebar'
 import { SidebarProvider } from '@/shared/ui/sidebar'
-import { RouterView } from 'vue-router'
-import { isAuthenticated } from './auth/auth'
+import { MainLayout } from '@/shared/ui/layouts/main-layout'
 import { AuthLayout } from '@/shared/ui/layouts/auth-layout'
-import Loader from '@/widgets/loader'
+import { AppSidebar } from '@/widgets/sidebar'
+import { Loader } from '@/widgets/loader'
+import { isAuthenticated } from './auth/auth'
 
 const isLoading = ref(false)
 const setLoading = (value: boolean) => (isLoading.value = value)
