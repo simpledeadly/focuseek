@@ -1,2 +1,2 @@
 export { useItemOptionsShortcuts } from './model/useItemOptionsShortcuts'
-export { default as ItemShowOptions } from './ui/ItemShowOptions.vue'
+export { default as ItemOptions } from './ui/ItemOptions.vue'

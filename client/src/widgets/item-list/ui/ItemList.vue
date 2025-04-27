@@ -10,13 +10,13 @@ import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
 import { ItemCheckbox, useDoneItem } from '@/features/item/done'
 import { useFilterItems } from '@/features/item/filter'
 import { ItemRemoveButton, useRemoveItem } from '@/features/item/remove'
-import { ItemShowSubItems, useShowSubItems } from '@/features/item/show-sub-items'
-import { ItemShowOptions } from '@/features/item/show-options'
+import { ItemSubItemsToggle, useShowSubItems } from '@/features/item/show-sub-items'
+import { ItemOptions } from '@/features/item/options'
 import { useCollections } from '@/entities/collection'
-import { useChangeItemCollection } from '@/features/item/change-collection'
+import { useSwitchItemCollection } from '@/features/item/switch-collection'
 import { StickyNote } from 'lucide-vue-next'
-import { useChangeItemType } from '@/features/item/change-type'
-import { ItemDuration, useChangeItemDuration } from '@/features/item/change-duration'
+import { useSwitchItemType } from '@/features/item/switch-type'
+import { ItemTimeTrack, useItemTimeTrack } from '@/features/item/time-track'
 import { Search } from '@/widgets/search'
 
 const { items } = useItems()
@@ -30,12 +30,11 @@ const { changeItemDescription } = useChangeItemDescription(items)
 const { changeItemDeadline } = useChangeItemDeadline(items)
 const { changeItemDate } = useChangeItemDate(items)
 const { changeItemPriority } = useChangeItemPriority(items)
-const { changeItemType } = useChangeItemType(items)
-const { changeItemDurationPlanned, changeItemDurationReal, deleteTimer } =
-  useChangeItemDuration(items)
+const { switchItemType } = useSwitchItemType(items)
+const { changeItemDurationPlanned, changeItemDurationReal, deleteTimer } = useItemTimeTrack(items)
 
 const { collections } = useCollections()
-const { changeItemCollection } = useChangeItemCollection(items)
+const { switchItemCollection } = useSwitchItemCollection(items)
 
 const showAllParams = ref<boolean>(false)
 const isTimeTracking = ref<boolean>(false)
@@ -63,10 +62,10 @@ const isTimeTracking = ref<boolean>(false)
         "
       >
         <template
-          #showSubItemsToggle
+          #subItemsToggle
           v-if="hasSubItems(item.id)"
         >
-          <ItemShowSubItems
+          <ItemSubItemsToggle
             :model-value="item.showSubItems"
             @update:model-value="toggleShowSubItems(item)"
           />
@@ -99,9 +98,9 @@ const isTimeTracking = ref<boolean>(false)
         </template>
         <template
           v-if="item.durationReal !== null || item.durationPlanned"
-          #duration
+          #timeTrack
         >
-          <ItemDuration
+          <ItemTimeTrack
             :item="item"
             :model-value="isTimeTracking"
             @change-duration-planned="changeItemDurationPlanned(item, $event)"
@@ -136,12 +135,13 @@ const isTimeTracking = ref<boolean>(false)
             @update:model-value="changeItemPriority(item, $event)"
           />
         </template>
-        <template #showItemOptions>
-          <ItemShowOptions
+        <template #options>
+          <ItemOptions
             :item="item"
             :collections="collections"
             :model-value:collectionId="item.collectionId"
-            @change-collection="changeItemCollection(item, $event)"
+            @change-collection="switchItemCollection(item, $event)"
+            @change-type="switchItemType(item, item.type === 'todo' ? 'note' : 'todo')"
             @remove="removeItem(item)"
             @add-description="changeItemDescription(item, '')"
             @remove-description="changeItemDescription(item, null)"
@@ -151,7 +151,6 @@ const isTimeTracking = ref<boolean>(false)
             @edit-deadline="changeItemDeadline(item, $event)"
             :model-value:priority="item.priority"
             @edit-priority="changeItemPriority(item, $event)"
-            @change-type="changeItemType(item, item.type === 'todo' ? 'note' : 'todo')"
             @change-duration-planned="changeItemDurationPlanned(item, $event)"
             @change-duration-real="changeItemDurationReal(item, $event)"
             @change-duration-real-from-opitons="deleteTimer(item, $event)"

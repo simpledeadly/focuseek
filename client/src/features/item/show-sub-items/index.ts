@@ -1,2 +1,2 @@
 export { useShowSubItems } from './model/useShowSubItems'
-export { default as ItemShowSubItems } from './ui/ItemShowSubItems.vue'
+export { default as ItemSubItemsToggle } from './ui/ItemSubItemsToggle.vue'

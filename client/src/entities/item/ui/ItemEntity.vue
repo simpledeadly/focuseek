@@ -1,16 +1,15 @@
 <script setup lang="ts">
 const slots = defineSlots<{
+  subItemsToggle?: () => unknown
   checkbox?: () => unknown
   title: () => unknown
   description?: () => unknown
-  typeSelect?: () => unknown
-  timeLeft?: () => unknown
+  timeTrack?: () => unknown
   date?: () => unknown
-  showSubItemsToggle?: () => unknown
-  showItemOptions: () => unknown
-  subItems?: () => unknown
+  deadline?: () => unknown
   priority?: () => unknown
-  duration?: () => unknown
+  options: () => unknown
+  subItems?: () => unknown
 }>()
 
 const props = defineProps<{
@@ -21,10 +20,10 @@ const props = defineProps<{
 <template>
   <div class="item-entity-wrapper flex items-center">
     <div
-      v-if="slots.showSubItemsToggle"
-      class="item-entity__show-subitems-toggle"
+      v-if="slots.subItemsToggle"
+      class="item-entity__sub-items-toggle"
     >
-      <slot name="showSubItemsToggle" />
+      <slot name="subItemsToggle" />
     </div>
 
     <div class="item-entity pt-2 pb-2">
@@ -50,9 +49,9 @@ const props = defineProps<{
         >
           <div
             class="item-entity__param"
-            v-if="slots.duration"
+            v-if="slots.timeTrack"
           >
-            <slot name="duration" />
+            <slot name="timeTrack" />
           </div>
           <div
             class="item-entity__param"
@@ -62,9 +61,9 @@ const props = defineProps<{
           </div>
           <div
             class="item-entity__param"
-            v-if="slots.timeLeft"
+            v-if="slots.deadline"
           >
-            <slot name="timeLeft" />
+            <slot name="deadline" />
           </div>
           <div
             class="item-entity__param"
@@ -76,10 +75,10 @@ const props = defineProps<{
       </div>
     </div>
     <div
-      v-if="slots.showItemOptions"
-      class="item-entity__show-item-options"
+      v-if="slots.options"
+      class="item-entity__options"
     >
-      <slot name="showItemOptions" />
+      <slot name="options" />
     </div>
     <ul
       v-if="slots.subItems"
@@ -102,14 +101,14 @@ const props = defineProps<{
   gap: 6px;
   border-bottom: 1px solid hsl(var(--border));
 
-  &__show-subitems-toggle {
+  &__sub-items-toggle {
     position: absolute;
     left: -1.5rem;
     top: 12px;
     display: flex;
   }
 
-  &__show-item-options {
+  &__options {
     position: absolute;
     right: -0rem;
     top: 12px;

@@ -2,7 +2,7 @@ import { ShallowRef } from 'vue'
 import { updateItem, replaceItemInList, type Item } from '@/entities/item'
 import { deleteTimerOnServer, updateItemOnServer } from '@/shared/api/api'
 
-export const useChangeItemDuration = (items: ShallowRef<Item[]>) => {
+export const useItemTimeTrack = (items: ShallowRef<Item[]>) => {
   const changeItemDurationPlanned = async (item: Item, durationPlanned?: number | null) => {
     const newItem = updateItem(item, { durationPlanned })
     await updateItemOnServer(item.id, newItem)
