@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { useAuth } from '@/app/auth/useAuth'
-import type { User } from '@/entities/user/types/user'
+import type { User } from '@/entities/user'
 import type { Collection } from '@/entities/collection'
-import type { Item } from '../../entities/item/types/item'
+import type { Item } from '@/entities/item'
+import type { Timer } from '@/entities/timer'
 
 const API_URL = 'http://localhost:3000/api'
 
@@ -192,5 +193,54 @@ export const deleteItemFromServer = async (id: number) => {
   } catch (e) {
     console.error('Ошибка при удалении элемента с сервера:', e)
     throw new Error('Ошибка при удалении элемента с сервера')
+  }
+}
+
+// === TIMERS ===
+
+export const fetchTimerFromServer = async (id: number): Promise<Timer> => {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await axios.get(`${API_URL}/items/${id}/timer`, {
+      headers: {
+        authorization: token,
+      },
+    })
+    console.log('Таймер успешно получен:', response.data)
+    return response.data
+  } catch (e) {
+    console.error('Ошибка при получении таймера:', e)
+    throw new Error('Ошибка при получении таймера')
+  }
+}
+
+export const upsertTimerOnServer = async (id: number, timer: Timer) => {
+  try {
+    const token = localStorage.getItem('token')
+    const response = await axios.post(`${API_URL}/items/${id}/timer/`, timer, {
+      headers: {
+        authorization: token,
+      },
+    })
+    console.log('Таймер успешно добавлен/изменён:', response.data)
+    return response.data
+  } catch (e) {
+    console.error('Ошибка при добавлении таймера:', e)
+    throw new Error('Ошибка при добавлении таймера')
+  }
+}
+
+export const deleteTimerOnServer = async (id: number) => {
+  try {
+    const token = localStorage.getItem('token')
+    await axios.delete(`${API_URL}/items/${id}/timer/`, {
+      headers: {
+        authorization: token,
+      },
+    })
+    console.log('Таймер успешно удалён')
+  } catch (e) {
+    console.error('Ошибка при удалении таймера:', e)
+    throw new Error('Ошибка при удалении таймера')
   }
 }
