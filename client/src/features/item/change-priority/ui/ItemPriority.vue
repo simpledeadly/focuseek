@@ -10,7 +10,7 @@ import {
 import { cn } from '@/shared/lib/utils'
 import { Badge } from '@/shared/ui/badge'
 
-const model = defineModel<number>()
+const model = defineModel<number | null>()
 </script>
 
 <template>
@@ -19,17 +19,15 @@ const model = defineModel<number>()
       <DropdownMenuTrigger as-child>
         <Badge
           :variant="model ? 'secondary' : 'outline'"
-          :class="
-            cn('flex justify-start text-left font-normal', !model && 'text-muted-foreground')
-          "
+          :class="cn('flex justify-start text-left font-normal', !model && 'text-muted-foreground')"
         >
-          {{ model ? model : 'Priority' }}
+          {{ model || 'Priority' }}
         </Badge>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuRadioGroup
           :modelValue="model?.toString()"
-          @update:modelValue="(value) => (model = Number(value))"
+          @update:modelValue="(value) => value === '0' ? (model = null) : (model = Number(value))"
         >
           <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
