@@ -5,15 +5,15 @@ import { useItemType } from '@/features/item/filter'
 import { Check, Edit3, X } from 'lucide-vue-next'
 
 const props = defineProps<{
-  description: string
+  description?: string
 }>()
 
 const emit = defineEmits<{
-  (e: 'save', value: string): void
+  (e: 'save', value: string | null): void
 }>()
 
 const isEdit = ref<boolean>(false)
-const newDescription = ref<string>('')
+const newDescription = ref<string | undefined | null>('')
 const inputRef = ref<HTMLInputElement | null>(null)
 const { itemType } = useItemType()
 
@@ -41,7 +41,7 @@ const toEdit = () => {
 watch(
   () => props.description,
   (newVal) => {
-    if (newVal === 'new') {
+    if (newVal === '') {
       toEdit()
     }
   },
@@ -49,13 +49,13 @@ watch(
 )
 
 const saveChanges = () => {
-  emit('save', newDescription.value)
+  emit('save', newDescription.value ? newDescription.value : null)
   cancelChanges()
 }
 
 const cancelChanges = () => {
   isEdit.value = false
-  newDescription.value = ''
+  newDescription.value = null
 }
 </script>
 
