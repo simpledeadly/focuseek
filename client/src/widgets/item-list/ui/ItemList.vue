@@ -16,6 +16,7 @@ import { useCollections } from '@/entities/collection'
 import { useChangeItemCollection } from '@/features/item/change-collection'
 import { StickyNote } from 'lucide-vue-next'
 import { useChangeItemType } from '@/features/item/change-type'
+import { ItemDuration, useChangeItemDuration } from '@/features/item/change-duration'
 
 const { items } = useItems()
 const { itemType, filteredItems, filteredParentItems, collectionId } = useFilterItems(items)
@@ -29,11 +30,14 @@ const { changeItemDeadline } = useChangeItemDeadline(items)
 const { changeItemDate } = useChangeItemDate(items)
 const { changeItemPriority } = useChangeItemPriority(items)
 const { changeItemType } = useChangeItemType(items)
+const { changeItemDurationPlanned, changeItemDurationReal, deleteTimer } =
+  useChangeItemDuration(items)
 
 const { collections } = useCollections()
 const { changeItemCollection } = useChangeItemCollection(items)
 
 const showAllParams = ref<boolean>(false)
+const isTimeTracking = ref<boolean>(false)
 </script>
 
 <template>
@@ -46,7 +50,14 @@ const showAllParams = ref<boolean>(false)
         v-for="item in filteredParentItems"
         :key="item.id"
         :showParams="
-          !item.isDone && !!(item.date || item.deadline || item.durationPlanned || showAllParams)
+          !item.isDone &&
+          !!(
+            item.date ||
+            item.deadline ||
+            item.durationPlanned ||
+            item.durationReal !== null ||
+            showAllParams
+          )
         "
       >
         <template
@@ -76,12 +87,24 @@ const showAllParams = ref<boolean>(false)
           />
         </template>
         <template
-          v-if="item.description"
+          v-if="item.description !== null"
           #description
         >
           <ItemDescription
             :description="item.description"
             @save="changeItemDescription(item, $event)"
+          />
+        </template>
+        <template
+          v-if="item.durationReal !== null || item.durationPlanned"
+          #duration
+        >
+          <ItemDuration
+            :item="item"
+            :model-value="isTimeTracking"
+            @change-duration-planned="changeItemDurationPlanned(item, $event)"
+            @change-duration-real="changeItemDurationReal(item, $event)"
+            @change-duration-real-from-options="deleteTimer(item, $event)"
           />
         </template>
         <template
@@ -118,8 +141,8 @@ const showAllParams = ref<boolean>(false)
             :model-value:collectionId="item.collectionId"
             @change-collection="changeItemCollection(item, $event)"
             @remove="removeItem(item)"
-            @add-description="changeItemDescription(item, 'new')"
-            @remove-description="changeItemDescription(item, '')"
+            @add-description="changeItemDescription(item, '')"
+            @remove-description="changeItemDescription(item, null)"
             :model-value:date="item.date"
             @edit-date="changeItemDate(item, $event)"
             :model-value:deadline="item.deadline"
@@ -127,6 +150,9 @@ const showAllParams = ref<boolean>(false)
             :model-value:priority="item.priority"
             @edit-priority="changeItemPriority(item, $event)"
             @change-type="changeItemType(item, item.type === 'todo' ? 'note' : 'todo')"
+            @change-duration-planned="changeItemDurationPlanned(item, $event)"
+            @change-duration-real="changeItemDurationReal(item, $event)"
+            @change-duration-real-from-opitons="deleteTimer(item, $event)"
           />
         </template>
         <template
