@@ -24,6 +24,12 @@ const routes = [
     props: (route: RouteLocationNormalized) => ({ type: route.query.type }),
   },
   {
+    path: '/:collection/:item',
+    component: () => import('@/pages/item'),
+    name: 'item',
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/profile',
     component: () => import('@/pages/profile'),
     name: 'profile',
