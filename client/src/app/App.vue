@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Toaster } from '@/shared/ui/sonner'
 import { TooltipProvider } from '@/shared/ui/tooltip'
 import { MainLayout } from '@/shared/ui/layouts/main-layout'
@@ -7,7 +8,6 @@ import { SidebarProvider } from '@/shared/ui/sidebar'
 import { RouterView } from 'vue-router'
 import { isAuthenticated } from './auth/auth'
 import { AuthLayout } from '@/shared/ui/layouts/auth-layout'
-import { ref } from 'vue'
 import Loader from '@/widgets/loader'
 
 const isLoading = ref(false)
@@ -46,7 +46,8 @@ const setLoading = (value: boolean) => (isLoading.value = value)
 }
 
 .toast {
-  background: hsl(var(--primary-foreground));
+  animation-duration: 75ms !important;
+  background: hsl(var(--primary-foreground)) !important;
   border: 1px solid hsl(var(--border));
 }
 </style>
