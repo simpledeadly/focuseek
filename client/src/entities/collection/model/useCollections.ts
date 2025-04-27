@@ -33,5 +33,10 @@ export const useCollectionsStore = defineStore('collections', () => {
 export const useCollections = () => {
   const { collections } = storeToRefs(useCollectionsStore())
 
-  return { collections }
+  const findCollectionTitleById = (id: number) => {
+    const collection = collections.value.find((col) => col.id === id)
+    return collection ? collection.title : 'undefined'
+  }
+
+  return { collections, findCollectionTitleById }
 }
