@@ -4,16 +4,16 @@ export type Item = {
   id: number
   userId: number
   collectionId: number
-  parentItemId?: number
+  parentItemId?: number | null
   title: string
   type: ItemType
   createdAt: number
   editedAt: number
   isDone?: boolean
-  description?: string
-  priority?: number
-  durationPlanned?: number
-  durationReal?: number
+  description?: string | null
+  priority?: number | null
+  durationPlanned?: number | null
+  durationReal?: number | null
   tags?: string[]
   date?: number
   deadline?: number
