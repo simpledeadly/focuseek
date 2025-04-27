@@ -6,27 +6,30 @@ export type Emit = {
   (e: 'remove'): void
   (e: 'add-description'): void
   (e: 'remove-description'): void
-  (e: 'edit-priority', value: number | undefined): void
+  (e: 'edit-priority', value: number | null): void
+  (e: 'change-duration-planned', value: number | null): void
+  (e: 'change-duration-real', value: number | null): void
+  (e: 'change-duration-real-from-opitons', value: number | null): void
   (e: 'change-type'): void
 }
 
-interface UseItemShortcutsParams {
+interface UseItemOptionsShortcutsParams {
   dropdownRef: Ref<HTMLElement | null>
   isMenuOpen: Ref<boolean>
-  priority: Ref<number | undefined>
-  modelPriority: Ref<number | undefined>
+  priority: Ref<number | undefined | null>
+  modelPriority: Ref<number | undefined | null>
   props: { item: Item }
   emit: Emit
 }
 
-export const useItemShortcuts = ({
+export const useItemOptionsShortcuts = ({
   dropdownRef,
   isMenuOpen,
   priority,
   modelPriority,
   props,
   emit,
-}: UseItemShortcutsParams) => {
+}: UseItemOptionsShortcutsParams) => {
   const isPriorityMode = ref(false)
   let priorityTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -59,7 +62,7 @@ export const useItemShortcuts = ({
       action: (e: KeyboardEvent, key?: string) => void
     }[] = [
       {
-        keys: 'r',
+        keys: ['r', 'к'],
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
           emit('remove')
@@ -67,15 +70,18 @@ export const useItemShortcuts = ({
         },
       },
       {
-        keys: 'd',
-        guard: () => isMenuOpen.value && !isPriorityMode.value && !props.item.description,
+        keys: ['d', 'в'],
+        guard: () =>
+          isMenuOpen.value &&
+          !isPriorityMode.value &&
+          (!props.item.description || !!props.item.description),
         action: () => {
-          emit('add-description')
+          props.item.description === null ? emit('add-description') : emit('remove-description')
           isMenuOpen.value = false
         },
       },
       {
-        keys: 't',
+        keys: ['t', 'е'],
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
           emit('change-type')
@@ -83,15 +89,31 @@ export const useItemShortcuts = ({
         },
       },
       {
-        keys: 'shift+d',
-        guard: () => isMenuOpen.value && !isPriorityMode.value && !!props.item.description,
+        keys: ['e', 'у'],
+        guard: () => isMenuOpen.value && !isPriorityMode.value && props.item.durationReal === null,
         action: () => {
-          emit('remove-description')
+          emit('change-duration-real', 0)
           isMenuOpen.value = false
         },
       },
       {
-        keys: 'p',
+        keys: ['shift+e', 'shift+у'],
+        guard: () => isMenuOpen.value && !isPriorityMode.value && props.item.durationReal !== null,
+        action: () => {
+          emit('change-duration-real-from-opitons', null)
+          isMenuOpen.value = false
+        },
+      },
+      {
+        keys: ['shift+s', 'shift+ы'],
+        guard: () => isMenuOpen.value && !isPriorityMode.value && props.item.durationReal !== 0,
+        action: () => {
+          emit('change-duration-real-from-opitons', 0)
+          isMenuOpen.value = false
+        },
+      },
+      {
+        keys: ['f', 'а'],
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
           isPriorityMode.value = true
@@ -113,12 +135,12 @@ export const useItemShortcuts = ({
         },
       },
       {
-        keys: '0',
+        keys: '4',
         guard: () => isPriorityMode.value,
         action: () => {
-          priority.value = 0
-          modelPriority.value = 0
-          emit('edit-priority', 0)
+          priority.value = null
+          modelPriority.value = null
+          emit('edit-priority', null)
           exitPriorityMode()
         },
       },
