@@ -14,3 +14,31 @@ export function valueUpdater<T extends Updater<any>>(updaterOrValue: T, ref: Ref
 export const capitalize = (input: string): string => {
   return input.charAt(0).toUpperCase() + input.slice(1)
 }
+
+export const parseDurationToUnixTimestamp = (duration: string): number => {
+  const regex = /(\d+h)?\s*(\d+m)?\s*(\d+s)?/
+  const match = duration.match(regex)
+
+  if (!match) return 0
+
+  let totalMs = 0
+  if (match[1]) totalMs += parseInt(match[1]) * 60 * 60 * 1000
+  if (match[2]) totalMs += parseInt(match[2]) * 60 * 1000
+  if (match[3]) totalMs += parseInt(match[3]) * 1000
+
+  return totalMs
+}
+
+export const parseUnixTimestampToDuration = (totalMs: number): string => {
+  const hours = Math.floor(totalMs / (1000 * 60 * 60))
+  const minutes = Math.floor((totalMs % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((totalMs % (1000 * 60)) / 1000)
+
+  if (hours) {
+    return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`
+  } else if (minutes) {
+    return seconds === 0 ? `${minutes}m` : `${minutes}m ${seconds}s`
+  } else {
+    return `${seconds}s`
+  }
+}
