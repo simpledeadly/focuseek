@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from 'pinia'
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import type { Item } from '../types/item'
 import { fetchItemsFromServer } from '@/shared/api/api'
 
@@ -12,8 +12,21 @@ const fetchItems = async (): Promise<Item[]> => {
   }
 }
 
+const undefinedItem: Item = {
+  id: 0,
+  title: '',
+  type: 'todo',
+  userId: 0,
+  collectionId: 0,
+  createdAt: 0,
+  editedAt: 0,
+}
+
 export const useItemsStore = defineStore('items', () => {
   const items = shallowRef<Item[]>([])
+
+  const savedItem = localStorage.getItem('selectedItem')
+  const selectedItem = ref<Item>(savedItem ? JSON.parse(savedItem) : undefinedItem)
 
   const loadItems = async () => {
     try {
@@ -27,11 +40,22 @@ export const useItemsStore = defineStore('items', () => {
     loadItems()
   }
 
-  return { items, loadItems }
+  const setSelectedItem = (item: Item | null) => {
+    if (item) {
+      selectedItem.value = item
+      localStorage.setItem('selectedItem', JSON.stringify(item))
+    } else {
+      selectedItem.value = undefinedItem
+      localStorage.removeItem('selectedItem')
+    }
+  }
+
+  return { items, selectedItem, setSelectedItem }
 })
 
 export const useItems = () => {
   const { items } = storeToRefs(useItemsStore())
+  const { selectedItem, setSelectedItem } = useItemsStore()
 
-  return { items }
+  return { items, selectedItem, setSelectedItem }
 }
