@@ -20,7 +20,7 @@ import {
 import { Calendar } from '@/shared/ui/calendar'
 import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
-import { useItemShortcuts } from '../model/useItemShortcuts'
+import { useItemOptionsShortcuts } from '../model/useItemOptionsShortcuts'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -33,14 +33,18 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+  (e: 'switch-menu-state', value: boolean): void
   (e: 'remove'): void
   (e: 'add-description'): void
   (e: 'remove-description'): void
   (e: 'edit-date', value: number | undefined): void
   (e: 'edit-deadline', value: number | undefined): void
-  (e: 'edit-priority', value: number | undefined): void
+  (e: 'edit-priority', value: number | null): void
   (e: 'change-collection', value: number): void
   (e: 'change-type'): void
+  (e: 'change-duration-planned', value: number | null): void
+  (e: 'change-duration-real', value: number | null): void
+  (e: 'change-duration-real-from-opitons', value: number | null): void
 }>()
 
 const dateValue = ref<DateValue>()
@@ -51,7 +55,7 @@ const collectionId = ref(props.item.collectionId)
 
 const dropdownRef = ref<HTMLElement | null>(null)
 
-useItemShortcuts({
+useItemOptionsShortcuts({
   dropdownRef,
   isMenuOpen,
   priority,
@@ -76,6 +80,7 @@ const watchAndEmit = <T, U = T>(
   })
 }
 
+watch(isMenuOpen, () => emit('switch-menu-state', isMenuOpen.value))
 watchAndEmit(collectionId, 'change-collection', modelCollectionId, isMenuOpen)
 watchAndEmit(priority, 'edit-priority', modelPriority, isMenuOpen)
 watchAndEmit(dateValue, 'edit-date', modelDate, isMenuOpen, (val) =>
@@ -86,7 +91,6 @@ watchAndEmit(deadlineValue, 'edit-deadline', modelDeadline, isMenuOpen, (val) =>
 )
 
 const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
-  modelValue = undefined
   modelValue = undefined
   emit(emitTitle, modelValue)
 }
@@ -106,24 +110,6 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-48">
       <DropdownMenuGroup>
-        <DropdownMenuItem
-          v-if="!props.item.description"
-          @click="emit('add-description')"
-        >
-          <span>Add description</span>
-          <DropdownMenuShortcut>D</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          v-else
-          @click="emit('remove-description')"
-        >
-          <span>Remove description</span>
-          <DropdownMenuShortcut>⇧D</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem @click="emit('change-type')">
-          <span>Turn into {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
-          <DropdownMenuShortcut>T</DropdownMenuShortcut>
-        </DropdownMenuItem>
         <DropdownMenuSub v-if="!item.date">
           <DropdownMenuSubTrigger>
             <span>Set date</span>
@@ -164,37 +150,40 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
             <DropdownMenuSubContent class="w-40">
               <DropdownMenuRadioGroup
                 :modelValue="priority?.toString()"
-                @update:modelValue="(value) => (priority = Number(value))"
+                @update:modelValue="
+                  (value) => (value === '0' ? (priority = null) : (priority = Number(value)))
+                "
               >
                 <DropdownMenuRadioItem value="1">
                   High
                   <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
                     1
                   </DropdownMenuShortcut>
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="2">
                   Medium
                   <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
                     2
-                  </DropdownMenuShortcut> </DropdownMenuRadioItem
-                ><DropdownMenuRadioItem value="3">
+                  </DropdownMenuShortcut>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="3">
                   Low
                   <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
+                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
                     3
                   </DropdownMenuShortcut>
                 </DropdownMenuRadioItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioItem
                   value="0"
-                  @click="emit('edit-priority', 0)"
+                  @click="emit('edit-priority', null)"
                 >
                   No priority
                   <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>P</DropdownMenuShortcut>
-                    0
+                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
+                    4
                   </DropdownMenuShortcut>
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
@@ -221,6 +210,47 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
+        <DropdownMenuItem
+          v-if="props.item.description === null"
+          @click="emit('add-description')"
+        >
+          <span>Add description</span>
+          <DropdownMenuShortcut>D</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-else
+          @click="emit('remove-description')"
+        >
+          <span>Remove description</span>
+          <DropdownMenuShortcut>D</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          @click="emit('change-duration-real-from-opitons', 0)"
+          :disabled="
+            props.item.durationReal === 0 ||
+            (props.item.durationReal === null && !!props.item.durationPlanned)
+          "
+        >
+          <span>{{
+            props.item.durationReal === null && !props.item.durationPlanned
+              ? 'Start tracking'
+              : 'Reset stopwatch'
+          }}</span>
+          <DropdownMenuShortcut>{{
+            props.item.durationReal === null ? 'E' : '⇧S'
+          }}</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-if="props.item.durationReal !== null || props.item.durationPlanned"
+          @click="emit('change-duration-real-from-opitons', null)"
+        >
+          <span>Remove stopwatch</span>
+          <DropdownMenuShortcut>⇧E</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem @click="emit('change-type')">
+          <span>Turn into {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
+          <DropdownMenuShortcut>T</DropdownMenuShortcut>
+        </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="emit('remove')">
