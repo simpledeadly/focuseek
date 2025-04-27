@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 const model = defineModel<boolean>()
 
 const props = defineProps<{
-  priority?: number
+  priority?: number | null
   disabled?: boolean
 }>()
 
