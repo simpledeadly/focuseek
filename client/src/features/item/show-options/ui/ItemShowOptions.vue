@@ -234,7 +234,7 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         >
           <span>{{
             props.item.durationReal === null && !props.item.durationPlanned
-              ? 'Start tracking'
+              ? 'Add tracking'
               : 'Reset stopwatch'
           }}</span>
           <DropdownMenuShortcut>{{
