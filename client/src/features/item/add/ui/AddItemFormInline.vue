@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { Badge } from '@/shared/ui/badge'
 import { Calendar } from '@/shared/ui/calendar'
+import { Checkbox } from '@/shared/ui/checkbox'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import {
   DropdownMenu,
@@ -11,36 +12,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
-import { cn } from '@/shared/lib/utils'
+import { cn, parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { useItemType } from '../../filter'
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
-import { Checkbox } from '@/shared/ui/checkbox'
 
 const emit = defineEmits<{
   (
     e: 'submit',
     data: {
       itemTitle: string
-      parentId?: number
-      description?: string
+      parentId?: number | null
+      description?: string | null
       deadline?: number
       date?: number
-      priority?: number
-      durationPlanned?: number
+      priority?: number | null
+      durationPlanned?: number | null
     }
   ): void
 }>()
 
 const itemTitle = ref<string>('')
-const itemDescription = ref<string>('')
+const itemDescription = ref<string | null>('')
 const itemDeadline = ref<number>()
 const itemDate = ref<number>()
-const itemParentId = ref<number>()
-const itemPriority = ref<number>()
-const itemDurationPlanned = ref<number>()
+const itemParentId = ref<number | null>()
+const itemPriority = ref<number | null>()
 
 const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
+const durationPlannedValue = ref<string | null>()
 
 const { itemType } = useItemType()
 
@@ -49,24 +49,27 @@ const handleSubmit = () => {
     const data = {
       itemTitle: itemTitle.value,
       parentId: Number(itemParentId.value),
-      description: itemDescription.value,
+      description: itemDescription.value || null,
       deadline: Number(itemDeadline.value),
       date: Number(itemDate.value),
-      priority: Number(itemPriority.value),
-      durationPlanned: Number(itemDurationPlanned.value),
+      priority: itemPriority.value,
+      durationPlanned:
+        durationPlannedValue.value && Number(durationPlannedValue.value) !== 0
+          ? parseDurationToUnixTimestamp(durationPlannedValue.value)
+          : null,
     }
     emit('submit', data)
   } else {
     alert('Введите заголовок')
   }
   itemTitle.value = ''
-  itemDescription.value = ''
+  itemDescription.value = null
   itemDeadline.value = undefined
   itemDate.value = undefined
-  itemPriority.value = undefined
-  itemDurationPlanned.value = undefined
+  itemPriority.value = null
   dateValue.value = undefined
   deadlineValue.value = undefined
+  durationPlannedValue.value = null
 }
 
 const df = new DateFormatter('en-US', {
@@ -181,16 +184,36 @@ watch(deadlineValue, () => {
               <DropdownMenuContent>
                 <DropdownMenuRadioGroup
                   :modelValue="itemPriority?.toString()"
-                  @update:modelValue="(value) => (itemPriority = Number(value))"
+                  @update:modelValue="
+                    (value) =>
+                      value === '0' ? (itemPriority = null) : (itemPriority = Number(value))
+                  "
                 >
                   <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuRadioItem value="0"> No priority </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="0">No priority</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
+          <div class="item-entity__param">
+            <Badge
+              :variant="durationPlannedValue ? 'secondary' : 'outline'"
+              :class="
+                cn(
+                  'justify-start text-left font-normal',
+                  !durationPlannedValue && 'text-muted-foreground'
+                )
+              "
+            >
+              <input
+                v-model="durationPlannedValue"
+                placeholder="e.g. 2h 32m"
+                class="item-description__input"
+              />
+            </Badge>
           </div>
         </div>
       </div>
