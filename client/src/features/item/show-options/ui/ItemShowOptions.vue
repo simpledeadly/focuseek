@@ -33,7 +33,6 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'switch-menu-state', value: boolean): void
   (e: 'remove'): void
   (e: 'add-description'): void
   (e: 'remove-description'): void
@@ -80,7 +79,6 @@ const watchAndEmit = <T, U = T>(
   })
 }
 
-watch(isMenuOpen, () => emit('switch-menu-state', isMenuOpen.value))
 watchAndEmit(collectionId, 'change-collection', modelCollectionId, isMenuOpen)
 watchAndEmit(priority, 'edit-priority', modelPriority, isMenuOpen)
 watchAndEmit(dateValue, 'edit-date', modelDate, isMenuOpen, (val) =>
@@ -102,9 +100,12 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
     ref="dropdownRef"
   >
     <DropdownMenuTrigger as-child>
-      <div class="item-show-options">
+      <div
+        class="item-show-options"
+        :style="isMenuOpen && 'background: hsl(var(--border))'"
+      >
         <span class="checkbox-icon-toggle">
-          <Ellipsis class="h-4 w-4 transition-transform duration-100" />
+          <Ellipsis class="h-4 w-4 transition-transform duration-75" />
         </span>
       </div>
     </DropdownMenuTrigger>
