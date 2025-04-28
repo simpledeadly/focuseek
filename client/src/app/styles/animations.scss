@@ -1,0 +1,92 @@
+/* Animations for switching lists:
+- fade
+- fade-list
+*/
+
+/* Animations for switching pages:
+- dissolve
+- dissolve-smooth
+*/
+
+// fade
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition:
+    opacity 0.05s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.05s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.fade-leave-active {
+  position: absolute;
+  width: 70vw;
+}
+
+// fade-list
+.fade-list-move,
+.fade-list-enter-active,
+.fade-list-leave-active {
+  transition:
+    opacity 0.075s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.075s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-list-enter-from,
+.fade-list-leave-to {
+  opacity: 0;
+}
+
+.fade-list-leave-active {
+  position: absolute;
+  width: 70vw;
+}
+
+// dissolve
+.dissolve-enter-active,
+.dissolve-leave-active {
+  transition: opacity 0.075s ease;
+}
+
+.dissolve-enter-from,
+.dissolve-leave-to {
+  opacity: 0;
+}
+
+.dissolve-enter-to,
+.dissolve-leave-from {
+  opacity: 1;
+}
+
+// dissolve-smooth
+.dissolve-smooth-move,
+.dissolve-smooth-enter-active,
+.dissolve-smooth-leave-active {
+  transition:
+    opacity 0.075s ease,
+    transform 0.075s ease;
+}
+
+.dissolve-smooth-enter-from,
+.dissolve-smooth-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+  position: absolute;
+  width: 100%;
+}
+
+.dissolve-smooth-enter-to,
+.dissolve-smooth-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dissolve-smooth-leave-active {
+  position: absolute;
+  width: 100%;
+}
