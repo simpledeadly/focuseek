@@ -25,8 +25,3 @@ export const useItemTimeTrack = (items: ShallowRef<Item[]>) => {
 
   return { changeItemDurationPlanned, changeItemDurationReal, deleteTimer }
 }
-
-/*
-TODO:
-- [] 1. Вынести функции в эту модель, заменить функции в UI эмитами.
-*/
