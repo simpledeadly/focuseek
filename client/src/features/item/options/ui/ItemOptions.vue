@@ -36,6 +36,7 @@ const emit = defineEmits<{
   (e: 'remove'): void
   (e: 'add-description'): void
   (e: 'remove-description'): void
+  (e: 'open-details-page'): void
   (e: 'edit-date', value: number | undefined): void
   (e: 'edit-deadline', value: number | undefined): void
   (e: 'edit-priority', value: number | null): void
@@ -211,6 +212,10 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
+        <DropdownMenuItem @click="emit('open-details-page')">
+          <span>Open</span>
+          <DropdownMenuShortcut>G</DropdownMenuShortcut>
+        </DropdownMenuItem>
         <DropdownMenuItem
           v-if="props.item.description === null"
           @click="emit('add-description')"
