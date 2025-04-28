@@ -12,7 +12,6 @@ const slots = defineSlots<{
 
 <template>
   <div class="collection-entity flex collections-center space-x-4 rounded-md border p-2">
-    <!-- <h1>THIS IS COLLECTION, BITCH!</h1> -->
     <div class="collection-entity__row">
       <div class="collection-entity__row_part">
         <div
