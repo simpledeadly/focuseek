@@ -4,29 +4,20 @@ export const useAuth = defineStore('auth', {
   persist: true,
   state: () => ({
     userId: null as number | null,
+    username: null as string | null,
   }),
   getters: {
     getUserId: (state) => state.userId,
+    getUsername: (state) => state.username,
   },
   actions: {
     setUserId(id: number) {
       this.userId = id
-      console.log('setUserId 2:', this.$state.userId, this.userId)
+      console.log('setUserId:', this.$state.userId, this.userId)
+    },
+    setUsername(username: string) {
+      this.username = username
+      console.log('setUsername:', this.$state.username, this.username)
     },
   },
 })
-
-// export const useAuth = defineStore('auth', () => {
-//   const authUserId = shallowRef<number | null>(null)
-
-//   const setUserId = async (id: number) => {
-//     try {
-//       authUserId.value = id
-//       console.log('setUserId 2:', authUserId.value)
-//     } catch (error) {
-//       console.error('Ошибка при установке userId:', error)
-//     }
-//   }
-
-//   return { authUserId, setUserId }
-// })

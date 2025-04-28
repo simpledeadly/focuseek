@@ -9,7 +9,7 @@ const API_URL = 'http://localhost:3000/api'
 
 // === USERS ===
 
-const { setUserId, getUserId } = useAuth()
+const { setUserId, setUsername, getUserId } = useAuth()
 
 export const registerUser = async (username: string, password: string): Promise<User> => {
   try {
@@ -21,6 +21,7 @@ export const registerUser = async (username: string, password: string): Promise<
 
     localStorage.setItem('token', token)
     setUserId(userId)
+    setUsername(username)
 
     return response.data
   } catch (e) {
@@ -39,6 +40,7 @@ export const loginUser = async (username: string, password: string): Promise<Use
 
     localStorage.setItem('token', token)
     setUserId(userId)
+    setUsername(username)
 
     return response.data
   } catch (e) {
