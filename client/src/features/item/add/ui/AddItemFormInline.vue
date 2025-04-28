@@ -188,7 +188,7 @@ onMounted(() => {
     <Tooltip>
       <Transition
         name="fade-form"
-        mode="out-in"
+        mode="default"
       >
         <div
           v-if="!isShowForm"
@@ -367,10 +367,6 @@ onMounted(() => {
     border-bottom: 1px solid hsl(var(--border));
     cursor: pointer;
     transition: 0.1s;
-
-    &:hover {
-      border-color: hsl(var(--muted-foreground));
-    }
   }
 
   &__description input {
@@ -396,18 +392,17 @@ onMounted(() => {
 .fade-form-enter-active,
 .fade-form-leave-active {
   transition:
-    opacity 0.05s cubic-bezier(0.55, 0, 0.1, 1),
-    transform 0.05s cubic-bezier(0.55, 0, 0.1, 1);
+    opacity 0.1s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.1s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 .fade-form-enter-from,
 .fade-form-leave-to {
   opacity: 0;
-  transform: translateX(20px);
 }
 
 .fade-form-leave-active {
   position: absolute;
-  width: 100%;
+  width: 70vw;
 }
 </style>
