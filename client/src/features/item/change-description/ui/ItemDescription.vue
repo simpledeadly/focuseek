@@ -20,6 +20,7 @@ const { itemType } = useItemType()
 const toEdit = () => {
   newDescription.value = props.description
   isEdit.value = true
+  
   nextTick(() => {
     if (inputRef.value) {
       inputRef.value.focus()
@@ -55,6 +56,9 @@ const saveChanges = () => {
 
 const cancelChanges = () => {
   isEdit.value = false
+  if (!newDescription.value) {
+    emit('save', null)
+  }
   newDescription.value = null
 }
 </script>
