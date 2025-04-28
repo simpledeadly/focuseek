@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { isAuthenticated } from '../auth/auth'
 
 const routes = [
@@ -12,16 +12,9 @@ const routes = [
   },
   {
     path: '/:collection',
-    component: () => import('@/pages/todos'),
-    name: 'todos',
+    component: () => import('@/pages/list'),
+    name: 'list',
     meta: { requiresAuth: true },
-  },
-  {
-    path: '/:collection',
-    component: () => import('@/pages/notes'),
-    name: 'notes',
-    meta: { requiresAuth: true },
-    props: (route: RouteLocationNormalized) => ({ type: route.query.type }),
   },
   {
     path: '/:collection/:item',
