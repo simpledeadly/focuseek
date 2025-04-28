@@ -10,12 +10,13 @@ import { AppSidebar } from '@/widgets/sidebar'
 import { Loader } from '@/widgets/loader'
 import { isAuthenticated } from './auth/auth'
 import { Collection } from '@/entities/collection'
+import './styles/animations.scss'
 
 const isLoading = ref(false)
 const collections = ref<Collection[]>([])
 const setLoading = (value: boolean) => (isLoading.value = value)
 
-const transitionName = computed<any>(() => 'dissolve-smooth')
+const transitionName = computed<any>(() => 'dissolve')
 </script>
 
 <template>
@@ -57,45 +58,5 @@ const transitionName = computed<any>(() => 'dissolve-smooth')
   animation-duration: 75ms !important;
   background: hsl(var(--primary-foreground)) !important;
   border: 1px solid hsl(var(--border));
-}
-
-.dissolve-enter-active,
-.dissolve-leave-active {
-  transition: opacity 0.1s ease;
-}
-
-.dissolve-enter-from,
-.dissolve-leave-to {
-  opacity: 0;
-}
-
-.dissolve-enter-to,
-.dissolve-leave-from {
-  opacity: 1;
-}
-
-.dissolve-smooth-move,
-.dissolve-smooth-enter-active,
-.dissolve-smooth-leave-active {
-  transition: opacity 0.1s ease, transform 0.1s ease;
-}
-
-.dissolve-smooth-enter-from,
-.dissolve-smooth-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
-  position: absolute;
-  width: 100%;
-}
-
-.dissolve-smooth-enter-to,
-.dissolve-smooth-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.dissolve-smooth-leave-active {
-  position: absolute;
-  width: 100%;
 }
 </style>
