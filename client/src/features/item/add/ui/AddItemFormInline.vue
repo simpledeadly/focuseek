@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { Badge } from '@/shared/ui/badge'
 import { Calendar } from '@/shared/ui/calendar'
 import { Checkbox } from '@/shared/ui/checkbox'
@@ -15,6 +15,10 @@ import {
 import { cn, parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { useItemType } from '../../filter'
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
+import { PlusCircle, X } from 'lucide-vue-next'
+import Mousetrap from 'mousetrap'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
+import 'mousetrap/plugins/global-bind/mousetrap-global-bind'
 
 const emit = defineEmits<{
   (
@@ -42,7 +46,42 @@ const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const durationPlannedValue = ref<string | null>()
 
+const isShowForm = ref<boolean>(false)
+const inputRef = ref<HTMLInputElement | null>(null)
+
+const showForm = () => {
+  isShowForm.value = true
+
+  setTimeout(() => {
+    if (inputRef.value) {
+      inputRef.value.focus()
+      if (itemTitle.value) {
+        inputRef.value.select()
+      }
+      setTimeout(() => {
+        if (document.activeElement !== inputRef.value) {
+          inputRef.value?.focus()
+          if (itemTitle.value) inputRef.value?.select()
+        }
+      }, 100)
+    } else {
+      console.warn('inputRef is null')
+    }
+  }, 100)
+}
+
 const { itemType } = useItemType()
+
+const clearRefs = () => {
+  itemTitle.value = ''
+  itemDescription.value = null
+  itemDeadline.value = undefined
+  itemDate.value = undefined
+  itemPriority.value = null
+  dateValue.value = undefined
+  deadlineValue.value = undefined
+  durationPlannedValue.value = null
+}
 
 const handleSubmit = () => {
   if (itemTitle.value.length > 0) {
@@ -62,14 +101,7 @@ const handleSubmit = () => {
   } else {
     alert('Введите заголовок')
   }
-  itemTitle.value = ''
-  itemDescription.value = null
-  itemDeadline.value = undefined
-  itemDate.value = undefined
-  itemPriority.value = null
-  dateValue.value = undefined
-  deadlineValue.value = undefined
-  durationPlannedValue.value = null
+  clearRefs()
 }
 
 const df = new DateFormatter('en-US', {
@@ -91,6 +123,61 @@ watch(deadlineValue, () => {
     deadlineValue.value?.day
   )
 })
+
+declare module 'mousetrap' {
+  interface MousetrapInstance {
+    bindGlobal(
+      keys: string | string[],
+      callback: (e: KeyboardEvent, combo: string) => void,
+      action?: string
+    ): void
+  }
+}
+
+const withGuard = (guard: () => boolean, action: (e: KeyboardEvent, key?: string) => void) => {
+  return (e: KeyboardEvent, key?: string) => {
+    if (!guard()) return
+    e.preventDefault()
+    e.stopPropagation()
+    action(e, key)
+    return false
+  }
+}
+
+onMounted(() => {
+  const mousetrap = new Mousetrap()
+
+  const bindings: {
+    keys: string | string[]
+    guard: () => boolean
+    action: (e: KeyboardEvent, key?: string) => void
+  }[] = [
+    {
+      keys: ['esc'],
+      guard: () => isShowForm.value,
+      action: () => {
+        isShowForm.value = false
+        clearRefs()
+      },
+    },
+    {
+      keys: ['command+j', 'command+о'],
+      guard: () => !isShowForm.value,
+      action: () => {
+        isShowForm.value = true
+        showForm()
+      },
+    },
+  ]
+
+  for (const { keys, guard, action } of bindings) {
+    mousetrap.bindGlobal(keys, withGuard(guard, action))
+  }
+
+  onUnmounted(() => {
+    mousetrap.reset()
+  })
+})
 </script>
 
 <template>
@@ -98,133 +185,195 @@ watch(deadlineValue, () => {
     class="add-item-wrapper-inline"
     @keypress.enter="handleSubmit"
   >
-    <div class="item-entity pt-2 pb-2">
-      <Checkbox
-        class="item-checkbox"
-        v-if="itemType !== 'note'"
-        :style="
-          (itemPriority === 1 && 'border: 2px solid red') ||
-          (itemPriority === 2 && 'border: 2px solid orange') ||
-          (itemPriority === 3 && 'border: 2px solid blue')
-        "
-        :disabled="true"
-      />
-      <div class="item-entity__column">
-        <div class="item-entity__title">
-          <input
-            v-model="itemTitle"
-            type="text"
-            placeholder="Enter title"
-            class="item-title__input"
-          />
+    <Tooltip>
+      <Transition
+        name="fade-form"
+        mode="out-in"
+      >
+        <div
+          v-if="!isShowForm"
+          key="component-a"
+          class="add-item-wrapper-inline__show-form-button"
+          @click="showForm"
+        >
+          <PlusCircle :size="18" />
+          Add {{ itemType }}
         </div>
-        <div class="item-entity__description">
-          <input
-            v-model="itemDescription"
-            type="text"
-            placeholder="Enter description"
-            class="item-description__input"
+        <div
+          v-else
+          key="component-b"
+          class="item-entity pt-2 pb-2"
+        >
+          <Checkbox
+            class="item-checkbox"
+            v-if="itemType !== 'note'"
+            :style="
+              (itemPriority === 1 && 'border: 2px solid red') ||
+              (itemPriority === 2 && 'border: 2px solid orange') ||
+              (itemPriority === 3 && 'border: 2px solid blue')
+            "
+            :disabled="true"
           />
-        </div>
-        <div class="item-entity__params">
-          <div class="item-entity__param">
-            <Popover>
-              <PopoverTrigger as-child>
+          <div class="item-entity__column">
+            <div class="item-entity__title">
+              <input
+                v-model="itemTitle"
+                type="text"
+                placeholder="Enter title"
+                class="item-title__input"
+                ref="inputRef"
+              />
+            </div>
+            <div class="item-entity__description">
+              <input
+                v-model="itemDescription"
+                type="text"
+                placeholder="Enter description"
+                class="item-description__input"
+              />
+            </div>
+            <div class="item-entity__params">
+              <div class="item-entity__param">
+                <Popover>
+                  <PopoverTrigger as-child>
+                    <Badge
+                      :variant="dateValue ? 'secondary' : 'outline'"
+                      :class="
+                        cn(
+                          'justify-start text-left font-normal',
+                          !dateValue && 'text-muted-foreground'
+                        )
+                      "
+                    >
+                      {{ dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : 'Date' }}
+                    </Badge>
+                  </PopoverTrigger>
+                  <PopoverContent class="flex w-auto flex-col gap-y-2 p-2">
+                    <Calendar v-model="dateValue" />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div class="item-entity__param">
+                <Popover>
+                  <PopoverTrigger as-child>
+                    <Badge
+                      :variant="deadlineValue ? 'secondary' : 'outline'"
+                      :class="
+                        cn(
+                          'justify-start text-left font-normal',
+                          !deadlineValue && 'text-muted-foreground'
+                        )
+                      "
+                    >
+                      {{
+                        deadlineValue
+                          ? df.format(deadlineValue.toDate(getLocalTimeZone()))
+                          : 'Deadline'
+                      }}
+                    </Badge>
+                  </PopoverTrigger>
+                  <PopoverContent class="flex w-auto flex-col gap-y-2 p-2">
+                    <Calendar v-model="deadlineValue" />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div class="item-entity__param">
+                <DropdownMenu>
+                  <DropdownMenuTrigger as-child>
+                    <Badge
+                      :variant="itemPriority ? 'secondary' : 'outline'"
+                      :class="
+                        cn(
+                          'flex justify-start text-left font-normal',
+                          !itemPriority && 'text-muted-foreground'
+                        )
+                      "
+                    >
+                      {{ itemPriority ? itemPriority : 'Priority' }}
+                    </Badge>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuRadioGroup
+                      :modelValue="itemPriority?.toString()"
+                      @update:modelValue="
+                        (value) =>
+                          value === '0' ? (itemPriority = null) : (itemPriority = Number(value))
+                      "
+                    >
+                      <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuRadioItem value="0">No priority</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div class="item-entity__param">
                 <Badge
-                  :variant="dateValue ? 'secondary' : 'outline'"
-                  :class="
-                    cn('justify-start text-left font-normal', !dateValue && 'text-muted-foreground')
-                  "
-                >
-                  {{ dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : 'Date' }}
-                </Badge>
-              </PopoverTrigger>
-              <PopoverContent class="flex w-auto flex-col gap-y-2 p-2">
-                <Calendar v-model="dateValue" />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div class="item-entity__param">
-            <Popover>
-              <PopoverTrigger as-child>
-                <Badge
-                  :variant="deadlineValue ? 'secondary' : 'outline'"
+                  :variant="durationPlannedValue ? 'secondary' : 'outline'"
                   :class="
                     cn(
                       'justify-start text-left font-normal',
-                      !deadlineValue && 'text-muted-foreground'
+                      !durationPlannedValue && 'text-muted-foreground'
                     )
                   "
                 >
-                  {{
-                    deadlineValue ? df.format(deadlineValue.toDate(getLocalTimeZone())) : 'Deadline'
-                  }}
+                  <input
+                    v-model="durationPlannedValue"
+                    placeholder="e.g. 2h 32m"
+                    class="item-description__input"
+                  />
                 </Badge>
-              </PopoverTrigger>
-              <PopoverContent class="flex w-auto flex-col gap-y-2 p-2">
-                <Calendar v-model="deadlineValue" />
-              </PopoverContent>
-            </Popover>
+              </div>
+            </div>
           </div>
-          <div class="item-entity__param">
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Badge
-                  :variant="itemPriority ? 'secondary' : 'outline'"
-                  :class="
-                    cn(
-                      'flex justify-start text-left font-normal',
-                      !itemPriority && 'text-muted-foreground'
-                    )
-                  "
-                >
-                  {{ itemPriority ? itemPriority : 'Priority' }}
-                </Badge>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuRadioGroup
-                  :modelValue="itemPriority?.toString()"
-                  @update:modelValue="
-                    (value) =>
-                      value === '0' ? (itemPriority = null) : (itemPriority = Number(value))
-                  "
-                >
-                  <DropdownMenuRadioItem value="1">High</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="2">Medium</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="3">Low</DropdownMenuRadioItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuRadioItem value="0">No priority</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div class="item-entity__param">
-            <Badge
-              :variant="durationPlannedValue ? 'secondary' : 'outline'"
-              :class="
-                cn(
-                  'justify-start text-left font-normal',
-                  !durationPlannedValue && 'text-muted-foreground'
-                )
-              "
-            >
-              <input
-                v-model="durationPlannedValue"
-                placeholder="e.g. 2h 32m"
-                class="item-description__input"
+          <TooltipTrigger as-child>
+            <span class="checkbox-icon-toggle item-entity__options">
+              <X
+                class="h-4 w-4 transition-transform duration-75"
+                @click="isShowForm = false"
               />
-            </Badge>
-          </div>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p class="text-sm text-muted-foreground">
+              Press
+              <kbd
+                class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100"
+              >
+                <span class="text-xs">Esc</span>
+              </kbd>
+              to close
+            </p>
+          </TooltipContent>
         </div>
-      </div>
-    </div>
+      </Transition>
+    </Tooltip>
   </div>
 </template>
 
 <style lang="scss">
 .add-item-wrapper-inline {
+  &__show-form-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: hsl(var(--muted-foreground));
+    border-bottom: 1px solid hsl(var(--border));
+    cursor: pointer;
+    transition: 0.1s;
+
+    &:hover {
+      border-color: #333;
+    }
+  }
+
   .item-entity {
-    border: none;
+    // border: none;
+    position: relative;
 
     &__description input {
       font-size: 15px;
@@ -236,6 +385,32 @@ watch(deadlineValue, () => {
       max-width: 8rem;
       cursor: pointer;
     }
+
+    &__options {
+      position: absolute;
+      right: -0rem;
+      top: 12px;
+      display: flex;
+    }
   }
+}
+
+.fade-form-move,
+.fade-form-enter-active,
+.fade-form-leave-active {
+  transition:
+    opacity 0.05s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.05s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-form-enter-from,
+.fade-form-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.fade-form-leave-active {
+  position: absolute;
+  width: 100%;
 }
 </style>
