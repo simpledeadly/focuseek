@@ -3,7 +3,6 @@ import { ref, computed, watch } from 'vue'
 import { router } from '@/app/router/router'
 import {
   CommandDialog,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -90,12 +89,23 @@ watch(
                 :value="result.title"
                 @mousedown.prevent="handleResultClick(result)"
               >
-                {{ result.title }}
+                <div
+                  style="
+                    border-bottom: 1px solid hsl(var(--border));
+                    width: 100%;
+                    padding-bottom: 4px;
+                  "
+                >
+                  {{ result.title }}
+                  <br />
+                  <i style="color: #aaa">
+                    Коллекция: {{ findCollectionTitleById(result.collectionId) }}
+                  </i>
+                </div>
                 <CommandShortcut>{{ result.type }}</CommandShortcut>
               </CommandItem>
             </div>
           </CommandGroup>
-          <CommandEmpty>Ничего не найдено.</CommandEmpty>
         </CommandList>
       </div>
     </CommandDialog>
