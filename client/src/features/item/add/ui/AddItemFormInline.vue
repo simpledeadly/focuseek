@@ -196,7 +196,10 @@ onMounted(() => {
           class="add-item-wrapper-inline__show-form-button"
           @click="showForm"
         >
-          <PlusCircle :size="18" />
+          <PlusCircle
+            v-if="itemType !== 'note'"
+            :size="18"
+          />
           Add {{ itemType }}
         </div>
         <div
