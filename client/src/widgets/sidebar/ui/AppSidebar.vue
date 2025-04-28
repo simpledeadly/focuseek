@@ -147,9 +147,9 @@ const quitApp = async () => {
 
     &_active {
       border-radius: 4px;
-      // background: hsl(var(--border));
-      background: hsl(var(--foreground));
-      color: hsl(var(--background));
+      background: hsl(var(--border));
+      // background: hsl(var(--foreground));
+      // color: hsl(var(--background));
     }
   }
 }
