@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { CollectionEntity, useCollections } from '@/entities/collection'
-import { AddCollectionForm, useAddCollection } from '@/features/collection/add'
-import { Separator } from '@/shared/ui/separator'
-import { CollectionTitle, useChangeCollectionTitle } from '@/features/collection/change-title'
 import { Button } from '@/shared/ui/button'
+import { Separator } from '@/shared/ui/separator'
+import { Collection, CollectionEntity, useCollections } from '@/entities/collection'
+import { AddCollectionForm, useAddCollection } from '@/features/collection/add'
+import { CollectionTitle, useChangeCollectionTitle } from '@/features/collection/change-title'
 import { CollectionRemoveButton, useRemoveCollection } from '@/features/collection/remove'
+
+const emit = defineEmits<{
+  (e: 'collections', value: Collection[]): void
+}>()
 
 const router = useRouter()
 
@@ -13,6 +17,10 @@ const { collections } = useCollections()
 const { addCollection } = useAddCollection(collections)
 const { changeCollectionTitle } = useChangeCollectionTitle(collections)
 const { removeCollection } = useRemoveCollection(collections)
+
+setTimeout(() => {
+  emit('collections', collections.value)
+}, 50)
 </script>
 
 <template>
@@ -54,21 +62,5 @@ const { removeCollection } = useRemoveCollection(collections)
 <style lang="scss">
 .collections-page {
   /** keep */
-}
-
-.fade-move,
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: scaleY(0.01) translate(30px, 0);
-}
-
-.fade-leave-active {
-  position: absolute;
 }
 </style>
