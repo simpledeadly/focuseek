@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useAuth } from '@/app/auth/useAuth'
 import { ChevronDown, User2 } from 'lucide-vue-next'
 import {
   Sidebar,
@@ -19,6 +20,16 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import SettingsPage from '@/pages/settings'
+import { Collection } from '@/entities/collection'
+import { useRoute } from 'vue-router'
+
+const props = defineProps<{
+  collections?: Collection[]
+}>()
+
+const { getUsername, getUserId } = useAuth()
+
+const route = useRoute()
 
 const quitApp = async () => {
   localStorage.removeItem('token')
@@ -28,7 +39,7 @@ const quitApp = async () => {
 </script>
 
 <template>
-  <Sidebar class="sidebar">
+  <Sidebar class="sidebar toast">
     <SidebarTrigger />
     <SidebarHeader>
       <SidebarMenu>
@@ -36,7 +47,14 @@ const quitApp = async () => {
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton>
-                <User2 /> simpledeadly
+                <User2 />
+                {{
+                  getUsername === '1'
+                    ? 'simpledeadly'
+                    : getUsername === '2'
+                      ? 'dev'
+                      : 'User (id:' + getUserId + ')'
+                }}
                 <ChevronDown class="ml-auto" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
@@ -67,32 +85,31 @@ const quitApp = async () => {
       <SidebarGroup>
         <SidebarGroupLabel as-child>
           <RouterLink to="/collections">
-            <span>Collections</span>
+            <span style="color: hsl(var(--foreground))">Collections</span>
           </RouterLink>
         </SidebarGroupLabel>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <RouterLink to="/inbox">
-              <SidebarMenuButton as-child>
-                <span>Inbox</span>
-              </SidebarMenuButton>
-            </RouterLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <RouterLink to="/today">
-              <SidebarMenuButton as-child>
-                <span>Today</span>
-              </SidebarMenuButton>
-            </RouterLink>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <RouterLink to="/focuseek">
-              <SidebarMenuButton as-child>
-                <span>Focuseek</span>
-              </SidebarMenuButton>
-            </RouterLink>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <Transition
+          name="fade"
+          mode="out-in"
+        >
+          <SidebarMenu>
+            <SidebarMenuItem
+              v-for="col in props.collections"
+              :class="
+                route.path.includes(col.title.toLowerCase())
+                  ? 'sidebar__item_active'
+                  : 'sidebar__item'
+              "
+            >
+              <RouterLink :to="`/${col.title.toLowerCase()}`">
+                <SidebarMenuButton as-child>
+                  <span>{{ col.title }}</span>
+                </SidebarMenuButton>
+                <!-- <SidebarMenuBadge>{{ col.id }}</SidebarMenuBadge> -->
+              </RouterLink>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </Transition>
       </SidebarGroup>
     </SidebarContent>
 
@@ -104,7 +121,37 @@ const quitApp = async () => {
 
 <style lang="scss">
 .sidebar {
-  background: hsl(var(--background));
+  &__item {
+    color: hsl(var(--muted-foreground));
+    position: relative;
+    transition: color 0.05s ease;
+    border-radius: 4px;
+
+    &::before {
+      border-radius: 4px;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: hsl(var(--border));
+      opacity: 0;
+      transition: opacity 0.05s ease;
+      z-index: -1;
+    }
+
+    &:hover::before {
+      opacity: 0.4;
+    }
+
+    &_active {
+      border-radius: 4px;
+      // background: hsl(var(--border));
+      background: hsl(var(--foreground));
+      color: hsl(var(--background));
+    }
+  }
 }
 
 .icon {
