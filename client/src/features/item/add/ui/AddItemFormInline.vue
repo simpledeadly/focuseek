@@ -15,7 +15,7 @@ import {
 import { cn, parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { useItemType } from '../../filter'
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
-import { PlusCircle, X } from 'lucide-vue-next'
+import { X } from 'lucide-vue-next'
 import Mousetrap from 'mousetrap'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import 'mousetrap/plugins/global-bind/mousetrap-global-bind'
@@ -193,12 +193,13 @@ onMounted(() => {
         <div
           v-if="!isShowForm"
           key="component-a"
-          class="add-item-wrapper-inline__show-form-button"
+          class="item-entity pt-2 pb-2 item-entity__show-form-button"
           @click="showForm"
         >
-          <PlusCircle
+          <Checkbox
             v-if="itemType !== 'note'"
-            :size="18"
+            class="item-checkbox"
+            :disabled="true"
           />
           Add {{ itemType }}
         </div>
@@ -208,8 +209,8 @@ onMounted(() => {
           class="item-entity pt-2 pb-2"
         >
           <Checkbox
-            class="item-checkbox"
             v-if="itemType !== 'note'"
+            class="item-checkbox"
             :style="
               (itemPriority === 1 && 'border: 2px solid red') ||
               (itemPriority === 2 && 'border: 2px solid orange') ||
@@ -357,44 +358,37 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-.add-item-wrapper-inline {
+.item-entity {
+  position: relative;
+  // border: none;
+
   &__show-form-button {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding-top: 8px;
-    padding-bottom: 8px;
     color: hsl(var(--muted-foreground));
     border-bottom: 1px solid hsl(var(--border));
     cursor: pointer;
     transition: 0.1s;
 
     &:hover {
-      border-color: #333;
+      border-color: hsl(var(--muted-foreground));
     }
   }
 
-  .item-entity {
-    // border: none;
-    position: relative;
+  &__description input {
+    font-size: 15px;
+    color: hsl(var(--muted-foreground));
+  }
 
-    &__description input {
-      font-size: 15px;
-      color: hsl(var(--muted-foreground));
-    }
+  &__param {
+    display: flex;
+    max-width: 8rem;
+    cursor: pointer;
+  }
 
-    &__param {
-      display: flex;
-      max-width: 8rem;
-      cursor: pointer;
-    }
-
-    &__options {
-      position: absolute;
-      right: -0rem;
-      top: 12px;
-      display: flex;
-    }
+  &__options {
+    position: absolute;
+    right: -0rem;
+    top: 12px;
+    display: flex;
   }
 }
 
