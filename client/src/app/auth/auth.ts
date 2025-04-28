@@ -1,8 +1,6 @@
 export const isAuthenticated = () => {
-  // console.log('Проверка авторизации...')
   const token = localStorage.getItem('token')
   const auth = localStorage.getItem('auth')
-  // console.log('Токен:', token)
 
   if (!token) {
     console.log('Токен не найден')
@@ -23,7 +21,6 @@ export const isAuthenticated = () => {
     }
 
     const payload = JSON.parse(atob(parts[1]))
-    // console.log('Payload:', payload)
 
     if (!payload || !payload.exp) {
       console.log('Невалидный payload')
@@ -31,24 +28,9 @@ export const isAuthenticated = () => {
     }
 
     const isExpired = payload.exp * 1000 < Date.now()
-    // console.log('Токен истек:', isExpired)
     return !isExpired
   } catch (e) {
     console.error('Ошибка при декодировании токена:', e)
     return false
   }
 }
-
-// export const isAuthenticated = async () => {
-//   try {
-//     const response = await axios.get('http://localhost:3000/api/check-token', {
-//       headers: {
-//         Authorization: localStorage.getItem('token'),
-//       },
-//     })
-//     return response.data.isValid
-//   } catch (error) {
-//     console.error('Ошибка при проверке токена:', error)
-//     return false
-//   }
-// }
