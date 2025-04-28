@@ -26,7 +26,7 @@ export const useItemsStore = defineStore('items', () => {
   const items = shallowRef<Item[]>([])
 
   const savedItem = localStorage.getItem('selectedItem')
-  const selectedItem = ref<Item>(savedItem ? JSON.parse(savedItem) : undefinedItem)
+  const item = ref<Item>(savedItem ? JSON.parse(savedItem) : undefinedItem)
 
   const loadItems = async () => {
     try {
@@ -40,22 +40,22 @@ export const useItemsStore = defineStore('items', () => {
     loadItems()
   }
 
-  const setSelectedItem = (item: Item | null) => {
-    if (item) {
-      selectedItem.value = item
-      localStorage.setItem('selectedItem', JSON.stringify(item))
+  const setSelectedItem = (selectedItem: Item | null) => {
+    if (selectedItem) {
+      item.value = selectedItem
+      localStorage.setItem('selectedItem', JSON.stringify(selectedItem))
     } else {
-      selectedItem.value = undefinedItem
+      item.value = undefinedItem
       localStorage.removeItem('selectedItem')
     }
   }
 
-  return { items, selectedItem, setSelectedItem }
+  return { items, item, setSelectedItem }
 })
 
 export const useItems = () => {
   const { items } = storeToRefs(useItemsStore())
-  const { selectedItem, setSelectedItem } = useItemsStore()
+  const { item, setSelectedItem } = useItemsStore()
 
-  return { items, selectedItem, setSelectedItem }
+  return { items, item, setSelectedItem }
 }
