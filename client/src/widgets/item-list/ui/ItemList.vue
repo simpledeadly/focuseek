@@ -14,7 +14,6 @@ import { ItemSubItemsToggle, useShowSubItems } from '@/features/item/show-sub-it
 import { ItemOptions } from '@/features/item/options'
 import { useCollections } from '@/entities/collection'
 import { useSwitchItemCollection } from '@/features/item/switch-collection'
-import { StickyNote } from 'lucide-vue-next'
 import { useSwitchItemType } from '@/features/item/switch-type'
 import { ItemTimeTrack, useItemTimeTrack } from '@/features/item/time-track'
 import { Search } from '@/widgets/search'
@@ -42,10 +41,7 @@ const isTimeTracking = ref<boolean>(false)
 
 <template>
   <Search />
-  <div
-    v-if="filteredParentItems.length > 0"
-    class="item-list"
-  >
+  <div class="item-list">
     <TransitionGroup name="fade">
       <ItemEntity
         v-for="item in filteredParentItems"
@@ -265,57 +261,65 @@ const isTimeTracking = ref<boolean>(false)
       </AddItemFormInline>
     </TransitionGroup>
   </div>
-  <div
-    v-else
+  <!-- <div
+    v-if="filteredParentItems.length === 0"
     class="empty"
   >
-    <StickyNote :size="40" />
-    <strong class="empty__message">No {{ itemType }}s</strong>
-  </div>
+    <StickyNote :size="60" />
+    <div class="empty__message">
+      <b>No {{ itemType }}s</b>
+      <p class="text-sm text-muted-foreground mt-1">
+        Press
+        <kbd
+          class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100"
+        >
+          <span class="text-xs">⌘</span>J
+        </kbd>
+        to show form
+      </p>
+    </div>
+  </div> -->
 </template>
 
 <style lang="scss">
 .item-list {
   width: 70vw;
-  margin-bottom: 5rem;
+  margin-bottom: 4rem;
 }
 
 .empty {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   margin-top: 2rem;
   margin-bottom: 2rem;
   color: #acacac;
+  height: 50vh;
 
   &__message {
     margin-top: 0.5rem;
-    font-size: 20px;
-  }
-}
-
-.pagination {
-  opacity: 0;
-  transition: all 0.05s;
-
-  &:hover {
-    opacity: 1;
+    font-size: 24px;
   }
 }
 
 .fade-move,
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.05s cubic-bezier(0.55, 0, 0.1, 1);
+  transition:
+    opacity 0.1s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.1s cubic-bezier(0.55, 0, 0.1, 1);
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: scaleY(0.01) translate(30px, 0);
+  transform: translateX(20px);
 }
 
 .fade-leave-active {
   position: absolute;
+  width: 100%;
 }
 </style>
