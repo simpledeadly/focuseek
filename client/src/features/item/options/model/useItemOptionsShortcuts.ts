@@ -5,6 +5,7 @@ import { Item } from '@/entities/item'
 export type Emit = {
   (e: 'remove'): void
   (e: 'add-description'): void
+  (e: 'open-details-page'): void
   (e: 'remove-description'): void
   (e: 'edit-priority', value: number | null): void
   (e: 'change-duration-planned', value: number | null): void
@@ -66,6 +67,14 @@ export const useItemOptionsShortcuts = ({
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
           emit('remove')
+          isMenuOpen.value = false
+        },
+      },
+      {
+        keys: ['g', 'п'],
+        guard: () => isMenuOpen.value && !isPriorityMode.value,
+        action: () => {
+          emit('open-details-page')
           isMenuOpen.value = false
         },
       },
