@@ -42,3 +42,19 @@ export const parseUnixTimestampToDuration = (totalMs: number): string => {
     return `${seconds}s`
   }
 }
+
+export const convertToLink = (text: string): string => {
+  const urlRegex = /(?:\()?(https?:\/\/[^\s<>()]+)(?:\))?/g
+  return text.replace(urlRegex, (match, url) => {
+    return match.replace(
+      url,
+      `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-entity__link">${url}</a>`
+    )
+  })
+}
+
+export const sanitizeHtml = (html: string): string => {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/on\w+="[^"]*"/gi, '')
+}
