@@ -452,7 +452,7 @@ setTimeout(() => {
               addItem(
                 collectionId,
                 $event.itemTitle,
-                itemType,
+                item.type,
                 item.id,
                 $event.description,
                 $event.deadline,
