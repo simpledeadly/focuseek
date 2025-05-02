@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
+import { convertToLink, sanitizeHtml } from '@/shared/lib/utils'
 import { useItemType } from '@/features/item/filter'
 import { Check, Edit3, X } from 'lucide-vue-next'
 
@@ -17,8 +18,10 @@ const isEdit = ref<boolean>(false)
 const newTitle = ref<string>('')
 const { itemType } = useItemType()
 
+const displayTitle = computed(() => sanitizeHtml(convertToLink(props.title)))
+
 const toEdit = () => {
-  newTitle.value = props.title
+  newTitle.value = props.title.replace(/<[^>]+>/g, '')
   isEdit.value = true
 }
 
@@ -39,9 +42,10 @@ const cancelChanges = () => {
       v-if="!isEdit"
       class="item-title__inner"
     >
-      <div :class="props.isDone ? 'item-title__label_done' : 'item-title__label'">
-        {{ props.title }}
-      </div>
+      <div
+        :class="props.isDone ? 'item-title__label_done' : 'item-title__label'"
+        v-html="displayTitle"
+      />
       <Tooltip v-if="!props.isDone">
         <TooltipTrigger as-child>
           <button
