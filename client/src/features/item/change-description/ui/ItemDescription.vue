@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
+import { convertToLink, sanitizeHtml } from '@/shared/lib/utils'
 import { useItemType } from '@/features/item/filter'
 import { Check, Edit3, X } from 'lucide-vue-next'
 
 const props = defineProps<{
-  description?: string
+  description?: string | null
 }>()
 
 const emit = defineEmits<{
@@ -17,10 +18,17 @@ const newDescription = ref<string | undefined | null>('')
 const inputRef = ref<HTMLInputElement | null>(null)
 const { itemType } = useItemType()
 
+const displayDescription = computed(() => {
+  if (!props.description || props.description.trim() === '') {
+    return null
+  }
+  return sanitizeHtml(convertToLink(props.description))
+})
+
 const toEdit = () => {
-  newDescription.value = props.description
+  newDescription.value = props.description?.replace(/<[^>]+>/g, '') ?? null
   isEdit.value = true
-  
+
   nextTick(() => {
     if (inputRef.value) {
       inputRef.value.focus()
@@ -50,13 +58,24 @@ watch(
 )
 
 const saveChanges = () => {
-  emit('save', newDescription.value ? newDescription.value : null)
-  cancelChanges()
+  const trimmedValue = newDescription.value?.trim()
+  const valueToEmit = trimmedValue || null
+  console.log('Saving description:', { newDescription: newDescription.value, valueToEmit })
+  emit('save', valueToEmit)
+  isEdit.value = false
+  newDescription.value = null
 }
 
 const cancelChanges = () => {
+  console.log(
+    'Canceling, original description:',
+    props.description,
+    'newDescription:',
+    newDescription.value
+  )
   isEdit.value = false
-  if (!newDescription.value) {
+  if (!props.description || props.description.trim() === '') {
+    console.log('Emitting null on cancel')
     emit('save', null)
   }
   newDescription.value = null
@@ -69,9 +88,10 @@ const cancelChanges = () => {
       v-if="!isEdit"
       class="item-description__inner"
     >
-      <div class="item-description__label">
-        {{ props.description }}
-      </div>
+      <div
+        class="item-description__label"
+        v-html="displayDescription"
+      />
       <Tooltip>
         <TooltipTrigger as-child>
           <button
