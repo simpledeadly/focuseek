@@ -16,7 +16,7 @@ const isLoading = ref(false)
 const collections = ref<Collection[]>([])
 const setLoading = (value: boolean) => (isLoading.value = value)
 
-const transitionName = computed<any>(() => 'dissolve')
+const transitionName = computed<any>(() => 'dissolve-smooth')
 </script>
 
 <template>
@@ -34,7 +34,6 @@ const transitionName = computed<any>(() => 'dissolve')
         <template #content>
           <Transition
             :name="transitionName"
-            mode="out-in"
           >
             <RouterView @collections="collections = $event" />
           </Transition>
