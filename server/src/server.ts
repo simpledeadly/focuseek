@@ -331,33 +331,54 @@ app.post('/api/items', authenticate, async (req, res) => {
   }
 })
 
+const updateItemWithChildren = async (
+  id: number,
+  data: Partial<Item> & { collectionId?: number; type?: ItemType }
+) => {
+  const updateData: any = {
+    ...data,
+    collectionId: data.collectionId !== undefined ? Number(data.collectionId) : undefined,
+    editedAt: new Date(),
+    date: data.date ? new Date(data.date) : null,
+    deadline: data.deadline ? new Date(data.deadline) : null,
+  }
+
+  const updatedItem = await prisma.item.update({
+    where: { id },
+    data: {
+      ...updateData,
+      id: undefined,
+      parentItemId: undefined,
+    },
+  })
+
+  if (data.collectionId !== undefined || data.type !== undefined) {
+    const children = await prisma.item.findMany({
+      where: { parentItemId: id },
+    })
+
+    for (const child of children) {
+      await updateItemWithChildren(child.id, {
+        collectionId: data.collectionId ?? child.collectionId,
+        type: data.type ?? child.type,
+      })
+    }
+  }
+
+  return updatedItem
+}
+
 app.put('/api/items/:id', async (req, res) => {
   const id = +req.params.id
-  const updatedItem: Item = req.body
+  const itemData: Partial<Item> = req.body
 
   try {
-    const updatedItemData = await prisma.item.update({
-      where: { id },
-      data: {
-        collectionId: Number(updatedItem.collectionId),
-        parentItemId: updatedItem.parentItemId,
-        title: updatedItem.title,
-        type: updatedItem.type,
-        createdAt: new Date(updatedItem.createdAt),
-        editedAt: new Date(updatedItem.editedAt),
-        isDone: updatedItem.isDone,
-        description: updatedItem.description,
-        priority: updatedItem.priority,
-        durationPlanned: updatedItem.durationPlanned,
-        durationReal: updatedItem.durationReal,
-        tags: updatedItem.tags,
-        date: updatedItem.date ? new Date(updatedItem.date) : null,
-        deadline: updatedItem.deadline ? new Date(updatedItem.deadline) : null,
-        showSubItems: updatedItem.showSubItems,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      return await updateItemWithChildren(id, itemData)
     })
-    console.log(chalk.hex('#fff').bold(`PUT item:`), updatedItemData)
-    res.status(200).json({ message: 'Элемент успешно обновлен', item: updatedItemData })
+
+    console.log(chalk.hex('#fff').bold(`PUT item:`), result)
+    res.status(200).json({ message: 'Элемент успешно обновлен', item: result })
   } catch (error) {
     console.error('Ошибка при обновлении элемента:', error)
     res.status(404).json({ message: 'Элемент не найден' })
