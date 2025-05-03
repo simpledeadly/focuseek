@@ -6,46 +6,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { prisma } from './prismaClient'
 import { authenticate } from './middlewares/authentication'
-
-type ItemType = 'todo' | 'note'
-
-type Item = {
-  id: number
-  userId: number
-  collectionId: number
-  parentItemId?: number
-  title: string
-  type: ItemType
-  createdAt: number
-  editedAt: number
-  isDone?: boolean
-  description?: string
-  priority?: number
-  durationPlanned?: number
-  durationReal?: number
-  tags?: string[]
-  date?: number
-  deadline?: number
-  showSubItems?: boolean
-}
-
-type Collection = {
-  id: number
-  userId: number
-  title: string
-  createdAt: number
-  editedAt: number
-}
-
-type Timer = {
-  id: number
-  userId: number
-  collectionId: number
-  itemId: number
-  startTime: number | null
-  trackedDuration: number
-  isRunning: boolean
-}
+import { Item, ItemType, Collection, Timer } from './types'
 
 const app = express()
 const PORT: string | number = process.env.PORT || 3000
