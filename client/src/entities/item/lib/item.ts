@@ -40,6 +40,28 @@ export const updateItem = (item: Item, changes: Partial<Item>): Item => {
   return { ...item, ...changes }
 }
 
+export const updateItemWithSubItems = (
+  itemList: Item[],
+  item: Item,
+  changes: Partial<Item>
+): Item[] => {
+  const idsToUpdate = new Set<number>()
+  const parentIds = [item.id]
+
+  while (parentIds.length > 0) {
+    const currentParentId = parentIds.pop()!
+    idsToUpdate.add(currentParentId)
+
+    for (const it of itemList) {
+      if (it.parentItemId === currentParentId) {
+        parentIds.push(it.id)
+      }
+    }
+  }
+
+  return itemList.filter((it) => idsToUpdate.has(it.id)).map((it) => updateItem(it, changes))
+}
+
 export const addItemToList = (itemList: Item[], item: Item): Item[] => {
   return [...itemList, item]
 }
@@ -50,6 +72,13 @@ export const replaceItemInList = (itemList: Item[], newItem: Item): Item[] => {
     return [...itemList.slice(0, idx), newItem, ...itemList.slice(idx + 1)]
   }
   return itemList
+}
+
+export const replaceItemsInList = (itemList: Item[], updatedItems: Item[]): Item[] => {
+  const updatedList = itemList.filter(
+    (item) => !updatedItems.some((updated) => updated.id === item.id)
+  )
+  return [...updatedList, ...updatedItems]
 }
 
 export const removeItemFromListById = (itemList: Item[], id: number): Item[] => {
