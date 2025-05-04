@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Collection, useCollections } from '@/entities/collection'
-import { ItemList } from '@/widgets/item-list'
+import { ItemListGroup } from '@/widgets/item-list'
 import { TabBar } from '@/widgets/tabbar'
 
 const emit = defineEmits<{
@@ -18,7 +18,7 @@ setTimeout(() => {
 <template>
   <div class="list-page">
     <TabBar />
-    <ItemList />
+    <ItemListGroup />
   </div>
 </template>
 
