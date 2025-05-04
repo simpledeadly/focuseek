@@ -30,6 +30,7 @@ const modelCollectionId = defineModel<number>('collectionId')
 const props = defineProps<{
   item: Item
   collections: Collection[]
+  hasSubItems: boolean
 }>()
 
 const emit = defineEmits<{
@@ -45,6 +46,7 @@ const emit = defineEmits<{
   (e: 'change-duration-planned', value: number | null): void
   (e: 'change-duration-real', value: number | null): void
   (e: 'change-duration-real-from-opitons', value: number | null): void
+  (e: 'toggle-sub-item-form'): void
 }>()
 
 const dateValue = ref<DateValue>()
@@ -229,6 +231,20 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         >
           <span>Remove description</span>
           <DropdownMenuShortcut>D</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-if="!props.item.showSubItems && !hasSubItems"
+          @click="emit('toggle-sub-item-form')"
+        >
+          <span>Add subitem form</span>
+          <DropdownMenuShortcut>S</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          v-if="props.item.showSubItems && !hasSubItems"
+          @click="emit('toggle-sub-item-form')"
+        >
+          <span>Remove subitem form</span>
+          <DropdownMenuShortcut>S</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem
           @click="emit('change-duration-real-from-opitons', 0)"
