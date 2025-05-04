@@ -5,7 +5,9 @@ import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'radix-vue
 import { Check } from 'lucide-vue-next'
 import { cn } from '@/shared/lib/utils'
 
-const props = defineProps<CheckboxRootProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps<
+  CheckboxRootProps & { class?: HTMLAttributes['class']; noTick?: boolean }
+>()
 const emits = defineEmits<CheckboxRootEmits>()
 
 const delegatedProps = computed(() => {
@@ -31,7 +33,7 @@ const model = defineModel<boolean>()
     "
   >
     <CheckboxIndicator class="flex h-full w-full items-center justify-center text-current">
-      <slot>
+      <slot v-if="!props.noTick">
         <Check class="h-4 w-4" />
       </slot>
     </CheckboxIndicator>
