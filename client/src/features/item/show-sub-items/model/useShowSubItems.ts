@@ -10,7 +10,7 @@ export const useShowSubItems = (items: ShallowRef<Item[]>) => {
   }
 
   const itemsMap = computed(() => {
-    const map = new Map<number, Item[]>()
+    const map = new Map<number | null, Item[]>()
     items.value.forEach((item) => {
       if (item.parentItemId !== undefined) {
         const parentId = item.parentItemId
