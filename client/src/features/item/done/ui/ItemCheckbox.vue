@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { toRef } from 'vue'
 import { toast } from 'vue-sonner'
 import { Checkbox } from '@/shared/ui/checkbox'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
+import { checkboxStyle } from '../../composables'
 
 const model = defineModel<boolean>()
 
@@ -16,6 +18,8 @@ const toaster = () => {
     class: 'toast',
   })
 }
+
+const style = checkboxStyle(toRef(props, 'priority'), model)
 </script>
 
 <template>
@@ -25,19 +29,13 @@ const toaster = () => {
         class="item-checkbox"
         v-model="model"
         @click="!model && toaster()"
-        :style="
-          ((props.priority === 1 && model) && 'border: 2px solid red; background: red') ||
-          ((props.priority === 2 && model) && 'border: 2px solid orange; background: orange') ||
-          ((props.priority === 3 && model) && 'border: 2px solid blue; background: blue') ||
-          (props.priority === 1 && 'border: 2px solid red') ||
-          (props.priority === 2 && 'border: 2px solid orange') ||
-          (props.priority === 3 && 'border: 2px solid blue')
-        "
+        :style="style"
         :disabled="props.disabled"
+        no-tick
       />
     </TooltipTrigger>
     <TooltipContent>
-      <p>Mark as done</p>
+      <p>{{ model ? 'Undone' : 'Done' }}</p>
     </TooltipContent>
   </Tooltip>
 </template>
@@ -45,6 +43,11 @@ const toaster = () => {
 <style lang="scss">
 .item-checkbox {
   border-radius: 100%;
+  border-style: solid;
+  transition: all 0.05s linear;
+  // box-shadow:
+  //   inset 5px 5px 10px rgba(255, 255, 255, 0.1),
+  //   inset -5px -5px 15px rgba(0, 0, 0, 0.4);
 
   &:disabled {
     margin-top: 4px;

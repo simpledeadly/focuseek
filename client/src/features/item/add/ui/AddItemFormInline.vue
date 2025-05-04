@@ -19,6 +19,7 @@ import { X } from 'lucide-vue-next'
 import Mousetrap from 'mousetrap'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import 'mousetrap/plugins/global-bind/mousetrap-global-bind'
+import { checkboxStyle } from '../../composables'
 
 const emit = defineEmits<{
   (
@@ -178,6 +179,8 @@ onMounted(() => {
     mousetrap.reset()
   })
 })
+
+const style = checkboxStyle(itemPriority)
 </script>
 
 <template>
@@ -211,11 +214,7 @@ onMounted(() => {
           <Checkbox
             v-if="itemType !== 'note'"
             class="item-checkbox"
-            :style="
-              (itemPriority === 1 && 'border: 2px solid red') ||
-              (itemPriority === 2 && 'border: 2px solid orange') ||
-              (itemPriority === 3 && 'border: 2px solid blue')
-            "
+            :style="style"
             :disabled="true"
           />
           <div class="item-entity__column">
