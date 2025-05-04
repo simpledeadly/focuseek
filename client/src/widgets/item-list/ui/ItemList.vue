@@ -43,8 +43,6 @@ const {
           <div
             v-for="(item, index) in filteredParentItems"
             :key="item.id"
-            :style="`--index: ${index};`"
-            class="item"
           >
             <ItemSubList
               :index="index"
