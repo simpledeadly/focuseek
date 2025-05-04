@@ -1,49 +1,65 @@
 <script setup lang="ts">
-import { ItemEntity, useItems, filterNestedItems, ItemType, Item } from '@/entities/item'
-import { AddItemFormInline, useAddItem } from '@/features/item/add'
-import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
-import { ItemDescription, useChangeItemDescription } from '@/features/item/change-description'
-import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
-import { ItemPriority, useChangeItemPriority } from '@/features/item/change-priority'
-import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
-import { ItemCheckbox, useDoneItem } from '@/features/item/done'
-import { useFilterItems } from '@/features/item/filter'
-import { useRemoveItem } from '@/features/item/remove'
-import { ItemSubItemsToggle, useShowSubItems } from '@/features/item/show-sub-items'
+import { ItemEntity, Item } from '@/entities/item'
+import { AddItemFormInline } from '@/features/item/add'
+import { ItemTitle } from '@/features/item/change-title'
+import { ItemDescription } from '@/features/item/change-description'
+import { ItemDeadline } from '@/features/item/change-deadline'
+import { ItemPriority } from '@/features/item/change-priority'
+import { ItemDate } from '@/features/item/change-date'
+import { ItemCheckbox } from '@/features/item/done'
+import { ItemSubItemsToggle } from '@/features/item/show-sub-items'
 import { ItemOptions } from '@/features/item/options'
-import { Collection, useCollections } from '@/entities/collection'
-import { useSwitchItemCollection } from '@/features/item/switch-collection'
-import { useSwitchItemType } from '@/features/item/switch-type'
-import { ItemTimeTrack, useItemTimeTrack } from '@/features/item/time-track'
-import ItemSubList from './ItemSubList.vue'
+import { ItemTimeTrack } from '@/features/item/time-track'
+import { useItemList } from '../composable/useItemList'
 
-const { items } = useItems()
-const { itemType, filteredItems, collectionId } = useFilterItems(items)
-const { addItem } = useAddItem(items)
-const { removeItem } = useRemoveItem(items)
-const { toggleDoneItem } = useDoneItem(items)
-const { toggleShowSubItems, hasSubItems } = useShowSubItems(items)
-const { changeItemTitle } = useChangeItemTitle(items)
-const { changeItemDescription } = useChangeItemDescription(items)
-const { changeItemDeadline } = useChangeItemDeadline(items)
-const { changeItemDate } = useChangeItemDate(items)
-const { changeItemPriority } = useChangeItemPriority(items)
-const { switchItemType } = useSwitchItemType(items)
-const { changeItemDurationPlanned, changeItemDurationReal, deleteTimer } = useItemTimeTrack(items)
+const {
+  itemType,
+  filteredItems,
+  collectionId,
+  addItem,
+  removeItem,
+  toggleDoneItem,
+  toggleShowSubItems,
+  hasSubItems,
+  changeItemTitle,
+  changeItemDescription,
+  changeItemDeadline,
+  changeItemDate,
+  changeItemPriority,
+  switchItemType,
+  changeItemDurationPlanned,
+  changeItemDurationReal,
+  deleteTimer,
+  collections,
+  switchItemCollection,
+  showAllParams,
+  isTimeTracking,
+  openDetailsPage,
+  filterNestedItems,
+} = useItemList()
 
-const { collections } = useCollections()
-const { switchItemCollection } = useSwitchItemCollection(items)
+const emit = defineEmits<{
+  (e: 'toggle-done', ...args: any[]): void
+  (e: 'change-title', ...args: any[]): void
+  (e: 'change-description', ...args: any[]): void
+  (e: 'change-duration-planned', ...args: any[]): void
+  (e: 'change-duration-real', ...args: any[]): void
+  (e: 'delete-timer', ...args: any[]): void
+  (e: 'change-date', ...args: any[]): void
+  (e: 'change-deadline', ...args: any[]): void
+  (e: 'change-priority', ...args: any[]): void
+  (e: 'switch-collection', ...args: any[]): void
+  (e: 'switch-type', ...args: any[]): void
+  (e: 'remove', ...args: any[]): void
+  (e: 'toggle-show-sub-items', ...args: any[]): void
+  (e: 'add-description', ...args: any[]): void
+  (e: 'remove-description', ...args: any[]): void
+  (e: 'open-details-page', ...args: any[]): void
+}>()
 
 defineProps<{
   index: number
   item: Item
-  filteredItems: Item[]
-  collections: Collection[]
-  itemType: ItemType
-  showAllParams: boolean
-  isTimeTracking: boolean
-  filterNestedItems: Item[]
-  openDetailsPage: (item: Item) => void
 }>()
 </script>
 
@@ -180,22 +196,22 @@ defineProps<{
               :is-time-tracking="isTimeTracking"
               :has-sub-items="hasSubItems"
               :filter-nested-items="filterNestedItems"
-              @toggle-done="$emit('toggle-done', ...arguments)"
-              @change-title="$emit('change-title', ...arguments)"
-              @change-description="$emit('change-description', ...arguments)"
-              @change-duration-planned="$emit('change-duration-planned', ...arguments)"
-              @change-duration-real="$emit('change-duration-real', ...arguments)"
-              @delete-timer="$emit('delete-timer', ...arguments)"
-              @change-date="$emit('change-date', ...arguments)"
-              @change-deadline="$emit('change-deadline', ...arguments)"
-              @change-priority="$emit('change-priority', ...arguments)"
-              @switch-collection="$emit('switch-collection', ...arguments)"
-              @switch-type="$emit('switch-type', ...arguments)"
-              @remove="$emit('remove', ...arguments)"
-              @toggle-show-sub-items="$emit('toggle-show-sub-items', ...arguments)"
-              @add-description="$emit('add-description', ...arguments)"
-              @remove-description="$emit('remove-description', ...arguments)"
-              @open-details-page="$emit('open-details-page', ...arguments)"
+              @toggle-done="(...args) => emit('toggle-done', ...args)"
+              @change-title="(...args) => emit('change-title', ...args)"
+              @change-description="(...args) => emit('change-description', ...args)"
+              @change-duration-planned="(...args) => emit('change-duration-planned', ...args)"
+              @change-duration-real="(...args) => emit('change-duration-real', ...args)"
+              @delete-timer="(...args) => emit('delete-timer', ...args)"
+              @change-date="(...args) => emit('change-date', ...args)"
+              @change-deadline="(...args) => emit('change-deadline', ...args)"
+              @change-priority="(...args) => emit('change-priority', ...args)"
+              @switch-collection="(...args) => emit('switch-collection', ...args)"
+              @switch-type="(...args) => emit('switch-type', ...args)"
+              @remove="(...args) => emit('remove', ...args)"
+              @toggle-show-sub-items="(...args) => emit('toggle-show-sub-items', ...args)"
+              @add-description="(...args) => emit('add-description', ...args)"
+              @remove-description="(...args) => emit('remove-description', ...args)"
+              @open-details-page="(...args) => emit('open-details-page', ...args)"
             />
           </div>
           <AddItemFormInline
@@ -224,15 +240,8 @@ defineProps<{
 </template>
 
 <style lang="scss">
-// .item {
-//   transition:
-//     opacity 0.5s cubic-bezier(0.55, 0, 0.1, 1),
-//     transform 0.5s cubic-bezier(0.55, 0, 0.1, 1);
-//   transition-delay: calc(0.05s * var(--index));
-// }
-
 .sub-items-container {
-  max-height: 3000px; /* Достаточно большой для подэлементов */
+  max-height: 3000px;
   transition:
     max-height 0.2s ease-in-out,
     opacity 0.2s ease-in-out;
