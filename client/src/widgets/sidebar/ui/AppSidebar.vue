@@ -93,21 +93,29 @@ const quitApp = async () => {
           mode="out-in"
         >
           <SidebarMenu>
-            <SidebarMenuItem
-              v-for="col in props.collections"
-              :class="
-                route.path.includes(col.title.toLowerCase())
-                  ? 'sidebar__item_active'
-                  : 'sidebar__item'
-              "
-            >
-              <RouterLink :to="`/${col.title.toLowerCase()}`">
-                <SidebarMenuButton as-child>
-                  <span>{{ col.title }}</span>
-                </SidebarMenuButton>
-                <!-- <SidebarMenuBadge>{{ col.id }}</SidebarMenuBadge> -->
-              </RouterLink>
-            </SidebarMenuItem>
+            <TransitionGroup name="fade-list">
+              <div
+                v-for="(col, idx) in props.collections"
+                :key="col.id"
+                :style="`--index: ${idx};`"
+                class="sub-item"
+              >
+                <SidebarMenuItem
+                  :class="
+                    route.path.includes(col.title.toLowerCase())
+                      ? 'sidebar__item_active'
+                      : 'sidebar__item'
+                  "
+                >
+                  <RouterLink :to="`/${col.title.toLowerCase()}`">
+                    <SidebarMenuButton as-child>
+                      <span>{{ col.title }}</span>
+                    </SidebarMenuButton>
+                    <!-- <SidebarMenuBadge>{{ col.id }}</SidebarMenuBadge> -->
+                  </RouterLink>
+                </SidebarMenuItem>
+              </div>
+            </TransitionGroup>
           </SidebarMenu>
         </Transition>
       </SidebarGroup>
