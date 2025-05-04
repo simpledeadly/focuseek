@@ -239,11 +239,11 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         >
           <span>{{
             props.item.durationReal === null && !props.item.durationPlanned
-              ? 'Add tracking'
+              ? 'Add stopwatch'
               : 'Reset stopwatch'
           }}</span>
           <DropdownMenuShortcut>{{
-            props.item.durationReal === null ? 'E' : '⇧S'
+            props.item.durationReal === null ? 'E' : '⇧E'
           }}</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -251,7 +251,7 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
           @click="emit('change-duration-real-from-opitons', null)"
         >
           <span>Remove stopwatch</span>
-          <DropdownMenuShortcut>⇧E</DropdownMenuShortcut>
+          <DropdownMenuShortcut>E</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem @click="emit('change-type')">
           <span>Turn into {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>

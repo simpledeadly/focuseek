@@ -99,23 +99,24 @@ export const useItemOptionsShortcuts = ({
       },
       {
         keys: ['e', 'у'],
-        guard: () => isMenuOpen.value && !isPriorityMode.value && props.item.durationReal === null,
+        guard: () =>
+          isMenuOpen.value &&
+          !isPriorityMode.value &&
+          (props.item.durationReal === null || props.item.durationReal !== null),
         action: () => {
-          emit('change-duration-real', 0)
+          props.item.durationReal !== null
+            ? emit('change-duration-real-from-opitons', null)
+            : emit('change-duration-real-from-opitons', 0)
           isMenuOpen.value = false
         },
       },
       {
         keys: ['shift+e', 'shift+у'],
-        guard: () => isMenuOpen.value && !isPriorityMode.value && props.item.durationReal !== null,
-        action: () => {
-          emit('change-duration-real-from-opitons', null)
-          isMenuOpen.value = false
-        },
-      },
-      {
-        keys: ['shift+s', 'shift+ы'],
-        guard: () => isMenuOpen.value && !isPriorityMode.value && props.item.durationReal !== 0,
+        guard: () =>
+          isMenuOpen.value &&
+          !isPriorityMode.value &&
+          props.item.durationReal !== 0 &&
+          props.item.durationReal !== null,
         action: () => {
           emit('change-duration-real-from-opitons', 0)
           isMenuOpen.value = false
