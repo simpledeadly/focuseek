@@ -82,7 +82,7 @@ const openDetailsPage = (item: Item) => {
             >
               <template
                 #subItemsToggle
-                v-if="hasSubItems(item.id)"
+                v-if="hasSubItems(item.id) || item.showSubItems"
               >
                 <ItemSubItemsToggle
                   :model-value="item.showSubItems"
@@ -158,6 +158,7 @@ const openDetailsPage = (item: Item) => {
                 <ItemOptions
                   :item="item"
                   :collections="collections"
+                  :hasSubItems="hasSubItems(item.id)"
                   :model-value:collectionId="item.collectionId"
                   @change-collection="switchItemCollection(item, $event)"
                   @change-type="switchItemType(item, item.type === 'todo' ? 'note' : 'todo')"
@@ -174,6 +175,7 @@ const openDetailsPage = (item: Item) => {
                   @change-duration-real="changeItemDurationReal(item, $event)"
                   @change-duration-real-from-opitons="deleteTimer(item, $event)"
                   @open-details-page="openDetailsPage(item)"
+                  @toggle-sub-item-form="toggleShowSubItems(item)"
                 />
               </template>
               <template #subItems>
@@ -201,7 +203,7 @@ const openDetailsPage = (item: Item) => {
                         "
                       >
                         <template
-                          v-if="hasSubItems(subItem.id)"
+                          v-if="hasSubItems(subItem.id) || subItem.showSubItems"
                           #subItemsToggle
                         >
                           <ItemSubItemsToggle
@@ -278,6 +280,7 @@ const openDetailsPage = (item: Item) => {
                           <ItemOptions
                             :item="subItem"
                             :collections="collections"
+                            :hasSubItems="hasSubItems(subItem.id)"
                             :model-value:collectionId="subItem.collectionId"
                             @change-collection="switchItemCollection(subItem, $event)"
                             @change-type="
@@ -296,6 +299,7 @@ const openDetailsPage = (item: Item) => {
                             @change-duration-real="changeItemDurationReal(subItem, $event)"
                             @change-duration-real-from-opitons="deleteTimer(subItem, $event)"
                             @open-details-page="openDetailsPage(subItem)"
+                            @toggle-sub-item-form="toggleShowSubItems(subItem)"
                           />
                         </template>
                         <template #subItems>
@@ -325,7 +329,7 @@ const openDetailsPage = (item: Item) => {
                               >
                                 <template
                                   #subItemsToggle
-                                  v-if="hasSubItems(subItem2.id)"
+                                  v-if="hasSubItems(subItem2.id) || subItem2.showSubItems"
                                 >
                                   <ItemSubItemsToggle
                                     :model-value="subItem2.showSubItems"
@@ -405,6 +409,7 @@ const openDetailsPage = (item: Item) => {
                                   <ItemOptions
                                     :item="subItem2"
                                     :collections="collections"
+                                    :hasSubItems="hasSubItems(subItem2.id)"
                                     :model-value:collectionId="subItem2.collectionId"
                                     @change-collection="switchItemCollection(subItem2, $event)"
                                     @change-type="
@@ -430,14 +435,52 @@ const openDetailsPage = (item: Item) => {
                                       deleteTimer(subItem2, $event)
                                     "
                                     @open-details-page="openDetailsPage(subItem2)"
+                                    @toggle-sub-item-form="toggleShowSubItems(subItem2)"
                                   />
                                 </template>
                               </ItemEntity>
+                              <AddItemFormInline
+                                v-if="item.showSubItems"
+                                v-model:type="itemType"
+                                key="add-item-form"
+                                @submit="
+                                  addItem(
+                                    collectionId,
+                                    $event.itemTitle,
+                                    itemType,
+                                    subItem.id,
+                                    $event.description,
+                                    $event.deadline,
+                                    $event.date,
+                                    $event.priority,
+                                    $event.durationPlanned
+                                  )
+                                "
+                              >
+                              </AddItemFormInline>
                             </div>
                           </TransitionGroup>
                         </template>
                       </ItemEntity>
                     </div>
+                    <AddItemFormInline
+                      v-model:type="itemType"
+                      key="add-item-form"
+                      @submit="
+                        addItem(
+                          collectionId,
+                          $event.itemTitle,
+                          itemType,
+                          item.id,
+                          $event.description,
+                          $event.deadline,
+                          $event.date,
+                          $event.priority,
+                          $event.durationPlanned
+                        )
+                      "
+                    >
+                    </AddItemFormInline>
                   </div>
                 </TransitionGroup>
               </template>
