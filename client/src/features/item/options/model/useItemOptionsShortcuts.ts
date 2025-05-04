@@ -12,6 +12,7 @@ export type Emit = {
   (e: 'change-duration-real', value: number | null): void
   (e: 'change-duration-real-from-opitons', value: number | null): void
   (e: 'change-type'): void
+  (e: 'toggle-sub-item-form'): void
 }
 
 interface UseItemOptionsShortcutsParams {
@@ -19,7 +20,7 @@ interface UseItemOptionsShortcutsParams {
   isMenuOpen: Ref<boolean>
   priority: Ref<number | undefined | null>
   modelPriority: Ref<number | undefined | null>
-  props: { item: Item }
+  props: { item: Item; hasSubItems: boolean }
   emit: Emit
 }
 
@@ -86,6 +87,18 @@ export const useItemOptionsShortcuts = ({
           (!props.item.description || !!props.item.description),
         action: () => {
           props.item.description === null ? emit('add-description') : emit('remove-description')
+          isMenuOpen.value = false
+        },
+      },
+      {
+        keys: ['s', 'ы'],
+        guard: () =>
+          isMenuOpen.value &&
+          !isPriorityMode.value &&
+          !props.hasSubItems &&
+          (!props.item.showSubItems || props.item.showSubItems),
+        action: () => {
+          emit('toggle-sub-item-form')
           isMenuOpen.value = false
         },
       },
