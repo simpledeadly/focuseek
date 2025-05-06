@@ -146,6 +146,11 @@ const cancelChanges = () => {
     &_done {
       color: hsl(var(--muted-foreground));
       text-decoration: line-through;
+
+      .link {
+        color: hsl(var(--muted-foreground));
+        text-decoration: none;
+      }
     }
   }
 

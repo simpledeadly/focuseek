@@ -48,7 +48,7 @@ export const convertToLink = (text: string): string => {
   return text.replace(urlRegex, (match, url) => {
     return match.replace(
       url,
-      `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-entity__link">${url}</a>`
+      `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link">${url}</a>`
     )
   })
 }

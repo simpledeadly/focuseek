@@ -140,6 +140,10 @@ const cancelChanges = () => {
   font-size: 15px;
   color: hsl(var(--muted-foreground));
 
+  .link {
+    color: hsl(var(--muted-foreground));
+  }
+
   &__inner {
     display: flex;
     gap: calc(var(--radius) - 2px);

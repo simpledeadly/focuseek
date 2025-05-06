@@ -140,13 +140,13 @@ const props = defineProps<{
     max-width: 8rem;
     cursor: pointer;
   }
+}
 
-  &__link {
-    color: hsl(var(--primary));
-    cursor: pointer;
-    transition: all 0.075s linear;
-    text-decoration: underline;
-  }
+.link {
+  color: hsl(var(--primary));
+  cursor: pointer;
+  transition: all 0.075s linear;
+  text-decoration: underline;
 }
 
 .subitems-list {

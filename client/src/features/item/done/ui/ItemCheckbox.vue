@@ -45,9 +45,6 @@ const style = checkboxStyle(toRef(props, 'priority'), model)
   border-radius: 100%;
   border-style: solid;
   transition: all 0.05s linear;
-  // box-shadow:
-  //   inset 5px 5px 10px rgba(255, 255, 255, 0.1),
-  //   inset -5px -5px 15px rgba(0, 0, 0, 0.4);
 
   &:disabled {
     margin-top: 4px;
