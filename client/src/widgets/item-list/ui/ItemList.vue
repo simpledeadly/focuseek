@@ -151,12 +151,16 @@ defineProps<{
         :hasSubItems="hasSubItems(item.id)"
         :model-value:collectionId="item.collectionId"
         @change-collection="
-          updateItemProperty(item, { collectionId: $event }, { withChildren: true })
+          updateItemProperty(
+            item,
+            { collectionId: $event, parentItemId: null },
+            { withChildren: true }
+          )
         "
         @change-type="
           updateItemProperty(
             item,
-            { type: item.type === 'todo' ? 'note' : 'todo' },
+            { type: item.type === 'todo' ? 'note' : 'todo', parentItemId: null },
             { withChildren: true }
           )
         "
