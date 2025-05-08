@@ -18,6 +18,7 @@ export type Emit = {
 interface UseItemOptionsShortcutsParams {
   dropdownRef: Ref<HTMLElement | null>
   isMenuOpen: Ref<boolean>
+  isMenuSubOpen: Ref<boolean>
   priority: Ref<number | undefined | null>
   modelPriority: Ref<number | undefined | null>
   props: { item: Item; hasSubItems: boolean }
@@ -27,6 +28,7 @@ interface UseItemOptionsShortcutsParams {
 export const useItemOptionsShortcuts = ({
   dropdownRef,
   isMenuOpen,
+  isMenuSubOpen,
   priority,
   modelPriority,
   props,
@@ -37,6 +39,7 @@ export const useItemOptionsShortcuts = ({
 
   const exitPriorityMode = () => {
     isPriorityMode.value = false
+    isMenuSubOpen.value = false
     isMenuOpen.value = false
     if (priorityTimeout) {
       clearTimeout(priorityTimeout)
@@ -140,6 +143,7 @@ export const useItemOptionsShortcuts = ({
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
           isPriorityMode.value = true
+          isMenuSubOpen.value = true
           priorityTimeout = setTimeout(exitPriorityMode, 1000)
         },
       },

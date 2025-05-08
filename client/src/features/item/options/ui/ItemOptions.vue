@@ -23,6 +23,7 @@ import { Ellipsis } from 'lucide-vue-next'
 import { useItemOptionsShortcuts } from '../model/useItemOptionsShortcuts'
 import { Input } from '@/shared/ui/input'
 import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
+import { Button } from '@/shared/ui/button'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -54,6 +55,7 @@ const emit = defineEmits<{
 const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
+const isMenuSubOpen = ref(false)
 const inputValue = ref()
 const priority = ref(props.item.priority)
 const collectionId = ref(props.item.collectionId)
@@ -63,6 +65,7 @@ const dropdownRef = ref<HTMLElement | null>(null)
 useItemOptionsShortcuts({
   dropdownRef,
   isMenuOpen,
+  isMenuSubOpen,
   priority,
   modelPriority,
   props,
@@ -97,6 +100,7 @@ watchAndEmit(deadlineValue, 'edit-deadline', modelDeadline, isMenuOpen, (val) =>
 const handleRemove = (emitTitle: any, modelValue: number | undefined | null) => {
   modelValue = null
   emit(emitTitle, modelValue)
+  isMenuOpen.value = false
 }
 
 const handleChangeDuration = async () => {
@@ -161,9 +165,9 @@ const handleChangeDuration = async () => {
         >
           <span>Remove deadline</span>
         </DropdownMenuItem>
-        <DropdownMenuSub>
+        <DropdownMenuSub v-model:open="isMenuSubOpen">
           <DropdownMenuSubTrigger>
-            <span>{{ item.priority ? 'Edit priority' : 'Set priority' }}</span>
+            <span>{{ item.priority ? 'Change priority' : 'Set priority' }}</span>
             <DropdownMenuShortcut>F</DropdownMenuShortcut>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
@@ -262,9 +266,9 @@ const handleChangeDuration = async () => {
           <span>Remove subitem form</span>
           <DropdownMenuShortcut>S</DropdownMenuShortcut>
         </DropdownMenuItem>
-        <DropdownMenuSub v-if="!props.item.durationPlanned">
+        <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <span>Set duration</span>
+            <span>{{ !props.item.durationPlanned ? 'Set duration' : 'Change duration' }}</span>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
@@ -274,15 +278,16 @@ const handleChangeDuration = async () => {
                 placeholder="e.g. 1h 23m 45s"
                 @keydown.enter="handleChangeDuration"
               />
+              <Button
+                variant="outline"
+                class="mt-1 w-full"
+                @click="handleRemove('change-duration-planned', null)"
+                :disabled="!props.item.durationPlanned"
+                >Remove</Button
+              >
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
-        <DropdownMenuItem
-          v-else
-          @click="handleRemove('change-duration-planned', inputValue)"
-        >
-          <span>Remove duration</span>
-        </DropdownMenuItem>
         <DropdownMenuItem
           @click="emit('reset-timer')"
           :disabled="
@@ -307,7 +312,7 @@ const handleChangeDuration = async () => {
           <DropdownMenuShortcut>E</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem @click="emit('change-type')">
-          <span>Turn into {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
+          <span>Switch to {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
           <DropdownMenuShortcut>T</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuGroup>
