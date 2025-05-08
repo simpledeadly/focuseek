@@ -4,29 +4,20 @@ import { AddItemFormInline } from '@/features/item/add'
 import { useItemList, ItemList } from '..'
 
 const {
-  itemType,
+  activeKey,
   filteredItems,
   filteredParentItems,
-  collectionId,
-  addItem,
-  removeItem,
-  toggleDoneItem,
-  toggleShowSubItems,
-  hasSubItems,
-  changeItemTitle,
-  changeItemDescription,
-  changeItemDeadline,
-  changeItemDate,
-  changeItemPriority,
-  switchItemType,
-  changeItemDurationPlanned,
-  changeItemDurationReal,
-  deleteTimer,
+  itemType,
   collections,
-  switchItemCollection,
+  collectionId,
   showAllParams,
   isTimeTracking,
-  activeKey,
+  updateItemProperty,
+  addItem,
+  removeItem,
+  toggleShowSubItems,
+  hasSubItems,
+  deleteTimer,
   openDetailsPage,
   filterNestedItems,
 } = useItemList()
@@ -56,21 +47,21 @@ const {
               :has-sub-items="hasSubItems"
               :filter-nested-items="filterNestedItems"
               :openDetailsPage="openDetailsPage"
-              @toggle-done="toggleDoneItem"
-              @change-title="changeItemTitle"
-              @change-description="changeItemDescription"
-              @change-duration-planned="changeItemDurationPlanned"
-              @change-duration-real="changeItemDurationReal"
+              @toggle-done="updateItemProperty"
+              @change-title="updateItemProperty"
+              @change-description="updateItemProperty"
+              @change-duration-planned="updateItemProperty"
+              @change-duration-real="updateItemProperty"
               @delete-timer="deleteTimer"
-              @change-date="changeItemDate"
-              @change-deadline="changeItemDeadline"
-              @change-priority="changeItemPriority"
-              @switch-collection="switchItemCollection"
-              @switch-type="switchItemType"
+              @change-date="updateItemProperty"
+              @change-deadline="updateItemProperty"
+              @change-priority="updateItemProperty"
+              @switch-collection="updateItemProperty"
+              @switch-type="updateItemProperty"
               @remove="removeItem"
               @toggle-show-sub-items="toggleShowSubItems"
-              @add-description="changeItemDescription"
-              @remove-description="changeItemDescription"
+              @add-description="updateItemProperty"
+              @remove-description="updateItemProperty"
               @open-details-page="openDetailsPage"
             />
           </div>
