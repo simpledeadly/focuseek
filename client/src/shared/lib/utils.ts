@@ -19,7 +19,12 @@ export const parseDurationToUnixTimestamp = (duration: string): number => {
   const regex = /(\d+h)?\s*(\d+m)?\s*(\d+s)?/
   const match = duration.match(regex)
 
-  if (!match) return 0
+  if (!match || match[0] === '') {
+    const msg = 'Введите время в формате 1h 1m 1s\n'
+    console.log(msg, duration, match)
+    alert(msg)
+    return 0
+  }
 
   let totalMs = 0
   if (match[1]) totalMs += parseInt(match[1]) * 60 * 60 * 1000
