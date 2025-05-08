@@ -58,3 +58,8 @@ export const sanitizeHtml = (html: string): string => {
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/on\w+="[^"]*"/gi, '')
 }
+
+export const handleError = (error: unknown, context: string = '') => {
+  const message = error instanceof Error ? error.message : 'Unknown error'
+  console.error(`${context}: ${message}`)
+}

@@ -6,34 +6,25 @@ import { ItemDescription } from '@/features/item/change-description'
 import { ItemDeadline } from '@/features/item/change-deadline'
 import { ItemPriority } from '@/features/item/change-priority'
 import { ItemDate } from '@/features/item/change-date'
-import { ItemCheckbox } from '@/features/item/done'
+import { ItemCheckbox } from '@/features/item/change-done'
 import { ItemSubItemsToggle } from '@/features/item/show-sub-items'
 import { ItemOptions } from '@/features/item/options'
 import { ItemTimeTrack } from '@/features/item/time-track'
 import { useItemList } from '../composable/useItemList'
 
 const {
-  itemType,
   filteredItems,
-  collectionId,
-  addItem,
-  removeItem,
-  toggleDoneItem,
-  toggleShowSubItems,
-  hasSubItems,
-  changeItemTitle,
-  changeItemDescription,
-  changeItemDeadline,
-  changeItemDate,
-  changeItemPriority,
-  switchItemType,
-  changeItemDurationPlanned,
-  changeItemDurationReal,
-  deleteTimer,
+  itemType,
   collections,
-  switchItemCollection,
+  collectionId,
   showAllParams,
   isTimeTracking,
+  updateItemProperty,
+  addItem,
+  removeItem,
+  toggleShowSubItems,
+  hasSubItems,
+  deleteTimer,
   openDetailsPage,
   filterNestedItems,
 } = useItemList()
@@ -92,14 +83,14 @@ defineProps<{
       <ItemCheckbox
         :priority="item.priority"
         :model-value="item.isDone"
-        @update:model-value="toggleDoneItem(item)"
+        @update:model-value="updateItemProperty(item, { isDone: !item.isDone })"
       />
     </template>
     <template #title>
       <ItemTitle
         :is-done="item.isDone"
         :title="item.title"
-        @save="changeItemTitle(item, $event)"
+        @save="updateItemProperty(item, { title: $event })"
       />
     </template>
     <template
@@ -108,7 +99,7 @@ defineProps<{
     >
       <ItemDescription
         :description="item.description"
-        @save="changeItemDescription(item, $event)"
+        @save="updateItemProperty(item, { description: $event })"
       />
     </template>
     <template
@@ -118,9 +109,9 @@ defineProps<{
       <ItemTimeTrack
         :item="item"
         :model-value="isTimeTracking"
-        @change-duration-planned="changeItemDurationPlanned(item, $event)"
-        @change-duration-real="changeItemDurationReal(item, $event)"
-        @change-duration-real-from-options="deleteTimer(item, $event)"
+        @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
+        @change-duration-real="updateItemProperty(item, { durationReal: $event })"
+        @change-duration-real-from-opitons="deleteTimer(item, $event)"
       />
     </template>
     <template
@@ -129,7 +120,7 @@ defineProps<{
     >
       <ItemDate
         :model-value="item.date"
-        @change="changeItemDate(item, $event)"
+        @change="updateItemProperty(item, { date: $event })"
       />
     </template>
     <template
@@ -138,7 +129,7 @@ defineProps<{
     >
       <ItemDeadline
         :model-value="item.deadline"
-        @change="changeItemDeadline(item, $event)"
+        @change="updateItemProperty(item, { deadline: $event })"
       />
     </template>
     <template
@@ -147,7 +138,7 @@ defineProps<{
     >
       <ItemPriority
         :model-value="item.priority"
-        @update:model-value="changeItemPriority(item, $event)"
+        @update:model-value="updateItemProperty(item, { priority: $event })"
       />
     </template>
     <template #options>
@@ -156,19 +147,27 @@ defineProps<{
         :collections="collections"
         :hasSubItems="hasSubItems(item.id)"
         :model-value:collectionId="item.collectionId"
-        @change-collection="switchItemCollection(item, $event)"
-        @change-type="switchItemType(item, item.type === 'todo' ? 'note' : 'todo')"
+        @change-collection="
+          updateItemProperty(item, { collectionId: $event }, { withChildren: true })
+        "
+        @change-type="
+          updateItemProperty(
+            item,
+            { type: item.type === 'todo' ? 'note' : 'todo' },
+            { withChildren: true }
+          )
+        "
         @remove="removeItem(item)"
-        @add-description="changeItemDescription(item, '')"
-        @remove-description="changeItemDescription(item, null)"
+        @add-description="updateItemProperty(item, { description: '' })"
+        @remove-description="updateItemProperty(item, { description: null })"
         :model-value:date="item.date"
-        @edit-date="changeItemDate(item, $event)"
+        @edit-date="updateItemProperty(item, { date: $event })"
         :model-value:deadline="item.deadline"
-        @edit-deadline="changeItemDeadline(item, $event)"
+        @edit-deadline="updateItemProperty(item, { deadline: $event })"
         :model-value:priority="item.priority"
-        @edit-priority="changeItemPriority(item, $event)"
-        @change-duration-planned="changeItemDurationPlanned(item, $event)"
-        @change-duration-real="changeItemDurationReal(item, $event)"
+        @edit-priority="updateItemProperty(item, { priority: $event })"
+        @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
+        @change-duration-real="updateItemProperty(item, { durationReal: $event })"
         @change-duration-real-from-opitons="deleteTimer(item, $event)"
         @open-details-page="openDetailsPage(item)"
         @toggle-sub-item-form="toggleShowSubItems(item)"

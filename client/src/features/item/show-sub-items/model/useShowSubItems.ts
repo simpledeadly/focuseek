@@ -24,3 +24,33 @@ export const useShowSubItems = (items: ShallowRef<Item[]>) => {
 
   return { toggleShowSubItems, hasSubItems }
 }
+
+/*
+import { useItemUpdater } from '../../composables/useItemUpdater'
+
+export const useShowSubItems = (items: ShallowRef<Item[]>) => {
+  const { updateItemProperty } = useItemUpdater(items)
+
+  const itemsMap = computed(() => {
+    return items.value.reduce((map, item) => {
+      const parentId = item.parentItemId ?? null
+      map.set(parentId, [...(map.get(parentId) || []), item])
+      return map
+    }, new Map<number | null, Item[]>())
+  })
+
+  const hasSubItems = (itemId: number) => itemsMap.value.get(itemId)?.length > 0
+
+  const toggleShowSubItems = async (item: Item) => {
+    await updateItemProperty(item, {
+      showSubItems: !item.showSubItems,
+    })
+  }
+
+  return {
+    toggleShowSubItems,
+    hasSubItems,
+    itemsMap,
+  }
+}
+*/
