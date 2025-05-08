@@ -35,7 +35,7 @@ const style = checkboxStyle(toRef(props, 'priority'), model)
       />
     </TooltipTrigger>
     <TooltipContent>
-      <p>{{ model ? 'Undone' : 'Done' }}</p>
+      <p>{{ `Mark as ${model ? 'undone': 'done'}` }}</p>
     </TooltipContent>
   </Tooltip>
 </template>
