@@ -24,6 +24,7 @@ const {
   removeItem,
   toggleShowSubItems,
   hasSubItems,
+  resetTimer,
   deleteTimer,
   openDetailsPage,
   filterNestedItems,
@@ -35,6 +36,7 @@ const emit = defineEmits<{
   (e: 'change-description', ...args: any[]): void
   (e: 'change-duration-planned', ...args: any[]): void
   (e: 'change-duration-real', ...args: any[]): void
+  (e: 'reset-timer', ...args: any[]): void
   (e: 'delete-timer', ...args: any[]): void
   (e: 'change-date', ...args: any[]): void
   (e: 'change-deadline', ...args: any[]): void
@@ -111,7 +113,8 @@ defineProps<{
         :model-value="isTimeTracking"
         @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
         @change-duration-real="updateItemProperty(item, { durationReal: $event })"
-        @change-duration-real-from-opitons="deleteTimer(item, $event)"
+        @reset-timer="resetTimer(item)"
+        @remove-timer="deleteTimer(item)"
       />
     </template>
     <template
@@ -167,8 +170,8 @@ defineProps<{
         :model-value:priority="item.priority"
         @edit-priority="updateItemProperty(item, { priority: $event })"
         @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
-        @change-duration-real="updateItemProperty(item, { durationReal: $event })"
-        @change-duration-real-from-opitons="deleteTimer(item, $event)"
+        @reset-timer="resetTimer(item)"
+        @remove-timer="deleteTimer(item)"
         @open-details-page="openDetailsPage(item)"
         @toggle-sub-item-form="toggleShowSubItems(item)"
       />

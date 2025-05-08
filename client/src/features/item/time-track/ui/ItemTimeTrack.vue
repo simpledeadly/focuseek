@@ -25,7 +25,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'change-duration-planned', value: number | null): void
   (e: 'change-duration-real', value: number | null): void
-  (e: 'change-duration-real-from-options', value: number | null): void
+  (e: 'reset-timer'): void
+  (e: 'remove-timer'): void
 }>()
 
 const model = defineModel<boolean>()
@@ -192,14 +193,6 @@ const handleRemoveDurationPlanned = () => {
   emit('change-duration-planned', null)
 }
 
-const handleRemoveDurationReal = () => {
-  emit('change-duration-real-from-options', null)
-}
-
-const handleResetDurationReal = () => {
-  emit('change-duration-real-from-options', 0)
-}
-
 onMounted(async () => {
   if (!loadTimerStateFromLocalStorage()) {
     await loadTimerStateFromServer()
@@ -239,15 +232,15 @@ onUnmounted(() => {
       </ContextMenuTrigger>
       <ContextMenuContent class="w-48">
         <ContextMenuItem @click="handleRemoveDurationPlanned">Remove durPlan</ContextMenuItem>
-        <ContextMenuItem @click="handleRemoveDurationReal">Remove durReal</ContextMenuItem>
-        <ContextMenuItem @click="handleResetDurationReal">Reset durReal</ContextMenuItem>
+        <ContextMenuItem @click="emit('reset-timer')">Reset durReal</ContextMenuItem>
+        <ContextMenuItem @click="emit('remove-timer')">Remove stopwatch</ContextMenuItem>
         <ContextMenuSub>
           <ContextMenuSubTrigger>Change durPlan</ContextMenuSubTrigger>
           <ContextMenuSubContent>
             <Input
               type="text"
               v-model="inputValue"
-              placeholder="e.g. 2h 32m"
+              placeholder="e.g. 1h 23m 45s"
               @keydown.enter="handleChangeDuration('durPlan')"
             />
           </ContextMenuSubContent>
@@ -258,12 +251,11 @@ onUnmounted(() => {
             <Input
               type="text"
               v-model="inputValue"
-              placeholder="e.g. 2h 32m"
+              placeholder="e.g. 1h 23m 45s"
               @keydown.enter="handleChangeDuration('durReal')"
             />
           </ContextMenuSubContent>
         </ContextMenuSub>
-        <!-- <ContextMenuItem>Remove stopwatch</ContextMenuItem> -->
       </ContextMenuContent>
     </ContextMenu>
   </div>

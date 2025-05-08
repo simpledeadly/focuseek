@@ -21,6 +21,8 @@ import { Calendar } from '@/shared/ui/calendar'
 import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
 import { useItemOptionsShortcuts } from '../model/useItemOptionsShortcuts'
+import { Input } from '@/shared/ui/input'
+import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -44,14 +46,15 @@ const emit = defineEmits<{
   (e: 'change-collection', value: number): void
   (e: 'change-type'): void
   (e: 'change-duration-planned', value: number | null): void
-  (e: 'change-duration-real', value: number | null): void
-  (e: 'change-duration-real-from-opitons', value: number | null): void
+  (e: 'remove-timer'): void
+  (e: 'reset-timer'): void
   (e: 'toggle-sub-item-form'): void
 }>()
 
 const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
+const inputValue = ref()
 const priority = ref(props.item.priority)
 const collectionId = ref(props.item.collectionId)
 
@@ -91,9 +94,21 @@ watchAndEmit(deadlineValue, 'edit-deadline', modelDeadline, isMenuOpen, (val) =>
   new Date(val.year, val.month - 1, val.day).getTime()
 )
 
-const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
-  modelValue = undefined
+const handleRemove = (emitTitle: any, modelValue: number | undefined | null) => {
+  modelValue = null
   emit(emitTitle, modelValue)
+}
+
+const handleChangeDuration = async () => {
+  if (inputValue.value !== undefined && inputValue.value.length >= 0) {
+    emit('change-duration-planned', parseDurationToUnixTimestamp(inputValue.value))
+    inputValue.value = ''
+    isMenuOpen.value = false
+  } else {
+    const msg = 'Введите время в формате 1h 1m 1s'
+    alert(msg)
+    console.log(msg)
+  }
 }
 </script>
 
@@ -149,6 +164,7 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <span>{{ item.priority ? 'Edit priority' : 'Set priority' }}</span>
+            <DropdownMenuShortcut>F</DropdownMenuShortcut>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent class="w-40">
@@ -246,8 +262,29 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
           <span>Remove subitem form</span>
           <DropdownMenuShortcut>S</DropdownMenuShortcut>
         </DropdownMenuItem>
+        <DropdownMenuSub v-if="!props.item.durationPlanned">
+          <DropdownMenuSubTrigger>
+            <span>Set duration</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <Input
+                type="text"
+                v-model="inputValue"
+                placeholder="e.g. 1h 23m 45s"
+                @keydown.enter="handleChangeDuration"
+              />
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
         <DropdownMenuItem
-          @click="emit('change-duration-real-from-opitons', 0)"
+          v-else
+          @click="handleRemove('change-duration-planned', inputValue)"
+        >
+          <span>Remove duration</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          @click="emit('reset-timer')"
           :disabled="
             props.item.durationReal === 0 ||
             (props.item.durationReal === null && !!props.item.durationPlanned)
@@ -264,7 +301,7 @@ const handleRemove = (emitTitle: any, modelValue: number | undefined) => {
         </DropdownMenuItem>
         <DropdownMenuItem
           v-if="props.item.durationReal !== null || props.item.durationPlanned"
-          @click="emit('change-duration-real-from-opitons', null)"
+          @click="emit('remove-timer')"
         >
           <span>Remove stopwatch</span>
           <DropdownMenuShortcut>E</DropdownMenuShortcut>

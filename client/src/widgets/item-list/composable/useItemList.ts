@@ -17,7 +17,7 @@ export const useItemList = () => {
   const { addItem } = useAddItem(items)
   const { removeItem } = useRemoveItem(items)
   const { toggleShowSubItems, hasSubItems } = useShowSubItems(items)
-  const { deleteTimer } = useItemTimeTrack(items)
+  const { resetTimer, deleteTimer } = useItemTimeTrack(items)
   const { collections, findCollectionTitleById } = useCollections()
 
   const showAllParams = ref<boolean>(false)
@@ -47,6 +47,7 @@ export const useItemList = () => {
     removeItem,
     toggleShowSubItems,
     hasSubItems,
+    resetTimer,
     deleteTimer,
     collections,
     findCollectionTitleById,

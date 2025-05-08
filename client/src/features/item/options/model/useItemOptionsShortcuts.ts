@@ -7,10 +7,10 @@ export type Emit = {
   (e: 'add-description'): void
   (e: 'open-details-page'): void
   (e: 'remove-description'): void
+  (e: 'remove-timer'): void
+  (e: 'reset-timer'): void
   (e: 'edit-priority', value: number | null): void
   (e: 'change-duration-planned', value: number | null): void
-  (e: 'change-duration-real', value: number | null): void
-  (e: 'change-duration-real-from-opitons', value: number | null): void
   (e: 'change-type'): void
   (e: 'toggle-sub-item-form'): void
 }
@@ -117,9 +117,9 @@ export const useItemOptionsShortcuts = ({
           !isPriorityMode.value &&
           (props.item.durationReal === null || props.item.durationReal !== null),
         action: () => {
-          props.item.durationReal !== null
-            ? emit('change-duration-real-from-opitons', null)
-            : emit('change-duration-real-from-opitons', 0)
+          props.item.durationReal !== null || props.item.durationPlanned
+            ? emit('remove-timer')
+            : emit('reset-timer')
           isMenuOpen.value = false
         },
       },
@@ -131,7 +131,7 @@ export const useItemOptionsShortcuts = ({
           props.item.durationReal !== 0 &&
           props.item.durationReal !== null,
         action: () => {
-          emit('change-duration-real-from-opitons', 0)
+          emit('reset-timer')
           isMenuOpen.value = false
         },
       },
