@@ -9,9 +9,9 @@ export type Emit = {
   (e: 'remove-description'): void
   (e: 'remove-timer'): void
   (e: 'reset-timer'): void
-  (e: 'edit-priority', value: number | null): void
+  (e: 'change-priority', value: number | null): void
   (e: 'change-duration-planned', value: number | null): void
-  (e: 'change-type'): void
+  (e: 'switch-type'): void
   (e: 'toggle-sub-item-form'): void
 }
 
@@ -109,7 +109,7 @@ export const useItemOptionsShortcuts = ({
         keys: ['t', 'е'],
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
-          emit('change-type')
+          emit('switch-type')
           isMenuOpen.value = false
         },
       },
@@ -157,7 +157,7 @@ export const useItemOptionsShortcuts = ({
           if (val === undefined) return
           priority.value = val
           modelPriority.value = val
-          emit('edit-priority', val)
+          emit('change-priority', val)
           exitPriorityMode()
         },
       },
@@ -167,7 +167,7 @@ export const useItemOptionsShortcuts = ({
         action: () => {
           priority.value = null
           modelPriority.value = null
-          emit('edit-priority', null)
+          emit('change-priority', null)
           exitPriorityMode()
         },
       },
