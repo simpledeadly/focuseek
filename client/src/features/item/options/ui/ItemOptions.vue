@@ -41,11 +41,12 @@ const emit = defineEmits<{
   (e: 'add-description'): void
   (e: 'remove-description'): void
   (e: 'open-details-page'): void
-  (e: 'edit-date', value: number | undefined): void
-  (e: 'edit-deadline', value: number | undefined): void
-  (e: 'edit-priority', value: number | null): void
-  (e: 'change-collection', value: number): void
-  (e: 'change-type'): void
+  (e: 'change-date', value: number | undefined): void
+  (e: 'change-deadline', value: number | undefined): void
+  (e: 'change-priority', value: number | null): void
+  (e: 'switch-collection', value: number): void
+  (e: 'switch-user', value: { userId: number; colId: number }): void
+  (e: 'switch-type'): void
   (e: 'change-duration-planned', value: number | null): void
   (e: 'remove-timer'): void
   (e: 'reset-timer'): void
@@ -56,7 +57,9 @@ const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
 const isMenuSubOpen = ref(false)
-const inputValue = ref()
+const inputValue = ref<string>()
+const userIdValue = ref<number>()
+const colIdValue = ref<number>()
 const priority = ref(props.item.priority)
 const collectionId = ref(props.item.collectionId)
 
@@ -88,12 +91,12 @@ const watchAndEmit = <T, U = T>(
   })
 }
 
-watchAndEmit(collectionId, 'change-collection', modelCollectionId, isMenuOpen)
-watchAndEmit(priority, 'edit-priority', modelPriority, isMenuOpen)
-watchAndEmit(dateValue, 'edit-date', modelDate, isMenuOpen, (val) =>
+watchAndEmit(collectionId, 'switch-collection', modelCollectionId, isMenuOpen)
+watchAndEmit(priority, 'change-priority', modelPriority, isMenuOpen)
+watchAndEmit(dateValue, 'change-date', modelDate, isMenuOpen, (val) =>
   new Date(val.year, val.month - 1, val.day).getTime()
 )
-watchAndEmit(deadlineValue, 'edit-deadline', modelDeadline, isMenuOpen, (val) =>
+watchAndEmit(deadlineValue, 'change-deadline', modelDeadline, isMenuOpen, (val) =>
   new Date(val.year, val.month - 1, val.day).getTime()
 )
 
@@ -110,6 +113,24 @@ const handleChangeDuration = async () => {
     isMenuOpen.value = false
   } else {
     const msg = 'Введите время в формате 1h 1m 1s'
+    alert(msg)
+    console.log(msg)
+  }
+}
+
+const handleSwitchUser = () => {
+  if (
+    userIdValue.value !== undefined &&
+    userIdValue.value >= 0 &&
+    colIdValue.value !== undefined &&
+    colIdValue.value >= 0
+  ) {
+    emit('switch-user', { userId: userIdValue.value, colId: colIdValue.value })
+    userIdValue.value = 7
+    colIdValue.value = 11
+    isMenuOpen.value = false
+  } else {
+    const msg = 'Заполните все поля указанными числами, иначе элемент потеряется!'
     alert(msg)
     console.log(msg)
   }
@@ -145,7 +166,7 @@ const handleChangeDuration = async () => {
         </DropdownMenuSub>
         <DropdownMenuItem
           v-else
-          @click="handleRemove('edit-date', modelDate)"
+          @click="handleRemove('change-date', modelDate)"
         >
           <span>Remove date</span>
         </DropdownMenuItem>
@@ -161,7 +182,7 @@ const handleChangeDuration = async () => {
         </DropdownMenuSub>
         <DropdownMenuItem
           v-else
-          @click="handleRemove('edit-deadline', modelDeadline)"
+          @click="handleRemove('change-deadline', modelDeadline)"
         >
           <span>Remove deadline</span>
         </DropdownMenuItem>
@@ -202,7 +223,7 @@ const handleChangeDuration = async () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuRadioItem
                   value="0"
-                  @click="emit('edit-priority', null)"
+                  @click="emit('change-priority', null)"
                 >
                   No priority
                   <DropdownMenuShortcut>
@@ -234,6 +255,37 @@ const handleChangeDuration = async () => {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <span>Switch user</span>
+            <DropdownMenuShortcut>Dev</DropdownMenuShortcut>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <Input
+                type="number"
+                v-model="userIdValue"
+                placeholder="Type number 7/9"
+              />
+              <Input
+                type="number"
+                class="mt-1"
+                v-model="colIdValue"
+                placeholder="Type number 8/11"
+              />
+              <Button
+                variant="outline"
+                class="mt-1 w-full"
+                @click="handleSwitchUser"
+                @keydown.enter="handleSwitchUser"
+                :disabled="!userIdValue || !colIdValue"
+                >Switch</Button
+              >
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+
         <DropdownMenuItem @click="emit('open-details-page')">
           <span>Open</span>
           <DropdownMenuShortcut>G</DropdownMenuShortcut>
@@ -311,7 +363,7 @@ const handleChangeDuration = async () => {
           <span>Remove stopwatch</span>
           <DropdownMenuShortcut>E</DropdownMenuShortcut>
         </DropdownMenuItem>
-        <DropdownMenuItem @click="emit('change-type')">
+        <DropdownMenuItem @click="emit('switch-type')">
           <span>Switch to {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
           <DropdownMenuShortcut>T</DropdownMenuShortcut>
         </DropdownMenuItem>

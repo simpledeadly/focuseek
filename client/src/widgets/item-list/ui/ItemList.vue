@@ -42,6 +42,7 @@ const emit = defineEmits<{
   (e: 'change-deadline', ...args: any[]): void
   (e: 'change-priority', ...args: any[]): void
   (e: 'switch-collection', ...args: any[]): void
+  (e: 'switch-user', ...args: any[]): void
   (e: 'switch-type', ...args: any[]): void
   (e: 'remove', ...args: any[]): void
   (e: 'toggle-show-sub-items', ...args: any[]): void
@@ -150,14 +151,21 @@ defineProps<{
         :collections="collections"
         :hasSubItems="hasSubItems(item.id)"
         :model-value:collectionId="item.collectionId"
-        @change-collection="
+        @switch-collection="
           updateItemProperty(
             item,
             { collectionId: $event, parentItemId: null },
             { withChildren: true }
           )
         "
-        @change-type="
+        @switch-user="
+          updateItemProperty(
+            item,
+            { userId: $event.userId, collectionId: $event.colId, parentItemId: null },
+            { withChildren: true }
+          )
+        "
+        @switch-type="
           updateItemProperty(
             item,
             { type: item.type === 'todo' ? 'note' : 'todo', parentItemId: null },
@@ -168,11 +176,11 @@ defineProps<{
         @add-description="updateItemProperty(item, { description: '' })"
         @remove-description="updateItemProperty(item, { description: null })"
         :model-value:date="item.date"
-        @edit-date="updateItemProperty(item, { date: $event })"
+        @change-date="updateItemProperty(item, { date: $event })"
         :model-value:deadline="item.deadline"
-        @edit-deadline="updateItemProperty(item, { deadline: $event })"
+        @change-deadline="updateItemProperty(item, { deadline: $event })"
         :model-value:priority="item.priority"
-        @edit-priority="updateItemProperty(item, { priority: $event })"
+        @change-priority="updateItemProperty(item, { priority: $event })"
         @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
         @reset-timer="resetTimer(item)"
         @remove-timer="deleteTimer(item)"
@@ -212,6 +220,7 @@ defineProps<{
               @change-deadline="(...args: any) => emit('change-deadline', ...args)"
               @change-priority="(...args: any) => emit('change-priority', ...args)"
               @switch-collection="(...args: any) => emit('switch-collection', ...args)"
+              @switch-user="(...args: any) => emit('switch-user', ...args)"
               @switch-type="(...args: any) => emit('switch-type', ...args)"
               @remove="(...args: any) => emit('remove', ...args)"
               @toggle-show-sub-items="(...args: any) => emit('toggle-show-sub-items', ...args)"
