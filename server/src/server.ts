@@ -284,11 +284,9 @@ app.post('/api/items', authenticate, async (req, res) => {
           description: item.description,
           priority: item.priority,
           durationPlanned:
-            item.durationPlanned !== undefined
-              ? BigInt(item.durationPlanned.toString())
-              : undefined,
+            item.durationPlanned != null ? BigInt(item.durationPlanned.toString()) : null,
           durationReal:
-            item.durationReal !== undefined ? BigInt(item.durationReal.toString()) : undefined,
+            item.durationReal != null ? BigInt(item.durationReal.toString()) : null,
           tags: item.tags,
           date: item.date ? new Date(item.date) : undefined,
           deadline: item.deadline ? new Date(item.deadline) : undefined,
