@@ -378,13 +378,6 @@ const style = checkboxStyle(itemPriority)
     max-width: 8rem;
     cursor: pointer;
   }
-
-  &__options {
-    position: absolute;
-    right: -0rem;
-    top: 12px;
-    display: flex;
-  }
 }
 
 .fade-form-move,

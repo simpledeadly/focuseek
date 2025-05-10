@@ -110,7 +110,7 @@ const props = defineProps<{
 
   &__options {
     position: absolute;
-    right: -0rem;
+    right: 0rem;
     top: 12px;
     display: flex;
   }
