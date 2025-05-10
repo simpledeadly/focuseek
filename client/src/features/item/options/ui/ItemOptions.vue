@@ -25,7 +25,7 @@ import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import ItemRemoveOption from './ItemRemoveOption.vue'
 import ItemDateOptions from './ItemDateOptions.vue'
-import { Calendar } from '@/shared/ui/calendar'
+import ItemPriorityOption from './ItemPriorityOption.vue'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -171,71 +171,11 @@ const handleSwitchUser = () => {
           v-model="deadlineValue"
           @remove="handleRemove('change-deadline', modelDeadline)"
         />
-        <DropdownMenuSub v-if="!item.deadline">
-          <DropdownMenuSubTrigger>
-            <span>Set deadline</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <Calendar v-model="deadlineValue" />
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
-        <DropdownMenuItem
-          v-else
-          @click="handleRemove('change-deadline', modelDeadline)"
-        >
-          <span>Remove deadline</span>
-        </DropdownMenuItem>
-        <DropdownMenuSub v-model:open="isMenuSubOpen">
-          <DropdownMenuSubTrigger>
-            <span>{{ item.priority ? 'Change priority' : 'Set priority' }}</span>
-            <DropdownMenuShortcut>F</DropdownMenuShortcut>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent class="w-40">
-              <DropdownMenuRadioGroup
-                :modelValue="priority?.toString()"
-                @update:modelValue="
-                  (value) => (value === '0' ? (priority = null) : (priority = Number(value)))
-                "
-              >
-                <DropdownMenuRadioItem value="1">
-                  High
-                  <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
-                    1
-                  </DropdownMenuShortcut>
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="2">
-                  Medium
-                  <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
-                    2
-                  </DropdownMenuShortcut>
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="3">
-                  Low
-                  <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
-                    3
-                  </DropdownMenuShortcut>
-                </DropdownMenuRadioItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioItem
-                  value="0"
-                  @click="emit('change-priority', null)"
-                >
-                  No priority
-                  <DropdownMenuShortcut>
-                    <DropdownMenuShortcut>F</DropdownMenuShortcut>
-                    4
-                  </DropdownMenuShortcut>
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
+        <ItemPriorityOption
+          :priority="item.priority"
+          v-model:isMenuSubOpen="isMenuSubOpen"
+          @change-priority="emit('change-priority', $event)"
+        />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <span>Move to</span>

@@ -158,7 +158,6 @@ export const useItemOptionsShortcuts = ({
           if (val === undefined) return
           priority.value = val
           modelPriority.value = val
-          emit('change-priority', val)
           exitPriorityMode()
         },
       },
