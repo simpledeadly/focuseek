@@ -19,6 +19,7 @@ interface UseItemOptionsShortcutsParams {
   dropdownRef: Ref<HTMLElement | null>
   isMenuOpen: Ref<boolean>
   isMenuSubOpen: Ref<boolean>
+  isConfirmOpen: Ref<boolean>
   priority: Ref<number | undefined | null>
   modelPriority: Ref<number | undefined | null>
   props: { item: Item; hasSubItems: boolean }
@@ -29,6 +30,7 @@ export const useItemOptionsShortcuts = ({
   dropdownRef,
   isMenuOpen,
   isMenuSubOpen,
+  isConfirmOpen,
   priority,
   modelPriority,
   props,
@@ -49,7 +51,7 @@ export const useItemOptionsShortcuts = ({
 
   const withGuard = (guard: () => boolean, action: (e: KeyboardEvent, key?: string) => void) => {
     return (e: KeyboardEvent, key?: string) => {
-      if (!guard()) return
+      if (!guard() || isConfirmOpen.value) return
       e.preventDefault()
       e.stopPropagation()
       action(e, key)
@@ -70,8 +72,7 @@ export const useItemOptionsShortcuts = ({
         keys: ['r', 'к'],
         guard: () => isMenuOpen.value && !isPriorityMode.value,
         action: () => {
-          emit('remove')
-          isMenuOpen.value = false
+          isConfirmOpen.value = true
         },
       },
       {

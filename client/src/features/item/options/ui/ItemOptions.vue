@@ -24,6 +24,7 @@ import { useItemOptionsShortcuts } from '../model/useItemOptionsShortcuts'
 import { Input } from '@/shared/ui/input'
 import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
+import ItemRemoveOption from './ItemRemoveOption.vue'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -57,6 +58,7 @@ const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const isMenuOpen = ref(false)
 const isMenuSubOpen = ref(false)
+const isConfirmOpen = ref(false)
 const inputValue = ref<string>()
 const userIdValue = ref<number>()
 const colIdValue = ref<number>()
@@ -69,6 +71,7 @@ useItemOptionsShortcuts({
   dropdownRef,
   isMenuOpen,
   isMenuSubOpen,
+  isConfirmOpen,
   priority,
   modelPriority,
   props,
@@ -369,10 +372,10 @@ const handleSwitchUser = () => {
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
-      <DropdownMenuItem @click="emit('remove')">
-        <span>Delete</span>
-        <DropdownMenuShortcut>R</DropdownMenuShortcut>
-      </DropdownMenuItem>
+      <ItemRemoveOption
+        v-model="isConfirmOpen"
+        @remove="emit('remove')"
+      />
     </DropdownMenuContent>
   </DropdownMenu>
 </template>
