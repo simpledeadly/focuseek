@@ -17,7 +17,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
-import { Calendar } from '@/shared/ui/calendar'
 import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
 import { useItemOptionsShortcuts } from '../model/useItemOptionsShortcuts'
@@ -25,6 +24,8 @@ import { Input } from '@/shared/ui/input'
 import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import ItemRemoveOption from './ItemRemoveOption.vue'
+import ItemDateOptions from './ItemDateOptions.vue'
+import { Calendar } from '@/shared/ui/calendar'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -104,6 +105,7 @@ watchAndEmit(deadlineValue, 'change-deadline', modelDeadline, isMenuOpen, (val) 
 )
 
 const handleRemove = (emitTitle: any, modelValue: number | undefined | null) => {
+  console.log(emitTitle, modelValue)
   modelValue = null
   emit(emitTitle, modelValue)
   isMenuOpen.value = false
@@ -157,22 +159,18 @@ const handleSwitchUser = () => {
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-48">
       <DropdownMenuGroup>
-        <DropdownMenuSub v-if="!item.date">
-          <DropdownMenuSubTrigger>
-            <span>Set date</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <Calendar v-model="dateValue" />
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
-        <DropdownMenuItem
-          v-else
-          @click="handleRemove('change-date', modelDate)"
-        >
-          <span>Remove date</span>
-        </DropdownMenuItem>
+        <ItemDateOptions
+          label="date"
+          :value="item.date"
+          v-model="dateValue"
+          @remove="handleRemove('change-date', modelDate)"
+        />
+        <ItemDateOptions
+          label="deadline"
+          :value="item.deadline"
+          v-model="deadlineValue"
+          @remove="handleRemove('change-deadline', modelDeadline)"
+        />
         <DropdownMenuSub v-if="!item.deadline">
           <DropdownMenuSubTrigger>
             <span>Set deadline</span>
