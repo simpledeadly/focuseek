@@ -2,6 +2,7 @@
 import { Search } from '@/widgets/search'
 import { AddItemFormInline } from '@/features/item/add'
 import { useItemList, ItemList } from '..'
+import { useSidebar } from '@/shared/ui/sidebar'
 
 const {
   activeKey,
@@ -21,11 +22,16 @@ const {
   openDetailsPage,
   filterNestedItems,
 } = useItemList()
+
+const { isMobile } = useSidebar()
 </script>
 
 <template>
   <Search />
-  <div class="item-list">
+  <div
+    class="item-list"
+    :style="isMobile && 'width: 85vw'"
+  >
     <Transition
       name="fade"
       mode="default"
