@@ -10,7 +10,7 @@ const activeTab = computed({
   get: () => route.query.type?.toString() || 'todo',
   set: (value) => {
     router.push({ query: { ...route.query, type: value } })
-  }
+  },
 })
 </script>
 
@@ -43,6 +43,7 @@ const activeTab = computed({
     margin-top: 0.25rem;
     margin-bottom: 1.5rem;
     text-align: center;
+    width: 100%;
   }
 
   &__tabs {
