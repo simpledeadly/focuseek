@@ -25,7 +25,7 @@ const { toggleSidebar } = useSidebar()
 .icon {
   position: absolute;
   top: 0.5rem;
-  left: 15rem;
+  left: 10rem;
   z-index: 999;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
