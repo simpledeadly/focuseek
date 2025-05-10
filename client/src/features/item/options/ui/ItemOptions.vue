@@ -21,11 +21,12 @@ import { type DateValue } from '@internationalized/date'
 import { Ellipsis } from 'lucide-vue-next'
 import { useItemOptionsShortcuts } from '../model/useItemOptionsShortcuts'
 import { Input } from '@/shared/ui/input'
-import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import ItemRemoveOption from './ItemRemoveOption.vue'
 import ItemDateOptions from './ItemDateOptions.vue'
 import ItemPriorityOption from './ItemPriorityOption.vue'
+import ItemTimeTrackOptions from './ItemTimeTrackOptions.vue'
+import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -104,8 +105,7 @@ watchAndEmit(deadlineValue, 'change-deadline', modelDeadline, isMenuOpen, (val) 
   new Date(val.year, val.month - 1, val.day).getTime()
 )
 
-const handleRemove = (emitTitle: any, modelValue: number | undefined | null) => {
-  console.log(emitTitle, modelValue)
+const handleEmit = (emitTitle: any, modelValue: number | undefined | null) => {
   modelValue = null
   emit(emitTitle, modelValue)
   isMenuOpen.value = false
@@ -163,13 +163,13 @@ const handleSwitchUser = () => {
           label="date"
           :value="item.date"
           v-model="dateValue"
-          @remove="handleRemove('change-date', modelDate)"
+          @remove="handleEmit('change-date', modelDate)"
         />
         <ItemDateOptions
           label="deadline"
           :value="item.deadline"
           v-model="deadlineValue"
-          @remove="handleRemove('change-deadline', modelDeadline)"
+          @remove="handleEmit('change-deadline', modelDeadline)"
         />
         <ItemPriorityOption
           :priority="item.priority"
@@ -259,51 +259,17 @@ const handleSwitchUser = () => {
           <span>Remove subitem form</span>
           <DropdownMenuShortcut>S</DropdownMenuShortcut>
         </DropdownMenuItem>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <span>{{ !props.item.durationPlanned ? 'Set duration' : 'Change duration' }}</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <Input
-                type="text"
-                v-model="inputValue"
-                placeholder="e.g. 1h 23m 45s"
-                @keydown.enter="handleChangeDuration"
-              />
-              <Button
-                variant="outline"
-                class="mt-1 w-full"
-                @click="handleRemove('change-duration-planned', null)"
-                :disabled="!props.item.durationPlanned"
-                >Remove</Button
-              >
-            </DropdownMenuSubContent>
-          </DropdownMenuPortal>
-        </DropdownMenuSub>
-        <DropdownMenuItem
-          @click="emit('reset-timer')"
-          :disabled="
-            props.item.durationReal === 0 ||
-            (props.item.durationReal === null && !!props.item.durationPlanned)
-          "
-        >
-          <span>{{
-            props.item.durationReal === null && !props.item.durationPlanned
-              ? 'Add stopwatch'
-              : 'Reset stopwatch'
-          }}</span>
-          <DropdownMenuShortcut>{{
-            props.item.durationReal === null ? 'E' : '⇧E'
-          }}</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          v-if="props.item.durationReal !== null || props.item.durationPlanned"
-          @click="emit('remove-timer')"
-        >
-          <span>Remove stopwatch</span>
-          <DropdownMenuShortcut>E</DropdownMenuShortcut>
-        </DropdownMenuItem>
+
+        <ItemTimeTrackOptions
+          :durPlan="props.item.durationPlanned"
+          :durReal="props.item.durationReal"
+          v-model="inputValue"
+          @reset-timer="emit('reset-timer')"
+          @remove-timer="emit('remove-timer')"
+          @change-duration="handleChangeDuration"
+          @remove-durationPlanned="handleEmit('change-duration-planned', null)"
+        />
+
         <DropdownMenuItem @click="emit('switch-type')">
           <span>Switch to {{ props.item.type === 'todo' ? 'note' : 'todo' }}</span>
           <DropdownMenuShortcut>T</DropdownMenuShortcut>
