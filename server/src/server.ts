@@ -228,7 +228,19 @@ app.get('/api/items', authenticate, async (req, res) => {
       if (!items) {
         return res.status(404).json({ message: 'Элементы не найдены' })
       }
-      res.json(items)
+
+      const safeItems = items.map((item) => ({
+        ...item,
+        durationPlanned:
+          item.durationPlanned !== undefined && item.durationPlanned !== null
+            ? Number(item.durationPlanned) // или item.durationPlanned.toString() если число слишком большое
+            : item.durationPlanned,
+        durationReal:
+          item.durationReal !== undefined && item.durationReal !== null
+            ? Number(item.durationReal)
+            : item.durationReal,
+      }))
+      res.json(safeItems)
     } else {
       console.error('Неправильный формат токена')
       return res.status(401).json({ message: 'Неправильный формат токена' })
@@ -271,8 +283,12 @@ app.post('/api/items', authenticate, async (req, res) => {
           isDone: item.isDone,
           description: item.description,
           priority: item.priority,
-          durationPlanned: item.durationPlanned,
-          durationReal: item.durationReal,
+          durationPlanned:
+            item.durationPlanned !== undefined
+              ? BigInt(item.durationPlanned.toString())
+              : undefined,
+          durationReal:
+            item.durationReal !== undefined ? BigInt(item.durationReal.toString()) : undefined,
           tags: item.tags,
           date: item.date ? new Date(item.date) : undefined,
           deadline: item.deadline ? new Date(item.deadline) : undefined,
@@ -338,8 +354,20 @@ app.put('/api/items/:id', async (req, res) => {
       return await updateItemWithChildren(id, itemData)
     })
 
+    const safeResult = {
+      ...result,
+      durationPlanned:
+        result.durationPlanned !== null && result.durationPlanned !== undefined
+          ? Number(result.durationPlanned)
+          : result.durationPlanned,
+      durationReal:
+        result.durationReal !== null && result.durationReal !== undefined
+          ? Number(result.durationReal)
+          : result.durationReal,
+    }
+
     console.log(chalk.hex('#fff').bold(`PUT item:`), result)
-    res.status(200).json({ message: 'Элемент успешно обновлен', item: result })
+    res.status(200).json({ message: 'Элемент успешно обновлен', item: safeResult })
   } catch (error) {
     console.error('Ошибка при обновлении элемента:', error)
     res.status(404).json({ message: 'Элемент не найден' })

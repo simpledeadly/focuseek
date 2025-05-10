@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "items" ALTER COLUMN "durationPlanned" SET DATA TYPE BIGINT,
+ALTER COLUMN "durationReal" SET DATA TYPE BIGINT;

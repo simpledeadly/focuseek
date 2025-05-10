@@ -12,8 +12,8 @@ export type Item = {
   isDone?: boolean
   description?: string
   priority?: number
-  durationPlanned?: number
-  durationReal?: number
+  durationPlanned?: BigInt
+  durationReal?: BigInt
   tags?: string[]
   date?: number
   deadline?: number

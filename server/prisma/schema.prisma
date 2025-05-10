@@ -47,8 +47,8 @@ model Item {
   isDone          Boolean?
   description     String?
   priority        Int?
-  durationPlanned Int?
-  durationReal    Int?
+  durationPlanned BigInt?
+  durationReal    BigInt?
   tags            String[]
   date            DateTime?
   deadline        DateTime?
