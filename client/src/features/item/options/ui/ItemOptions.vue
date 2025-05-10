@@ -200,7 +200,6 @@ const handleSwitchUser = () => {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <span>Switch user</span>
-            <DropdownMenuShortcut>Dev</DropdownMenuShortcut>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>

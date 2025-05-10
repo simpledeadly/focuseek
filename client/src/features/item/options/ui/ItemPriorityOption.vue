@@ -45,7 +45,6 @@ watch(priorityModel, (newVal, oldVal) => {
   <DropdownMenuSub v-model:open="isMenuSubOpen">
     <DropdownMenuSubTrigger>
       <span>{{ props.priority ? 'Change priority' : 'Set priority' }}</span>
-      <DropdownMenuShortcut>F</DropdownMenuShortcut>
     </DropdownMenuSubTrigger>
     <DropdownMenuPortal>
       <DropdownMenuSubContent class="w-40">
@@ -57,20 +56,32 @@ watch(priorityModel, (newVal, oldVal) => {
         >
           <DropdownMenuRadioItem value="1">
             High
-            <DropdownMenuShortcut>1</DropdownMenuShortcut>
+            <DropdownMenuShortcut>
+              <DropdownMenuShortcut>F</DropdownMenuShortcut>
+              1
+            </DropdownMenuShortcut>
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="2">
             Medium
-            <DropdownMenuShortcut>2</DropdownMenuShortcut>
+            <DropdownMenuShortcut>
+              <DropdownMenuShortcut>F</DropdownMenuShortcut>
+              2
+            </DropdownMenuShortcut>
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="3">
             Low
-            <DropdownMenuShortcut>3</DropdownMenuShortcut>
+            <DropdownMenuShortcut>
+              <DropdownMenuShortcut>F</DropdownMenuShortcut>
+              3
+            </DropdownMenuShortcut>
           </DropdownMenuRadioItem>
           <DropdownMenuSeparator />
           <DropdownMenuRadioItem value="0">
             No priority
-            <DropdownMenuShortcut>4</DropdownMenuShortcut>
+            <DropdownMenuShortcut>
+              <DropdownMenuShortcut>F</DropdownMenuShortcut>
+              4
+            </DropdownMenuShortcut>
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuSubContent>
