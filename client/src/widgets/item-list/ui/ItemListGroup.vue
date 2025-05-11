@@ -4,6 +4,7 @@ import { AddItemFormInline } from '@/features/item/add'
 import { useItemList, ItemList } from '..'
 import { useSidebar } from '@/shared/ui/sidebar'
 import draggable from 'vuedraggable'
+import { HideToggle } from '@/widgets/hide-toggle'
 
 const {
   sortedItems,
@@ -18,6 +19,8 @@ const {
   priorityFilter,
   sortBy,
   sortOrder,
+  isHideDone,
+  nestedItemsMap,
   updateItemProperty,
   onDragStart,
   onDragEnd,
@@ -30,7 +33,6 @@ const {
   deleteTimer,
   openDetailsPage,
   filterNestedItems,
-  nestedItemsMap,
 } = useItemList()
 
 const { isMobile } = useSidebar()
@@ -38,6 +40,7 @@ const { isMobile } = useSidebar()
 
 <template>
   <Search />
+  <HideToggle v-model="isHideDone" />
   <div class="flex mb-4">
     <select v-model="dateFilter">
       <option value="all">Все даты</option>

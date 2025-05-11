@@ -1,4 +1,4 @@
-import { computed, reactive, ref, ShallowRef } from 'vue'
+import { computed, reactive, ref, ShallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { isItemType, Item, type ItemType } from '@/entities/item'
 import { useCollection } from '@/features/collection/filter'
@@ -21,11 +21,19 @@ export const useItemType = () => {
 }
 
 export const useHideDone = () => {
-  const isHideDone = ref<boolean>(false)
+  const isHideDone = ref(!!localStorage.getItem('hide'))
+
   try {
     const stored = localStorage.getItem('hide')
     if (stored !== null) isHideDone.value = JSON.parse(stored)
   } catch {}
+
+  watch(isHideDone, (newVal) => {
+    console.log(newVal)
+    try {
+      localStorage.setItem('hide', JSON.stringify(newVal))
+    } catch {}
+  })
 
   return { isHideDone }
 }
@@ -63,7 +71,8 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
       collectionId: number | null
       dateFilter: 'all' | 'today'
       priorityFilter: 1 | 2 | 3 | 0 | null
-    }
+    },
+    isHideDoneValue: boolean
   ): Item[] => {
     const todayStr = formatDateToYMD(new Date())
 
@@ -72,13 +81,13 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
       if (filters.collectionId !== null && item.collectionId !== filters.collectionId) return false
       if (filters.dateFilter === 'today') {
         if (!item.date) return false
-        const itemDate = new Date(item.date)
-        const itemDateStr = formatDateToYMD(itemDate)
+        const itemDateStr = formatDateToYMD(new Date(item.date))
         if (itemDateStr !== todayStr) return false
       }
       if (filters.priorityFilter !== 0 && filters.priorityFilter !== item.priority) return false
 
-      if (isHideDone.value && item.isDone) return false
+      if (isHideDoneValue && item.isDone) return false
+
       return true
     })
   }
@@ -115,12 +124,17 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   }
 
   const filteredItems = computed(() => {
-    const filtered = applyFilters(items.value, {
-      itemType: itemType.value,
-      collectionId: collectionId.value,
-      dateFilter: dateFilter.value,
-      priorityFilter: priorityFilter.value,
-    })
+    console.log('from filteredItems:', isHideDone.value)
+    const filtered = applyFilters(
+      items.value,
+      {
+        itemType: itemType.value,
+        collectionId: collectionId.value,
+        dateFilter: dateFilter.value,
+        priorityFilter: priorityFilter.value,
+      },
+      isHideDone.value
+    )
 
     return applySorting(filtered, sortBy.value, sortOrder.value)
   })
