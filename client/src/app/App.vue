@@ -9,11 +9,9 @@ import { AuthLayout } from '@/shared/ui/layouts/auth-layout'
 import { AppSidebar } from '@/widgets/sidebar'
 import { Loader } from '@/widgets/loader'
 import { isAuthenticated } from './auth/auth'
-import { Collection } from '@/entities/collection'
 import './styles/animations.scss'
 
 const isLoading = ref(false)
-const collections = ref<Collection[]>([])
 const setLoading = (value: boolean) => (isLoading.value = value)
 
 const transitionName = computed<any>(() => 'dissolve-smooth')
@@ -29,13 +27,11 @@ const transitionName = computed<any>(() => 'dissolve-smooth')
     />
     <Loader v-if="isLoading" />
     <SidebarProvider v-if="isAuthenticated()">
-      <AppSidebar :collections="collections" />
+      <AppSidebar />
       <MainLayout>
         <template #content>
-          <Transition
-            :name="transitionName"
-          >
-            <RouterView @collections="collections = $event" />
+          <Transition :name="transitionName">
+            <RouterView />
           </Transition>
         </template>
       </MainLayout>
