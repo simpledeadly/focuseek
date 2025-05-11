@@ -14,6 +14,10 @@ const {
   collectionId,
   showAllParams,
   isTimeTracking,
+  dateFilter,
+  priorityFilter,
+  sortBy,
+  sortOrder,
   updateItemProperty,
   onDragStart,
   onDragEnd,
@@ -34,8 +38,39 @@ const { isMobile } = useSidebar()
 
 <template>
   <Search />
-  <div class="item-list" :style="isMobile && 'width: 85vw'">
-    <Transition name="fade" mode="default">
+  <div class="flex mb-4">
+    <select v-model="dateFilter">
+      <option value="all">Все даты</option>
+      <option value="today">Только сегодня</option>
+    </select>
+    <select v-model="priorityFilter">
+      <option :value="0">All</option>
+      <option :value="1">High</option>
+      <option :value="2">Medium</option>
+      <option :value="3">Low</option>
+      <option :value="null">Only gray</option>
+    </select>
+  </div>
+  <div class="flex mb-4">
+    <select v-model="sortBy">
+      <option value="default">Без сортировки</option>
+      <option value="date">По дате</option>
+      <option value="priority">По приоритету</option>
+    </select>
+
+    <select v-model="sortOrder">
+      <option value="asc">По возрастанию</option>
+      <option value="desc">По убыванию</option>
+    </select>
+  </div>
+  <div
+    class="item-list"
+    :style="isMobile && 'width: 85vw'"
+  >
+    <Transition
+      name="fade"
+      mode="default"
+    >
       <div :key="activeKey">
         <draggable
           item-key="id"

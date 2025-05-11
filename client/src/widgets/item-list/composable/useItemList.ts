@@ -13,7 +13,18 @@ import { reactive } from 'vue'
 
 export const useItemList = () => {
   const { items, updateOrderOfItem, setSelectedItem } = useItems()
-  const { filters, itemType, rootItems, filteredItems, collectionId } = useFilterItems(items)
+  const {
+    filters,
+    dateFilter,
+    priorityFilter,
+    itemType,
+    sortBy,
+    sortOrder,
+    rootItems,
+    filteredItems,
+    sortedItems,
+    collectionId,
+  } = useFilterItems(items)
   const { updateItemProperty } = useItemUpdater(items)
 
   const { addItem } = useAddItem(items)
@@ -37,22 +48,6 @@ export const useItemList = () => {
       path: `/${findCollectionTitleById(item.collectionId).toLowerCase()}/${item.id}`,
     })
   }
-
-  const sortedItems = computed({
-    get() {
-      const sorted = [...rootItems.value].sort((a, b) => a.order - b.order)
-
-      return sorted
-    },
-    set(newList) {
-      newList.forEach((item, index) => {
-        const original = items.value.find((i) => i.id === item.id)
-        if (original) {
-          original.order = index + 1
-        }
-      })
-    },
-  })
 
   function calcOrder(
     prevOrder: number | null,
@@ -202,6 +197,10 @@ export const useItemList = () => {
 
   return {
     filters,
+    dateFilter,
+    priorityFilter,
+    sortBy,
+    sortOrder,
     items,
     nestedItemsMap,
     sortedItems,
@@ -213,7 +212,6 @@ export const useItemList = () => {
     setSelectedItem,
     itemType,
     filteredItems,
-
     collectionId,
     addItem,
     removeItem,
