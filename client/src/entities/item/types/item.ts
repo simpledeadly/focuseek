@@ -18,4 +18,5 @@ export type Item = {
   date?: number
   deadline?: number
   showSubItems?: boolean
+  order: number
 }

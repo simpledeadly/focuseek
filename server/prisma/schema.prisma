@@ -53,6 +53,7 @@ model Item {
   date            DateTime?
   deadline        DateTime?
   showSubItems    Boolean?
+  order           Float     @default(0)
   createdAt       DateTime   @default(now()) @map("created_at")
   editedAt        DateTime   @updatedAt @map("edited_at")
 
@@ -60,7 +61,7 @@ model Item {
   collection      Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   parentItem      Item?      @relation("ItemToSubItems", fields: [parentItemId], references: [id])
   subItems        Item[]     @relation("ItemToSubItems")
-  timer           Timer? @relation("ItemToItemTimer")
+  timer           Timer?     @relation("ItemToItemTimer")
 
   @@map(name: "items")
 }
