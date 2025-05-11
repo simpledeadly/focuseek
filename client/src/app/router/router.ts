@@ -16,10 +16,17 @@ const routes = [
     meta: { requiresAuth: true, title: 'Коллекции' },
   },
   {
+    path: '/today',
+    component: () => import('@/pages/today'),
+    name: 'today',
+    meta: { requiresAuth: true, title: 'Сегодня' },
+  },
+  {
     path: '/:collection',
     component: () => import('@/pages/list'),
     name: 'list',
     meta: { requiresAuth: true, title: 'Список' },
+    
   },
   {
     path: '/:collection/:item',
@@ -50,7 +57,7 @@ export const router = createRouter({
 
 router.beforeEach((to, _from, next) => {
   document.title = `${to.meta.title} | Focuseek` || 'Focuseek'
-  
+
   if (to.meta.requiresAuth && !isAuthenticated()) {
     next({ name: 'login' })
   } else if (to.params.collection === undefined && (to.name === 'todos' || to.name === 'notes')) {
