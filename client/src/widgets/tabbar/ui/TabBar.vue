@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { ItemType, useItems } from '@/entities/item'
+import { useItems } from '@/entities/item'
 import { useFilterItems } from '@/features/item/filter'
 
 const router = useRouter()
 
 const { items } = useItems()
-const { filters } = useFilterItems(items)
+const { itemType } = useFilterItems(items)
 
-const activeTab = ref<ItemType>(filters.itemType)
-
-watch(activeTab, (newVal) => (filters.itemType = newVal))
+const activeTab = computed(() => itemType.value)
 </script>
 
 <template>
