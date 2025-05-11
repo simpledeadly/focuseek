@@ -4,6 +4,7 @@ import { cn } from '@/shared/lib/utils'
 import { Button } from '@/shared/ui/button'
 import { PanelLeft } from 'lucide-vue-next'
 import { useSidebar } from './utils'
+import { SIDEBAR_WIDTH } from './utils'
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
@@ -25,7 +26,7 @@ const { toggleSidebar } = useSidebar()
 .icon {
   position: absolute;
   top: 0.5rem;
-  left: 10rem;
+  left: v-bind(SIDEBAR_WIDTH);
   z-index: 999;
   color: hsl(var(--muted-foreground));
   cursor: pointer;
