@@ -137,6 +137,7 @@ export const fetchItemsFromServer = async () => {
       },
     })
     console.log('Элементы успешно получены:', response.data)
+
     return response.data
   } catch (e) {
     console.error('Ошибка при получении данных:', e)
@@ -179,6 +180,18 @@ export const updateItemOnServer = async (id: number, updatedItem: Item) => {
   } catch (e) {
     console.error('Ошибка при обновлении элемента на сервере:', e)
     throw new Error('Ошибка при обновлении элемента на сервере')
+  }
+}
+
+export type OrderUpdate = { id: number; order: number }
+
+export const updateItemsOrder = async (updates: OrderUpdate[]): Promise<void> => {
+  try {
+    console.log('updateItemsOrder /api/items/order on client')
+    return await axios.post(`${API_URL}/items/order`, updates)
+  } catch (error) {
+    console.error('Ошибка обновления порядка элементов:', error)
+    throw new Error('Ошибка обновления порядка элементов')
   }
 }
 
