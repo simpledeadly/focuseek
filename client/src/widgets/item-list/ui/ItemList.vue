@@ -11,15 +11,21 @@ import { ItemSubItemsToggle } from '@/features/item/show-sub-items'
 import { ItemOptions } from '@/features/item/options'
 import { ItemTimeTrack } from '@/features/item/time-track'
 import { useItemList } from '../composable/useItemList'
+import draggable from 'vuedraggable'
 
 const {
   filteredItems,
+  nestedItemsMap,
   itemType,
   collections,
   collectionId,
   showAllParams,
   isTimeTracking,
   updateItemProperty,
+  onDragStartNested,
+  onDragEndNested,
+  // onAddToNested,
+  // onRemoveFromNested,
   addItem,
   removeItem,
   toggleShowSubItems,
@@ -52,7 +58,6 @@ const emit = defineEmits<{
 }>()
 
 defineProps<{
-  index: number
   item: Item
 }>()
 </script>
@@ -71,8 +76,8 @@ defineProps<{
     "
   >
     <template
-      #subItemsToggle
       v-if="hasSubItems(item.id) || item.showSubItems"
+      #subItemsToggle
     >
       <ItemSubItemsToggle
         :model-value="item.showSubItems"
@@ -194,41 +199,54 @@ defineProps<{
           v-if="item.showSubItems"
           class="sub-items-container"
         >
-          <div
-            v-for="(subItem, index) in filterNestedItems(filteredItems, item.id)"
-            :key="subItem.id"
-            :style="`--index: ${index};`"
-            class="sub-item"
+          <draggable
+            item-key="id"
+            v-model="nestedItemsMap[item.id]"
+            :group="{ name: 'items', pull: true, put: true }"
+            @start="(evt) => onDragStartNested(evt, item.id)"
+            @end="(evt) => onDragEndNested(evt, item.id)"
+            :component-data="{ name: 'fade-list', type: 'transition-group' }"
+            :animation="150"
           >
-            <ItemList
-              :index="index"
-              :item="subItem"
-              :filtered-items="filteredItems"
-              :collections="collections"
-              :item-type="itemType"
-              :show-all-params="showAllParams"
-              :is-time-tracking="isTimeTracking"
-              :has-sub-items="hasSubItems"
-              :filter-nested-items="filterNestedItems"
-              @toggle-done="(...args: any) => emit('toggle-done', ...args)"
-              @change-title="(...args: any) => emit('change-title', ...args)"
-              @change-description="(...args: any) => emit('change-description', ...args)"
-              @change-duration-planned="(...args: any) => emit('change-duration-planned', ...args)"
-              @change-duration-real="(...args: any) => emit('change-duration-real', ...args)"
-              @delete-timer="(...args: any) => emit('delete-timer', ...args)"
-              @change-date="(...args: any) => emit('change-date', ...args)"
-              @change-deadline="(...args: any) => emit('change-deadline', ...args)"
-              @change-priority="(...args: any) => emit('change-priority', ...args)"
-              @switch-collection="(...args: any) => emit('switch-collection', ...args)"
-              @switch-user="(...args: any) => emit('switch-user', ...args)"
-              @switch-type="(...args: any) => emit('switch-type', ...args)"
-              @remove="(...args: any) => emit('remove', ...args)"
-              @toggle-show-sub-items="(...args: any) => emit('toggle-show-sub-items', ...args)"
-              @add-description="(...args: any) => emit('add-description', ...args)"
-              @remove-description="(...args: any) => emit('remove-description', ...args)"
-              @open-details-page="(...args: any) => emit('open-details-page', ...args)"
-            />
-          </div>
+            <template #item="{ element }">
+              <div
+                :data-id="element.id"
+                :style="`--index: ${element.index};`"
+                class="sub-item"
+              >
+                <ItemList
+                  :item="element"
+                  :filtered-items="filteredItems"
+                  :collections="collections"
+                  :item-type="itemType"
+                  :show-all-params="showAllParams"
+                  :is-time-tracking="isTimeTracking"
+                  :has-sub-items="hasSubItems"
+                  :filter-nested-items="filterNestedItems"
+                  :nested-items="nestedItemsMap[element.id] || []"
+                  @toggle-done="(...args: any) => emit('toggle-done', ...args)"
+                  @change-title="(...args: any) => emit('change-title', ...args)"
+                  @change-description="(...args: any) => emit('change-description', ...args)"
+                  @change-duration-planned="
+                    (...args: any) => emit('change-duration-planned', ...args)
+                  "
+                  @change-duration-real="(...args: any) => emit('change-duration-real', ...args)"
+                  @delete-timer="(...args: any) => emit('delete-timer', ...args)"
+                  @change-date="(...args: any) => emit('change-date', ...args)"
+                  @change-deadline="(...args: any) => emit('change-deadline', ...args)"
+                  @change-priority="(...args: any) => emit('change-priority', ...args)"
+                  @switch-collection="(...args: any) => emit('switch-collection', ...args)"
+                  @switch-user="(...args: any) => emit('switch-user', ...args)"
+                  @switch-type="(...args: any) => emit('switch-type', ...args)"
+                  @remove="(...args: any) => emit('remove', ...args)"
+                  @toggle-show-sub-items="(...args: any) => emit('toggle-show-sub-items', ...args)"
+                  @add-description="(...args: any) => emit('add-description', ...args)"
+                  @remove-description="(...args: any) => emit('remove-description', ...args)"
+                  @open-details-page="(...args: any) => emit('open-details-page', ...args)"
+                />
+              </div>
+            </template>
+          </draggable>
           <AddItemFormInline
             v-if="item.showSubItems"
             v-model:type="itemType"
@@ -246,8 +264,7 @@ defineProps<{
                 $event.durationPlanned
               )
             "
-          >
-          </AddItemFormInline>
+          />
         </div>
       </TransitionGroup>
     </template>
