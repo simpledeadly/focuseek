@@ -32,7 +32,7 @@ export const useItemList = () => {
   const { removeItem } = useRemoveItem(items)
   const { toggleShowSubItems, hasSubItems } = useShowSubItems(items)
   const { resetTimer, deleteTimer } = useItemTimeTrack(items)
-  const { collections, findCollectionTitleById } = useCollections()
+  const { collections, findCollectionTitleById, findIdByCollectionTitle } = useCollections()
 
   const showAllParams = ref<boolean>(false)
   const isTimeTracking = ref<boolean>(false)
@@ -223,6 +223,7 @@ export const useItemList = () => {
     deleteTimer,
     collections,
     findCollectionTitleById,
+    findIdByCollectionTitle,
     showAllParams,
     isTimeTracking,
     activeKey,

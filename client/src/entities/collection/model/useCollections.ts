@@ -38,5 +38,10 @@ export const useCollections = () => {
     return collection ? collection.title : 'undefined'
   }
 
-  return { collections, findCollectionTitleById }
+  const findIdByCollectionTitle = (title: string) => {
+    const collection = collections.value.find((col) => col.title === title)
+    return collection ? collection.id : undefined
+  }
+
+  return { collections, findCollectionTitleById, findIdByCollectionTitle }
 }
