@@ -103,7 +103,7 @@ dateFilter.value = 'today'
           v-model:type="itemType"
           @submit="
             addItem(
-              findIdByCollectionTitle('Today') || 0,
+              findIdByCollectionTitle('Today') || 9,
               $event.itemTitle,
               itemType,
               $event.parentId,

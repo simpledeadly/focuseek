@@ -2,8 +2,10 @@ import { ShallowRef } from 'vue'
 import { useAuth } from '@/app/auth/useAuth'
 import { createItem, addItemToList, Item, type ItemType } from '@/entities/item'
 import { addItemToServer } from '@/shared/api/api'
+import { useCollections } from '@/entities/collection'
 
 const { getUserId } = useAuth()
+const { findIdByCollectionTitle } = useCollections()
 
 export const useAddItem = (items: ShallowRef<Item[]>) => {
   const addItem = async (
@@ -20,7 +22,7 @@ export const useAddItem = (items: ShallowRef<Item[]>) => {
   ) => {
     const item = createItem(
       getUserId!,
-      collectionId,
+      collectionId ? collectionId : findIdByCollectionTitle('Today') || 9,
       title,
       type,
       parentItemId,
