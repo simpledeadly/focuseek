@@ -92,7 +92,7 @@ const props = defineProps<{
 <style lang="scss">
 .item-entity-wrapper {
   position: relative;
-  display: block;
+  display: block !important;
 }
 
 .item-entity {
