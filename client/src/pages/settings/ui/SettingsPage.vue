@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import {
   Dialog,
   DialogContent,
@@ -15,11 +14,6 @@ import { useColorMode } from '@vueuse/core'
 import DialogClose from '@/shared/ui/dialog/DialogClose.vue'
 import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
 import { Card, CardContent } from '@/shared/ui/card'
-import { HideToggle } from '@/widgets/hide-toggle'
-
-const isHideDone = ref(JSON.parse(localStorage.getItem('hide')!) || false)
-
-watch(isHideDone, () => localStorage.setItem('hide', isHideDone.value.toString()))
 
 const handleReload = () => window.location.reload()
 
@@ -152,7 +146,6 @@ const getColors = (pack: Record<string, any>) => {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-          <HideToggle v-model="isHideDone" />
         </div>
         <DialogFooter class="settings-page__footer">
           <DialogClose as-child>
