@@ -31,11 +31,10 @@ const style = checkboxStyle(toRef(props, 'priority'), model)
         @click="!model && toaster()"
         :style="style"
         :disabled="props.disabled"
-        no-tick
       />
     </TooltipTrigger>
     <TooltipContent>
-      <p>{{ `Mark as ${model ? 'undone': 'done'}` }}</p>
+      <p>{{ `Mark as ${model ? 'undone' : 'done'}` }}</p>
     </TooltipContent>
   </Tooltip>
 </template>
