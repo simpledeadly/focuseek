@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
 import { useAuth } from '@/app/auth/useAuth'
-import { ChevronDown, User2 } from 'lucide-vue-next'
 import {
   Sidebar,
   SidebarContent,
@@ -9,6 +9,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
@@ -19,15 +20,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
+import { useCollections } from '@/entities/collection'
 import SettingsPage from '@/pages/settings'
-import { Collection } from '@/entities/collection'
-import { useRoute } from 'vue-router'
-
-const props = defineProps<{
-  collections?: Collection[]
-}>()
+import { ChevronDown, User2 } from 'lucide-vue-next'
+import { useItems } from '@/entities/item'
+import { useFilterItems } from '@/features/item/filter'
 
 const { getUsername, getUserId } = useAuth()
+
+const { items } = useItems()
+const { itemType } = useFilterItems(items)
+
+const { collections } = useCollections()
 
 const route = useRoute()
 
@@ -95,7 +99,7 @@ const quitApp = async () => {
           <SidebarMenu>
             <TransitionGroup name="fade-list">
               <div
-                v-for="(col, idx) in props.collections"
+                v-for="(col, idx) in collections"
                 :key="col.id"
                 :style="`--index: ${idx};`"
                 class="sub-item"
@@ -111,7 +115,33 @@ const quitApp = async () => {
                     <SidebarMenuButton as-child>
                       <span>{{ col.title }}</span>
                     </SidebarMenuButton>
-                    <!-- <SidebarMenuBadge>{{ col.id }}</SidebarMenuBadge> -->
+                    <SidebarMenuBadge
+                      class="gap-x-1"
+                      :class="route.path.includes(col.title.toLowerCase()) && 'text-blue-400'"
+                    >
+                      <span
+                        :class="
+                          itemType === 'note' &&
+                          route.path.includes(col.title.toLowerCase()) &&
+                          'text-muted-foreground'
+                        "
+                      >
+                        {{
+                          items.filter((i) => i.collectionId === col.id && i.type === 'todo').length
+                        }}
+                      </span>
+                      <span
+                        :class="
+                          itemType === 'todo' &&
+                          route.path.includes(col.title.toLowerCase()) &&
+                          'text-muted-foreground'
+                        "
+                      >
+                        {{
+                          items.filter((i) => i.collectionId === col.id && i.type === 'note').length
+                        }}
+                      </span>
+                    </SidebarMenuBadge>
                   </RouterLink>
                 </SidebarMenuItem>
               </div>
@@ -131,6 +161,7 @@ const quitApp = async () => {
 .sidebar {
   &__item {
     color: hsl(var(--muted-foreground));
+    opacity: 0.6;
     position: relative;
     transition: color 0.05s ease;
     border-radius: 4px;
