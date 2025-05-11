@@ -109,7 +109,7 @@ dateFilter.value = 'today'
               $event.parentId,
               $event.description,
               $event.deadline,
-              getStartOfTodayMillis(),
+              $event.date ? $event.date : getStartOfTodayMillis(),
               $event.priority,
               $event.durationPlanned
             )
