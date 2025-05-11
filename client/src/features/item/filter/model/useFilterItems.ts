@@ -40,12 +40,7 @@ export const useHideDone = () => {
 export const useFilterItems = (items: ShallowRef<Item[]>) => {
   const { itemType } = useItemType()
   const { isHideDone } = useHideDone()
-  const { collections, collection, collectionId } = useCollection()
-
-  if (!collectionId.value) {
-    console.error('collectionId not found', collections.value, collection.value, collectionId.value)
-    throw new Error('collectionId not found')
-  }
+  const { collectionId, loading } = useCollection()
 
   const filters = reactive({
     itemType: itemType.value,
@@ -80,8 +75,7 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
       if (filters.collectionId !== null && item.collectionId !== filters.collectionId) return false
       if (filters.dateFilter === 'today') {
         if (!item.date) return false
-        const itemDateStr = formatDateToYMD(new Date(item.date))
-        if (itemDateStr !== todayStr) return false
+        if (formatDateToYMD(new Date(item.date)) !== todayStr) return false
       }
       if (filters.priorityFilter !== 0 && filters.priorityFilter !== item.priority) return false
 
@@ -123,6 +117,8 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   }
 
   const filteredItems = computed(() => {
+    if (loading.value) return []
+
     const filtered = applyFilters(
       items.value,
       {

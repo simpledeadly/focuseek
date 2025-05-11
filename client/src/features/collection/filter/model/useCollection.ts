@@ -1,25 +1,42 @@
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCollections } from '@/entities/collection'
 
 export const useCollection = () => {
   const { collections } = useCollections()
   const route = useRoute()
+
   const collection = computed(() => {
-    // console.log(route.params.collection)
-    return route.params.collection
-  })
-  // console.log(collections.value, collection.value)
-
-  const collectionId = computed<number>(() => {
-    if (!collections.value.length) {
-      return 1
-    } else {
-      return collections.value.find(
-        (col) => col.title.toLocaleString().toLocaleLowerCase() === collection.value
-      )!.id
-    }
+    return typeof route.params.collection === 'string'
+      ? route.params.collection.toLowerCase()
+      : null
   })
 
-  return { collections, collection, collectionId }
+  const collectionId = ref<number | null>(null)
+  const loading = ref(true)
+
+  watch(
+    [collections, collection],
+    () => {
+      if (collections.value.length === 0) {
+        loading.value = true
+        collectionId.value = null
+        return
+      }
+      loading.value = false
+
+      if (!collection.value) {
+        collectionId.value = null
+        return
+      }
+
+      const found = collections.value.find(
+        (col) => col.title.toLocaleLowerCase() === collection.value
+      )
+      collectionId.value = found ? found.id : null
+    },
+    { immediate: true }
+  )
+
+  return { collections, collection, collectionId, loading }
 }
