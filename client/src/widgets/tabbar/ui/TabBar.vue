@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ItemType, useItems } from '@/entities/item'
+import { useFilterItems } from '@/features/item/filter'
 
 const router = useRouter()
-const route = useRoute()
 
-const activeTab = computed({
-  get: () => route.query.type?.toString() || 'todo',
-  set: (value) => {
-    router.push({ query: { ...route.query, type: value } })
-  },
-})
+const { items } = useItems()
+const { filters } = useFilterItems(items)
+
+const activeTab = ref<ItemType>(filters.itemType)
+
+watch(activeTab, (newVal) => (filters.itemType = newVal))
 </script>
 
 <template>

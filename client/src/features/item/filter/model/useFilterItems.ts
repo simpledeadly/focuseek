@@ -1,14 +1,6 @@
-import { computed, ref, ShallowRef } from 'vue'
+import { computed, reactive, ref, ShallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import {
-  filterItemsByCollection,
-  filterParentItems,
-  filterItemsByType,
-  filterDoneItems,
-  isItemType,
-  Item,
-  type ItemType,
-} from '@/entities/item'
+import { isItemType, Item, type ItemType } from '@/entities/item'
 import { useCollection } from '@/features/collection/filter'
 
 export const useItemType = () => {
@@ -21,7 +13,7 @@ export const useItemType = () => {
       return isItemType(type) ? type : 'todo'
     },
     set: (type: ItemType) => {
-      router.push({ query: { type } })
+      router.push({ query: { ...route.query, type } })
     },
   })
 
@@ -29,7 +21,11 @@ export const useItemType = () => {
 }
 
 export const useHideDone = () => {
-  const isHideDone = ref(JSON.parse(localStorage.getItem('hide')!) || false)
+  const isHideDone = ref<boolean>(false)
+  try {
+    const stored = localStorage.getItem('hide')
+    if (stored !== null) isHideDone.value = JSON.parse(stored)
+  } catch {}
 
   return { isHideDone }
 }
@@ -39,42 +35,45 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   const { isHideDone } = useHideDone()
   const { collections, collection, collectionId } = useCollection()
 
-  if (!collectionId) {
-    console.log('collectionId not found', collections.value, collection, collectionId)
+  if (!collectionId.value) {
+    console.error('collectionId not found', collections.value, collection.value, collectionId.value)
     throw new Error('collectionId not found')
   }
 
-  const filteredDoneItems = filterDoneItems(items.value)
-
-  const filteredParentItems = computed(() => {
-    const filteredItemsByCollection = filterItemsByCollection(items.value, collectionId.value)
-
-    return filterParentItems(
-      filterItemsByType(
-        isHideDone.value
-          ? filterItemsByCollection(filteredDoneItems, collectionId.value)
-          : filteredItemsByCollection,
-        itemType.value
-      )
-    )
+  const filters = reactive({
+    itemType: itemType.value,
+    collectionId: collectionId.value,
   })
+
+  function applyFilters(
+    arr: Item[],
+    filters: {
+      itemType: ItemType
+      collectionId: number | null
+    }
+  ): Item[] {
+    return arr.filter((item) => {
+      if (filters.itemType && item.type !== filters.itemType) return false
+      if (filters.collectionId !== null && item.collectionId !== filters.collectionId) return false
+      if (isHideDone.value && item.isDone) return false
+      return true
+    })
+  }
 
   const filteredItems = computed(() => {
-    const filteredItemsByCollection = filterItemsByCollection(items.value, collectionId.value)
-
-    return filterItemsByType(
-      isHideDone.value
-        ? filterItemsByCollection(filteredDoneItems, collectionId.value)
-        : filteredItemsByCollection,
-      itemType.value
-    )
+    return applyFilters(items.value, {
+      itemType: itemType.value,
+      collectionId: collectionId.value,
+    })
   })
+
+  const rootItems = computed(() => filteredItems.value.filter((item) => item.parentItemId === null))
 
   return {
     itemType,
+    rootItems,
     filteredItems,
-    filteredDoneItems,
-    filteredParentItems,
+    filters,
     collectionId,
     isHideDone,
   }
