@@ -29,7 +29,6 @@ export const useHideDone = () => {
   } catch {}
 
   watch(isHideDone, (newVal) => {
-    console.log(newVal)
     try {
       localStorage.setItem('hide', JSON.stringify(newVal))
     } catch {}
@@ -124,7 +123,6 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   }
 
   const filteredItems = computed(() => {
-    console.log('from filteredItems:', isHideDone.value)
     const filtered = applyFilters(
       items.value,
       {
