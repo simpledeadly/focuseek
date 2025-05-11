@@ -47,7 +47,7 @@ dateFilter.value = 'today'
         itemType === 'todo' &&
         !isHideDone &&
         !!sortedItems.filter((i) => i.type === itemType).length
-          ? `${(sortedItems.filter((i) => i.isDone).length / sortedItems.length) * 100}% out of ${sortedItems.length} (${sortedItems.filter((i) => i.isDone).length})`
+          ? `${(sortedItems.filter((i) => i.isDone).length / sortedItems.length) * 100}% of ${sortedItems.length} (${sortedItems.filter((i) => i.isDone).length})`
           : `${sortedItems.filter((i) => i.type === itemType).length} ${itemType}s`
       "
       class="mb-4"
