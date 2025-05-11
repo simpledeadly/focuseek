@@ -9,7 +9,20 @@ const API_URL = 'http://localhost:3000/api'
 
 // === USERS ===
 
-const { setUserId, setUsername, getUserId } = useAuth()
+export function setUserId(id: number) {
+  const auth = useAuth()
+  auth.setUserId(id)
+}
+
+export function getUserId() {
+  const auth = useAuth()
+  return auth.getUserId
+}
+
+export function setUsername(username: string) {
+  const auth = useAuth()
+  auth.setUsername(username)
+}
 
 export const registerUser = async (username: string, password: string): Promise<User> => {
   try {
