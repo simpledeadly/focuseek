@@ -271,6 +271,12 @@ app.post('/api/items', authenticate, async (req, res) => {
         console.log('Request body:', req.body, item)
       }
 
+      const maxOrderResult = await prisma.item.aggregate({
+        where: { collectionId: item.collectionId },
+        _max: { order: true },
+      })
+      const maxOrder = maxOrderResult._max.order ?? 0
+
       const newItem = await prisma.item.create({
         data: {
           userId,
@@ -285,12 +291,12 @@ app.post('/api/items', authenticate, async (req, res) => {
           priority: item.priority,
           durationPlanned:
             item.durationPlanned != null ? BigInt(item.durationPlanned.toString()) : null,
-          durationReal:
-            item.durationReal != null ? BigInt(item.durationReal.toString()) : null,
+          durationReal: item.durationReal != null ? BigInt(item.durationReal.toString()) : null,
           tags: item.tags,
           date: item.date ? new Date(item.date) : undefined,
           deadline: item.deadline ? new Date(item.deadline) : undefined,
           showSubItems: item.showSubItems,
+          order: maxOrder + 1,
         },
       })
 
@@ -369,6 +375,38 @@ app.put('/api/items/:id', async (req, res) => {
   } catch (error) {
     console.error('Ошибка при обновлении элемента:', error)
     res.status(404).json({ message: 'Элемент не найден' })
+  }
+})
+
+type OrderUpdate = { id: number; order: number }
+
+async function updateItemsOrder(updates: OrderUpdate[]) {
+  try {
+    await prisma.$transaction(
+      updates.map(({ id, order }) =>
+        prisma.item.update({
+          where: { id },
+          data: { order },
+        })
+      )
+    )
+    console.log('Обновление order прошло успешно')
+  } catch (error) {
+    console.error('Ошибка при обновлении order в базе:', error)
+    throw error
+  }
+}
+
+app.post('/api/items/order', async (req, res) => {
+  const updates: OrderUpdate[] = req.body
+  console.log('Получен запрос на обновление order:', updates)
+
+  try {
+    await updateItemsOrder(updates)
+    res.status(200).json({ success: true })
+  } catch (error) {
+    console.error('Ошибка обновления order:', error)
+    res.status(500).json({ error: 'Failed to update order' })
   }
 })
 
