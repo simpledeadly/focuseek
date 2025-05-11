@@ -30,10 +30,23 @@ export const useItemsStore = defineStore('items', () => {
 
   const loadItems = async () => {
     try {
-      items.value = await fetchItems()
+      const data = await fetchItems()
+
+      const loadedItems = data
+        .map((item: Item, index: number) => ({
+          ...item,
+          order: item.order ?? index + 1,
+        }))
+        .sort((a: Item, b: Item) => a.order - b.order)
+
+      items.value = loadedItems
     } catch (error) {
       console.error('Ошибка при загрузке данных:', error)
     }
+  }
+
+  function updateOrderOfItem(id: number, newOrder: number) {
+    items.value = items.value.map((item) => (item.id === id ? { ...item, order: newOrder } : item))
   }
 
   if (!items.value.length) {
@@ -50,12 +63,12 @@ export const useItemsStore = defineStore('items', () => {
     }
   }
 
-  return { items, item, setSelectedItem }
+  return { items, item, updateOrderOfItem, setSelectedItem }
 })
 
 export const useItems = () => {
   const { items } = storeToRefs(useItemsStore())
-  const { item, setSelectedItem } = useItemsStore()
+  const { item, updateOrderOfItem, setSelectedItem } = useItemsStore()
 
-  return { items, item, setSelectedItem }
+  return { items, item, updateOrderOfItem, setSelectedItem }
 }
