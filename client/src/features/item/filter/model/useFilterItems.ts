@@ -61,7 +61,7 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
     return `${year}-${month}-${day}`
   }
 
-  const priorityFilter = ref<1 | 2 | 3 | 0 | null>(0)
+  const priorityFilter = ref<number | null>(0)
 
   const applyFilters = (
     arr: Item[],
@@ -69,7 +69,7 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
       itemType: ItemType
       collectionId: number | null
       dateFilter: 'all' | 'today'
-      priorityFilter: 1 | 2 | 3 | 0 | null
+      priorityFilter: number | null
     },
     isHideDoneValue: boolean
   ): Item[] => {

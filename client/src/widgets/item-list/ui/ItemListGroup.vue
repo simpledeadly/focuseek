@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { Search } from '@/widgets/search'
-import { AddItemFormInline } from '@/features/item/add'
-import { useItemList, ItemList } from '..'
-import { useSidebar } from '@/shared/ui/sidebar'
 import draggable from 'vuedraggable'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/ui/select'
+import { useSidebar } from '@/shared/ui/sidebar'
+import { AddItemFormInline } from '@/features/item/add'
+import { Search } from '@/widgets/search'
 import { HideToggle } from '@/widgets/hide-toggle'
+import { useItemList, ItemList } from '..'
 
 const {
   sortedItems,
@@ -40,31 +48,78 @@ const { isMobile } = useSidebar()
 
 <template>
   <Search />
-  <HideToggle v-model="isHideDone" />
-  <div class="flex mb-4">
-    <select v-model="dateFilter">
-      <option value="all">Все даты</option>
-      <option value="today">Только сегодня</option>
-    </select>
-    <select v-model="priorityFilter">
-      <option :value="0">All</option>
-      <option :value="1">High</option>
-      <option :value="2">Medium</option>
-      <option :value="3">Low</option>
-      <option :value="null">Only gray</option>
-    </select>
+  <div class="flex mb-2">
+    <Select v-model="dateFilter">
+      <SelectTrigger
+        arrow
+        class="w-[180px]"
+      >
+        <SelectValue placeholder="Select a date" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="all">All dates</SelectItem>
+          <SelectItem value="today">Today</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+    <Select
+      :modelValue="priorityFilter?.toString()"
+      @update:modelValue="
+        (value) => (value === 'null' ? (priorityFilter = null) : (priorityFilter = Number(value)))
+      "
+    >
+      <SelectTrigger
+        arrow
+        class="w-[180px] ml-2"
+      >
+        <SelectValue placeholder="Select priority" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="0">All</SelectItem>
+          <SelectItem value="1">High</SelectItem>
+          <SelectItem value="2">Medium</SelectItem>
+          <SelectItem value="3">Low</SelectItem>
+          <SelectItem value="null">Only grays</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+    <HideToggle
+      class="ml-2"
+      v-model="isHideDone"
+    />
   </div>
-  <div class="flex mb-4">
-    <select v-model="sortBy">
-      <option value="default">Без сортировки</option>
-      <option value="date">По дате</option>
-      <option value="priority">По приоритету</option>
-    </select>
-
-    <select v-model="sortOrder">
-      <option value="asc">По возрастанию</option>
-      <option value="desc">По убыванию</option>
-    </select>
+  <div class="flex mb-2">
+    <Select v-model="sortBy">
+      <SelectTrigger
+        arrow
+        class="w-[180px]"
+      >
+        <SelectValue placeholder="Sort by" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="default">No sorting</SelectItem>
+          <SelectItem value="date">Date</SelectItem>
+          <SelectItem value="priority">Priority</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+    <Select v-model="sortOrder">
+      <SelectTrigger
+        arrow
+        class="w-[180px] ml-2"
+      >
+        <SelectValue placeholder="Sort order" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectItem value="asc">Asc</SelectItem>
+          <SelectItem value="desc">Desc</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   </div>
   <div
     class="item-list"
