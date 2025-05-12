@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { RouterView } from 'vue-router'
 import { Toaster } from '@/shared/ui/sonner'
 import { TooltipProvider } from '@/shared/ui/tooltip'
@@ -8,11 +8,11 @@ import { MainLayout } from '@/shared/ui/layouts/main-layout'
 import { AuthLayout } from '@/shared/ui/layouts/auth-layout'
 import { AppSidebar } from '@/widgets/sidebar'
 import { Loader } from '@/widgets/loader'
+import { useLoading } from './useLoading'
 import { isAuthenticated } from './auth/auth'
 import './styles/animations.scss'
 
-const isLoading = ref(false)
-const setLoading = (value: boolean) => (isLoading.value = value)
+const { isLoading, setLoading } = useLoading()
 
 const transitionName = computed<any>(() => 'dissolve-smooth')
 </script>
