@@ -1,21 +1,35 @@
 <script setup lang="ts">
-import { toRef } from 'vue'
+import { h, toRef } from 'vue'
 import { toast } from 'vue-sonner'
 import { Checkbox } from '@/shared/ui/checkbox'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
+import { parseUnixTimestampToDuration } from '@/shared/lib/utils'
 import { checkboxStyle } from '../../composables'
 
 const model = defineModel<boolean>()
 
 const props = defineProps<{
+  itemId: number
   priority?: number | null
   disabled?: boolean
 }>()
 
+const storedValue = localStorage.getItem(`timer_${props.itemId}`)
+
 const toaster = () => {
   toast.success('Todo completed', {
-    description: '+1',
+    description: h('div', { class: 'text-muted-foreground' }, [
+      storedValue ? '+1 in ' : '+1',
+      h(
+        'span',
+        { class: 'text-foreground' },
+        storedValue
+          ? `${parseUnixTimestampToDuration(JSON.parse(storedValue).trackedDuration)}`
+          : ''
+      ),
+    ]),
     class: 'toast',
+    duration: 5000,
   })
 }
 

@@ -89,6 +89,7 @@ defineProps<{
       #checkbox
     >
       <ItemCheckbox
+        :itemId="item.id"
         :priority="item.priority"
         :model-value="item.isDone"
         @update:model-value="updateItemProperty(item, { isDone: !item.isDone })"
