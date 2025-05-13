@@ -9,17 +9,17 @@ const API_URL = 'http://localhost:3000/api'
 
 // === USERS ===
 
-export function setUserId(id: number) {
+export const setUserId = (id: number) => {
   const auth = useAuth()
   auth.setUserId(id)
 }
 
-export function getUserId() {
+export const getUserId = () => {
   const auth = useAuth()
   return auth.getUserId
 }
 
-export function setUsername(username: string) {
+export const setUsername = (username: string) => {
   const auth = useAuth()
   auth.setUsername(username)
 }
@@ -85,7 +85,7 @@ export const addCollectionToServer = async (collection: Collection): Promise<Col
     const token = localStorage.getItem('token')
     console.log('collection:', collection)
 
-    console.log('POST collection before', collection.userId, getUserId)
+    console.log('POST collection before', collection.userId, getUserId())
 
     const response = await axios.post(`${API_URL}/collections`, collection, {
       headers: {
@@ -96,7 +96,7 @@ export const addCollectionToServer = async (collection: Collection): Promise<Col
     console.log(
       'POST collection after 2',
       collection.userId,
-      getUserId,
+      getUserId(),
       response.data.collection.userId
     )
 
@@ -163,7 +163,7 @@ export const addItemToServer = async (item: Item): Promise<Item> => {
     const token = localStorage.getItem('token')
     console.log('item:', item)
 
-    console.log('POST Item before', item.userId, getUserId)
+    console.log('POST Item before', item.userId, getUserId())
 
     const response = await axios.post(`${API_URL}/items`, item, {
       headers: {
@@ -171,7 +171,7 @@ export const addItemToServer = async (item: Item): Promise<Item> => {
       },
     })
     console.log('Элемент успешно добавлен на сервер:', response.data)
-    console.log('POST Item after 2', item.userId, getUserId, response.data.item.userId)
+    console.log('POST Item after 2', item.userId, getUserId(), response.data.item.userId)
 
     return response.data.item
   } catch (e) {
