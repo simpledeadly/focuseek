@@ -6,8 +6,9 @@ import { TooltipProvider } from '@/shared/ui/tooltip'
 import { SidebarProvider } from '@/shared/ui/sidebar'
 import { MainLayout } from '@/shared/ui/layouts/main-layout'
 import { AuthLayout } from '@/shared/ui/layouts/auth-layout'
-import { AppSidebar } from '@/widgets/sidebar'
 import { Loader } from '@/widgets/loader'
+import { AppSidebar } from '@/widgets/sidebar'
+import { BreakAlert } from '@/widgets/break-alert'
 import { useLoading } from './useLoading'
 import { isAuthenticated } from './auth/auth'
 import './styles/animations.scss'
@@ -18,6 +19,7 @@ const transitionName = computed<any>(() => 'dissolve-smooth')
 </script>
 
 <template>
+  <BreakAlert />
   <TooltipProvider :delay-duration="400">
     <Toaster
       theme="system"
@@ -50,7 +52,7 @@ const transitionName = computed<any>(() => 'dissolve-smooth')
 }
 
 .toast {
-  animation-duration: 75ms !important;
+  animation-duration: 100ms !important;
   background: hsl(var(--primary-foreground)) !important;
   border: 1px solid hsl(var(--border));
 }
