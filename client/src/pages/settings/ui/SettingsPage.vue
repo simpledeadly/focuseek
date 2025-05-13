@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useColorMode } from '@vueuse/core'
+import { useTakeABreak } from '@/widgets/break-alert'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -8,12 +11,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/shared/ui/dialog'
+import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
-import { Bolt } from 'lucide-vue-next'
-import { useColorMode } from '@vueuse/core'
-import DialogClose from '@/shared/ui/dialog/DialogClose.vue'
-import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
+import { Checkbox } from '@/shared/ui/checkbox'
 import { Card, CardContent } from '@/shared/ui/card'
+import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
+import { parseUnixTimestampToDuration } from '@/shared/lib/utils'
+import { Bolt } from 'lucide-vue-next'
+
+const { breakPer, breakFor, takeABreakReminders, remainingUntilNextBreak } = useTakeABreak()
 
 const handleReload = () => window.location.reload()
 
@@ -146,6 +152,30 @@ const getColors = (pack: Record<string, any>) => {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
+          <div class="flex flex-col gap-2">
+            <p>Break</p>
+            <div class="flex flex-col gap-2">
+              <div class="flex flex-row gap-2 items-center">
+                <Checkbox v-model="takeABreakReminders" />
+                <Input
+                  type="text"
+                  class="w-24"
+                  placeholder="Every"
+                  v-model="breakPer"
+                />
+                <Input
+                  type="text"
+                  class="w-24"
+                  placeholder="Duration"
+                  v-model="breakFor"
+                />
+              </div>
+              <div>
+                <span class="text-muted-foreground">Before break: </span>
+                <span>{{ parseUnixTimestampToDuration(remainingUntilNextBreak) }}</span>
+              </div>
+            </div>
+          </div>
         </div>
         <DialogFooter class="settings-page__footer">
           <DialogClose as-child>
@@ -179,18 +209,18 @@ const getColors = (pack: Record<string, any>) => {
 
   .color-split-content {
     display: flex;
-    flex-direction: column; /* вертикальное расположение */
-    height: 110px; /* фиксированная высота для карточки */
+    flex-direction: column;
+    height: 110px;
     padding: 0 !important;
     position: relative;
-    border-radius: 6px; /* чтобы карточка была с закруглениями */
-    overflow: hidden; /* чтобы цвета не выходили за края */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* легкая тень для объема */
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   .color-part {
-    flex: 1; /* равномерное деление высоты */
-    width: 100%; /* растянуть по ширине */
+    flex: 1;
+    width: 100%;
   }
 }
 </style>
