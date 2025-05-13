@@ -9,7 +9,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
@@ -23,13 +22,8 @@ import {
 import { useCollections } from '@/entities/collection'
 import SettingsPage from '@/pages/settings'
 import { ChevronDown, User2 } from 'lucide-vue-next'
-import { useItems } from '@/entities/item'
-import { useFilterItems } from '@/features/item/filter'
 
 const { getUsername, getUserId } = useAuth()
-
-const { items } = useItems()
-const { itemType } = useFilterItems(items)
 
 const { collections } = useCollections()
 
@@ -115,33 +109,6 @@ const quitApp = async () => {
                     <SidebarMenuButton as-child>
                       <span>{{ col.title }}</span>
                     </SidebarMenuButton>
-                    <SidebarMenuBadge
-                      class="gap-x-1"
-                      :class="route.path.includes(col.title.toLowerCase()) && 'text-blue-400'"
-                    >
-                      <span
-                        :class="
-                          itemType === 'note' &&
-                          route.path.includes(col.title.toLowerCase()) &&
-                          'text-muted-foreground'
-                        "
-                      >
-                        {{
-                          items.filter((i) => i.collectionId === col.id && i.type === 'todo').length
-                        }}
-                      </span>
-                      <span
-                        :class="
-                          itemType === 'todo' &&
-                          route.path.includes(col.title.toLowerCase()) &&
-                          'text-muted-foreground'
-                        "
-                      >
-                        {{
-                          items.filter((i) => i.collectionId === col.id && i.type === 'note').length
-                        }}
-                      </span>
-                    </SidebarMenuBadge>
                   </RouterLink>
                 </SidebarMenuItem>
               </div>
