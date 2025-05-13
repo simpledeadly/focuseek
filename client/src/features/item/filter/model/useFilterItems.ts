@@ -1,5 +1,6 @@
 import { computed, reactive, ref, ShallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { formatDateToYMD } from '@/shared/lib/utils'
 import { isItemType, Item, type ItemType } from '@/entities/item'
 import { useCollection } from '@/features/collection/filter'
 
@@ -48,13 +49,6 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   })
 
   const dateFilter = ref<'all' | 'today'>('all')
-
-  function formatDateToYMD(date: Date): string {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
 
   const priorityFilter = ref<number | null>(0)
 
