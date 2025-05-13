@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { AddItemFormInline } from '@/features/item/add'
+import { watch } from 'vue'
 import { Separator } from '@/shared/ui/separator'
-import { useItemList } from '@/widgets/item-list'
-import ItemList from '@/widgets/item-list/ui/ItemList.vue'
+import { getStartOfTodayMillis } from '@/shared/lib/utils'
+import { AddItemFormInline } from '@/features/item/add'
+import { ItemList, useItemList } from '@/widgets/item-list'
 import { TabBar } from '@/widgets/tabbar'
 import draggable from 'vuedraggable'
 
 const {
   sortedItems,
   activeKey,
+  collectionId,
   filteredItems,
   dateFilter,
   itemType,
@@ -30,13 +32,20 @@ const {
   filterNestedItems,
 } = useItemList()
 
-function getStartOfTodayMillis() {
-  const now = new Date()
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-  return startOfToday.getTime()
+const updateFilters = (type: string) => {
+  if (type === 'todo') {
+    dateFilter.value = 'today'
+  } else {
+    dateFilter.value = 'all'
+    collectionId.value = 9
+  }
 }
 
-dateFilter.value = 'today'
+updateFilters(itemType.value)
+
+watch(itemType, (newVal) => {
+  updateFilters(newVal)
+})
 </script>
 
 <template>
@@ -109,7 +118,7 @@ dateFilter.value = 'today'
               $event.parentId,
               $event.description,
               $event.deadline,
-              $event.date ? $event.date : getStartOfTodayMillis(),
+              $event.date ? $event.date : itemType === 'todo' ? getStartOfTodayMillis() : undefined,
               $event.priority,
               $event.durationPlanned
             )
