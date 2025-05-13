@@ -22,7 +22,6 @@ export const parseDurationToUnixTimestamp = (duration: string): number => {
   if (!match || match[0] === '') {
     const msg = 'Введите время в формате 1h 1m 1s\n'
     console.log(msg, duration, match)
-    alert(msg)
     return 0
   }
 
@@ -46,6 +45,44 @@ export const parseUnixTimestampToDuration = (totalMs: number): string => {
   } else {
     return `${seconds}s`
   }
+}
+
+export const getStartOfTodayMillis = () => {
+  const now = new Date()
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+  return startOfToday.getTime()
+}
+
+export const formatDateToYMD = (date: Date, time: boolean = false): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  if (time) {
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    const seconds = String(date.getSeconds()).padStart(2, '0')
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`
+  } else {
+    return `${day}.${month}.${year}`
+  }
+}
+
+export const updateLocalStorageField = (key: string, field: string, newValue: string) => {
+  const stored = localStorage.getItem(key)
+  const obj = stored ? JSON.parse(stored) : {}
+
+  obj[field] = newValue
+
+  localStorage.setItem(key, JSON.stringify(obj))
+}
+
+export const declOfNum = (number: number, titles: [string, string, string]): string => {
+  const cases = [2, 0, 1, 1, 1, 2]
+  return titles[
+    number % 100 > 4 && number % 100 < 20 ? 2 : cases[number % 10 < 5 ? number % 10 : 5]
+  ]
 }
 
 export const convertToLink = (text: string): string => {
