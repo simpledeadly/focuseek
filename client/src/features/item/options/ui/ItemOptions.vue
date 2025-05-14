@@ -27,6 +27,7 @@ import ItemDateOptions from './ItemDateOptions.vue'
 import ItemPriorityOption from './ItemPriorityOption.vue'
 import ItemTimeTrackOptions from './ItemTimeTrackOptions.vue'
 import { parseDurationToUnixTimestamp } from '@/shared/lib/utils'
+import { Toggle } from '@/shared/ui/toggle'
 
 const modelDate = defineModel<number>('date')
 const modelDeadline = defineModel<number>('deadline')
@@ -148,14 +149,12 @@ const handleSwitchUser = () => {
     ref="dropdownRef"
   >
     <DropdownMenuTrigger as-child>
-      <div
-        class="item-show-options"
+      <Toggle
+        class="item-show-options checkbox-icon-toggle"
         :style="isMenuOpen && 'background: hsl(var(--border))'"
       >
-        <span class="checkbox-icon-toggle">
-          <Ellipsis class="h-4 w-4 transition-transform duration-75" />
-        </span>
-      </div>
+        <Ellipsis class="h-4 w-4 transition-transform duration-100" />
+      </Toggle>
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-48">
       <DropdownMenuGroup>
@@ -285,29 +284,11 @@ const handleSwitchUser = () => {
 
 <style lang="scss">
 .item-show-options {
-  cursor: pointer;
   transition: all 0.1s ease;
-  border-radius: 4px;
 
   &:hover {
     color: hsl(var(--primary));
     background: hsl(var(--border));
   }
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.checkbox-icon-toggle {
-  cursor: pointer;
 }
 </style>
