@@ -131,10 +131,10 @@ const quitApp = async () => {
     opacity: 0.6;
     position: relative;
     transition: color 0.05s ease;
-    border-radius: 4px;
+    border-radius: 6px;
 
     &::before {
-      border-radius: 4px;
+      border-radius: 6px;
       content: '';
       position: absolute;
       top: 0;
@@ -152,7 +152,7 @@ const quitApp = async () => {
     }
 
     &_active {
-      border-radius: 4px;
+      border-radius: 6px;
       background: hsl(var(--border));
       // background: hsl(var(--foreground));
       // color: hsl(var(--background));
