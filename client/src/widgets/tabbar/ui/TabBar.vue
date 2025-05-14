@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { useItems } from '@/entities/item'
 import { useFilterItems } from '@/features/item/filter'
+import { CollectionOptions } from '@/features/collection/options'
 
 const router = useRouter()
 
@@ -15,6 +16,7 @@ const activeTab = computed(() => itemType.value)
 
 <template>
   <nav class="tab-bar">
+    <div style="background: red; width: 38px; visibility: hidden" />
     <Tabs
       v-model="activeTab"
       class="w-[400px] tab-bar__container"
@@ -32,22 +34,25 @@ const activeTab = computed(() => itemType.value)
         >
       </TabsList>
     </Tabs>
+    <CollectionOptions />
   </nav>
 </template>
 
 <style lang="scss">
 .tab-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  margin-top: 0.25rem;
+
   &__container {
-    margin: 0 auto;
-    margin-top: 0.25rem;
-    margin-bottom: 1.5rem;
     text-align: center;
     width: 100%;
   }
 
   &__tabs {
-    background: hsl(var(--primary-foreground)) !important;
-    border: 1px solid hsl(var(--border));
+    background: hsl(var(--primary-foreground));
+    // border: 1px solid hsl(var(--border));
   }
 }
 </style>
