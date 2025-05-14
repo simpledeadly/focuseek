@@ -11,10 +11,10 @@
   },
   "aliases": {
     "components": "@/shared",
-    "composables": "@/shared/composables",
+    "composables": "@/shared",
     "utils": "@/shared/lib/utils",
-    "lib": "@/shared/lib",
-    "ui": "@/shared/ui"
+    "lib": "@/shared",
+    "ui": "@/shared"
   },
   "iconLibrary": "lucide"
 }
