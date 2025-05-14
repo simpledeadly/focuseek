@@ -21,6 +21,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import 'mousetrap/plugins/global-bind/mousetrap-global-bind'
 import { checkboxStyle } from '../../composables'
 
+const props = defineProps<{
+  subForm?: boolean
+}>()
+
 const emit = defineEmits<{
   (
     e: 'submit',
@@ -204,7 +208,7 @@ const style = checkboxStyle(itemPriority)
             class="item-checkbox"
             :disabled="true"
           />
-          Add {{ itemType }}
+          Add {{ props.subForm ? `sub${itemType}` : itemType }}
         </div>
         <div
           v-else

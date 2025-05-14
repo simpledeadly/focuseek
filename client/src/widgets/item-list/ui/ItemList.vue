@@ -249,6 +249,7 @@ defineProps<{
             </template>
           </draggable>
           <AddItemFormInline
+            subForm
             v-if="item.showSubItems"
             v-model:type="itemType"
             key="add-item-form"
