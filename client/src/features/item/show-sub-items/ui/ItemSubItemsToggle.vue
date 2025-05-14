@@ -15,7 +15,7 @@ const model = defineModel<boolean>()
             v-model="model"
             class="visually-hidden"
           />
-          <span class="checkbox-icon-toggle">
+          <span class="checkbox-icon-toggle cursor-pointer">
             <ChevronRight
               class="h-4 w-4 transition-transform duration-100"
               :class="{ 'rotate-90': model }"
@@ -32,7 +32,6 @@ const model = defineModel<boolean>()
 
 <style lang="scss">
 .item-show-sub-items {
-  cursor: pointer;
   transition: all 0.1s ease;
   border-radius: 4px;
 
@@ -52,10 +51,6 @@ const model = defineModel<boolean>()
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-.checkbox-icon-toggle-wrap {
-  cursor: pointer;
 }
 
 .rotate-90 {
