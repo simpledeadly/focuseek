@@ -117,6 +117,36 @@ export const useTakeABreak = () => {
     }
   }
 
+  const showBreakNotification = () => {
+    if (!('Notification' in window)) {
+      alert('Ваш браузер не поддерживает уведомления')
+      return
+    }
+
+    if (Notification.permission === 'granted') {
+      console.log('notify')
+      const notification = new Notification('Время перерыва!', {
+        body: 'Пора сделать паузу',
+        requireInteraction: true,
+      })
+
+      notification.onshow = () => console.log('Уведомление показано')
+      notification.onclick = () => {
+        console.log('Уведомление кликнуто')
+        window.focus()
+        notification.close()
+      }
+      notification.onerror = (e) => console.error('Ошибка уведомления:', e)
+      notification.onclose = () => console.log('Уведомление закрыто')
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          showBreakNotification()
+        }
+      })
+    }
+  }
+
   const startInterval = () => {
     if (!takeABreakReminders.value) {
       clearExistingInterval()
@@ -132,6 +162,9 @@ export const useTakeABreak = () => {
 
     intervalId = setTimeout(() => {
       isBreakNow.value = true
+
+      showBreakNotification()
+
       if (takeABreakReminders.value) {
         updateLocalStorageField('breakProgress', 'isBreakNow', 'true')
       }
