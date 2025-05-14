@@ -35,6 +35,7 @@ const {
 const updateFilters = (type: string) => {
   if (type === 'todo') {
     dateFilter.value = 'today'
+    collectionId.value = null
   } else {
     dateFilter.value = 'all'
     collectionId.value = 9
