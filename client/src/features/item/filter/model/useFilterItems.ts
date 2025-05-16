@@ -1,5 +1,6 @@
 import { computed, reactive, ref, ShallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useLoading } from '@/app/useLoading'
 import { formatDateToYMD } from '@/shared/lib/utils'
 import { isItemType, Item, type ItemType } from '@/entities/item'
 import { useCollection } from '@/features/collection/filter'
@@ -41,7 +42,8 @@ export const useHideDone = () => {
 export const useFilterItems = (items: ShallowRef<Item[]>) => {
   const { itemType } = useItemType()
   const { isHideDone } = useHideDone()
-  const { collectionId, loading } = useCollection()
+  const { collectionId } = useCollection()
+  const { isLoading } = useLoading()
 
   const filters = reactive({
     itemType: itemType.value,
@@ -59,8 +61,8 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
       collectionId: number | null
       dateFilter: 'all' | 'today'
       priorityFilter: number | null
-    },
-    isHideDoneValue: boolean
+      isDone: boolean
+    }
   ): Item[] => {
     const todayStr = formatDateToYMD(new Date())
 
@@ -72,8 +74,7 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
         if (formatDateToYMD(new Date(item.date)) !== todayStr) return false
       }
       if (filters.priorityFilter !== 0 && filters.priorityFilter !== item.priority) return false
-
-      if (isHideDoneValue && item.isDone) return false
+      if (filters.isDone && !item.isDone) return false
 
       return true
     })
@@ -110,19 +111,23 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
     })
   }
 
-  const filteredItems = computed(() => {
-    if (loading.value) return []
+  /** Список должен быть:
+   *! 1. Оптимизированным
+   *! 2. Мог быть вложенным
+   *! 3. Перетаскиваемым (по вложенности и параллельности)
+   *! 4. Анимированным
+   */
 
-    const filtered = applyFilters(
-      items.value,
-      {
-        itemType: itemType.value,
-        collectionId: collectionId.value,
-        dateFilter: dateFilter.value,
-        priorityFilter: priorityFilter.value,
-      },
-      isHideDone.value
-    )
+  const filteredItems = computed(() => {
+    if (isLoading.value) return []
+
+    const filtered = applyFilters(items.value, {
+      itemType: itemType.value,
+      collectionId: collectionId.value,
+      dateFilter: dateFilter.value,
+      priorityFilter: priorityFilter.value,
+      isDone: isHideDone.value,
+    })
 
     return applySorting(filtered, sortBy.value, sortOrder.value)
   })
@@ -152,6 +157,7 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   return {
     itemType,
     rootItems,
+    applyFilters,
     filteredItems,
     sortedItems,
     filters,
