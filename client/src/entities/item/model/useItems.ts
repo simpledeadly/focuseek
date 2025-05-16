@@ -67,8 +67,8 @@ export const useItemsStore = defineStore('items', () => {
 })
 
 export const useItems = () => {
-  const { items } = storeToRefs(useItemsStore())
-  const { item, updateOrderOfItem, setSelectedItem } = useItemsStore()
+  const { items, item } = storeToRefs(useItemsStore())
+  const { updateOrderOfItem, setSelectedItem } = useItemsStore()
 
   return { items, item, updateOrderOfItem, setSelectedItem }
 }
