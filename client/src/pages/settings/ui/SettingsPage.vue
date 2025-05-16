@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColorMode } from '@vueuse/core'
-import { useTakeABreak } from '@/widgets/break-alert'
+import { useBreaks } from '@/app/stores'
 import {
   Dialog,
   DialogClose,
@@ -19,7 +19,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
 import { parseUnixTimestampToDuration } from '@/shared/lib/utils'
 import { Bolt } from 'lucide-vue-next'
 
-const { breakPer, breakFor, takeABreakReminders, remainingUntilNextBreak } = useTakeABreak()
+const { breakPer, breakFor, takeABreakReminders, remainingUntilNextBreak } = useBreaks()
 
 const handleReload = () => window.location.reload()
 

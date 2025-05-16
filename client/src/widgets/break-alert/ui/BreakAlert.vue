@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Pause, Play } from 'lucide-vue-next'
+import { useBreaks } from '@/app/stores'
 import { Button } from '@/shared/ui/button'
 import {
   AlertDialog,
@@ -9,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/shared/ui/alert-dialog'
-import { useTakeABreak } from '..'
 import { parseUnixTimestampToDuration } from '@/shared/lib/utils'
 
 const {
@@ -23,7 +23,7 @@ const {
   newBreakStarted,
   isBreakNow,
   lastBreakTimestampWas,
-} = useTakeABreak()
+} = useBreaks()
 </script>
 
 <template>
