@@ -1,35 +1,18 @@
-import { ref, watch, onScopeDispose, computed, onUnmounted, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onScopeDispose, computed, onUnmounted, onMounted } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
-import {
-  formatDateToYMD,
-  parseDurationToUnixTimestamp,
-  parseUnixTimestampToDuration,
-  updateLocalStorageField,
-} from '@/shared/lib/utils'
+import { formatDateToYMD, parseDurationToUnixTimestamp } from '@/shared/lib/utils'
 
 export const useBreaksStore = defineStore(
   'breaks',
   () => {
-    const storedValue = localStorage.getItem('breaks')
-    const storedProgress = localStorage.getItem('breakProgress')
-    const storedElapsed = localStorage.getItem('elapsedBreak')
-    const storedPrevBreak = localStorage.getItem('prevBreakEnded')
-    const storedElapsedUpdate = localStorage.getItem('elapsedBreakUpdate')
-    const storedLastBreakTimestamp = localStorage.getItem('lastBreakTimestamp')
-
     const now = ref(Date.now())
-
-    const takeABreakReminders = ref<boolean>(storedValue ? JSON.parse(storedValue).isBreaks : false)
+    const takeABreakReminders = ref<boolean>(false)
     const isBreakTracking = ref<boolean>(false)
     const canCloseAlert = ref<boolean>(false)
     const isBreakNow = ref<boolean>(false)
     const newBreakStarted = ref<boolean>(false)
-    const breakPer = ref<string>(
-      storedValue ? parseUnixTimestampToDuration(JSON.parse(storedValue).everyMs) : '30m'
-    )
-    const breakFor = ref<string>(
-      storedValue ? parseUnixTimestampToDuration(JSON.parse(storedValue).forMs) : '1m 30s'
-    )
+    const breakPer = ref<string>('30m')
+    const breakFor = ref<string>('1m 30s')
     const breakEveryMillis = computed<number>(() => parseDurationToUnixTimestamp(breakPer.value))
     const breakForMillis = computed<number>(() => parseDurationToUnixTimestamp(breakFor.value))
     const seconds = ref<number>(0)
@@ -39,87 +22,33 @@ export const useBreaksStore = defineStore(
     let timerUpdateId: ReturnType<typeof setInterval> | null = null
     let timerId: ReturnType<typeof setInterval> | null = null
 
-    // Время последнего срабатывания перерыва (timestamp в мс)
-    const lastBreakTimestamp = ref<number | null>(
-      storedLastBreakTimestamp ? Number(JSON.parse(storedLastBreakTimestamp)) : null
-    )
-    const lastBreakTimestampWas = ref<number | null>(
-      storedPrevBreak ? Number(JSON.parse(storedPrevBreak)) : null
-    )
+    const lastBreakTimestamp = ref<number | null>(null)
+    const lastBreakTimestampWas = ref<number | null>(null)
     const lastBreak = computed<string | undefined>(() => {
-      if (storedPrevBreak) {
-        return formatDateToYMD(new Date(JSON.parse(storedPrevBreak)), true)
+      if (lastBreakTimestampWas.value) {
+        return formatDateToYMD(new Date(lastBreakTimestampWas.value), true)
       }
     })
 
-    if (storedValue) {
-      try {
-        const parsed = JSON.parse(storedValue)
-        breakFor.value = parseUnixTimestampToDuration(parsed.forMs) ?? '60s'
-      } catch {}
-    }
-
-    if (storedProgress) {
-      try {
-        const parsed = JSON.parse(storedProgress)
-        isBreakTracking.value = parsed.isBreakTracking ?? false
-        isBreakNow.value = parsed.isBreakNow ?? false
-        newBreakStarted.value = parsed.newBreakStarted ?? false
-        seconds.value = parsed.seconds ?? 0
-        canCloseAlert.value = parsed.seconds >= 5
-        lastBreakTimestamp.value = parsed.lastBreakTimestamp ?? lastBreakTimestamp.value
-      } catch {}
-    }
-
-    // Функция запуска таймера
-    const startNowTimer = () => {
-      if (nowTimer === null) {
-        nowTimer = setInterval(() => {
-          now.value = Date.now()
-        }, 1000)
-      }
-    }
-
-    // Функция остановки таймера
-    const stopNowTimer = () => {
-      if (nowTimer !== null) {
-        clearInterval(nowTimer)
-        nowTimer = null
-      }
-    }
-
-    onMounted(() => {
-      if (isBreakTracking.value) {
-        startTimer()
-      }
-    })
-
-    // Время, прошедшее с последнего перерыва (в мс)
     const elapsedSinceLastBreak = ref<number>(0)
     const lastElapsedUpdate = ref<number | null>(null)
 
-    // --- ВОССТАНОВЛЕНИЕ ПРОШЕДШЕГО ВРЕМЕНИ ---
-    if (lastBreakTimestamp.value) {
-      if (storedElapsed && storedElapsedUpdate) {
-        const elapsed = Number(JSON.parse(storedElapsed))
-        const updateTime = Number(JSON.parse(storedElapsedUpdate))
-        // Считаем сколько прошло времени с момента последнего сохранения
-        elapsedSinceLastBreak.value = elapsed + (now.value - updateTime)
-        lastElapsedUpdate.value = now.value
-      } else {
-        // Если нет сохранённых данных, просто считаем от lastBreakTimestamp
-        elapsedSinceLastBreak.value = now.value - lastBreakTimestamp.value
-        lastElapsedUpdate.value = now.value
-      }
-    } else {
-      elapsedSinceLastBreak.value = 0
-      lastElapsedUpdate.value = null
-    }
+    watch(
+      [lastBreakTimestamp, now],
+      ([ts, n]) => {
+        if (ts) {
+          elapsedSinceLastBreak.value = n - ts
+          lastElapsedUpdate.value = n
+        } else {
+          elapsedSinceLastBreak.value = 0
+          lastElapsedUpdate.value = null
+        }
+      },
+      { immediate: true }
+    )
 
-    // Время, оставшееся до следующего перерыва (в мс)
     const remainingUntilNextBreak = computed(() => {
       if (!lastBreakTimestamp.value) return breakEveryMillis.value
-      // добавь зависимость от now.value!
       return Math.max(breakEveryMillis.value - (now.value - lastBreakTimestamp.value), 0)
     })
 
@@ -167,7 +96,6 @@ export const useBreaksStore = defineStore(
 
       if (Notification.permission === 'granted') {
         playBreakSound()
-
         const notification = new Notification('Время перерыва!', {
           body: 'Пора сделать паузу',
           requireInteraction: true,
@@ -190,6 +118,21 @@ export const useBreaksStore = defineStore(
       }
     }
 
+    const startNowTimer = () => {
+      if (nowTimer === null) {
+        nowTimer = setInterval(() => {
+          now.value = Date.now()
+        }, 1000)
+      }
+    }
+
+    const stopNowTimer = () => {
+      if (nowTimer !== null) {
+        clearInterval(nowTimer)
+        nowTimer = null
+      }
+    }
+
     const startInterval = () => {
       if (!takeABreakReminders.value) {
         clearExistingInterval()
@@ -197,22 +140,15 @@ export const useBreaksStore = defineStore(
       }
 
       clearExistingInterval()
-
       now.value = Date.now()
 
       if (!lastBreakTimestamp.value) {
         lastBreakTimestamp.value = now.value
-        localStorage.setItem('lastBreakTimestamp', JSON.stringify(lastBreakTimestamp.value))
       }
 
       intervalId = setTimeout(() => {
         isBreakNow.value = true
-
         showBreakNotification()
-
-        if (takeABreakReminders.value) {
-          updateLocalStorageField('breakProgress', 'isBreakNow', 'true')
-        }
         clearExistingInterval()
         console.log('[Break] Время перерыва наступило!')
       }, remainingUntilNextBreak.value)
@@ -220,40 +156,75 @@ export const useBreaksStore = defineStore(
       timerUpdateId = setInterval(() => {
         if (lastBreakTimestamp.value) {
           elapsedSinceLastBreak.value = now.value - lastBreakTimestamp.value
-          localStorage.setItem('elapsedBreak', JSON.stringify(elapsedSinceLastBreak.value))
-          localStorage.setItem('lastBreakTimestamp', JSON.stringify(lastBreakTimestamp.value))
         }
       }, 1000)
     }
 
-    if (takeABreakReminders.value) {
-      startInterval()
+    const resetData = () => {
+      isBreakNow.value = false
+      elapsedSinceLastBreak.value = 0
+      seconds.value = 0
+      canCloseAlert.value = false
+      lastBreakTimestamp.value = null
+      newBreakStarted.value = false
     }
 
-    interface BreakProgress {
-      isBreakTracking: boolean
-      isBreakNow: boolean
-      newBreakStarted: boolean
-      seconds: number
-      lastBreakTimestamp: number | null
+    watch(
+      takeABreakReminders,
+      (newVal) => {
+        if (newVal) {
+          startNowTimer()
+          startInterval()
+        } else {
+          stopNowTimer()
+          clearExistingInterval()
+          resetData()
+        }
+      },
+      { immediate: true }
+    )
+
+    onMounted(() => {
+      if (isBreakTracking.value) {
+        startTimer()
+      }
+    })
+
+    const startTimer = () => {
+      stopLoopSound()
+      if (timerId) return
+      if (!newBreakStarted.value) {
+        newBreakStarted.value = true
+      }
+      timerId = setInterval(() => {
+        seconds.value++
+        if (seconds.value >= breakForMillis.value / 1000) {
+          canCloseAlert.value = true
+        }
+      }, 1000)
     }
 
-    const saveBreakProgress = async () => {
-      if (!takeABreakReminders.value) return
-
-      const state: BreakProgress = {
-        isBreakTracking: isBreakTracking.value,
-        isBreakNow: isBreakNow.value,
-        newBreakStarted: newBreakStarted.value,
-        seconds: seconds.value,
-        lastBreakTimestamp: lastBreakTimestamp.value,
+    const stopTimer = () => {
+      stopLoopSound()
+      if (timerId) {
+        clearInterval(timerId)
+        timerId = null
       }
+      isBreakTracking.value = false
+    }
 
-      try {
-        localStorage.setItem('breakProgress', JSON.stringify(state))
-      } catch (error) {
-        localStorage.setItem('breakProgress', JSON.stringify(state))
-      }
+    const resetTimer = () => {
+      stopTimer()
+      seconds.value = 0
+      canCloseAlert.value = false
+    }
+
+    const onCloseAlert = () => {
+      newBreakStarted.value = false
+      lastBreakTimestampWas.value = Date.now()
+      resetData()
+      stopTimer()
+      resetTimer()
     }
 
     watch(isBreakNow, (newVal, oldVal) => {
@@ -262,43 +233,21 @@ export const useBreaksStore = defineStore(
       }
     })
 
-    const resetData = () => {
-      isBreakNow.value = false
-      elapsedSinceLastBreak.value = 0
-      seconds.value = 0
-      canCloseAlert.value = false
-      lastBreakTimestamp.value = null
-      localStorage.removeItem('lastBreakTimestamp')
-      localStorage.removeItem('elapsedBreak')
-      localStorage.removeItem('elapsedBreakUpdate')
-      localStorage.removeItem('breakProgress')
-      localStorage.removeItem('seconds')
-    }
-
-    // Следим за изменениями флага
-    watch(takeABreakReminders, (newVal) => {
-      localStorage.setItem(
-        'breaks',
-        JSON.stringify({
-          isBreaks: newVal,
-          everyMs: breakEveryMillis.value,
-          forMs: breakForMillis.value,
-        })
-      )
-
+    watch(isBreakTracking, (newVal) => {
       if (newVal) {
-        startNowTimer()
-        startInterval()
+        startTimer()
       } else {
-        stopNowTimer()
-        clearExistingInterval()
-        resetData()
-        localStorage.removeItem('breaks')
+        stopTimer()
       }
     })
 
     onScopeDispose(() => {
       clearExistingInterval()
+    })
+
+    onUnmounted(() => {
+      stopTimer()
+      stopNowTimer()
     })
 
     const formattedTime = computed(() => {
@@ -310,77 +259,6 @@ export const useBreaksStore = defineStore(
     })
 
     const displayTime = computed(() => formattedTime.value)
-
-    const startTimer = () => {
-      stopLoopSound()
-
-      if (timerId) return
-      if (!newBreakStarted.value) {
-        newBreakStarted.value = true
-      }
-      saveBreakProgress()
-
-      timerId = setInterval(() => {
-        seconds.value++
-        if (takeABreakReminders.value) {
-          updateLocalStorageField('breakProgress', 'seconds', seconds.value.toString())
-        }
-        if (seconds.value >= breakForMillis.value / 1000) {
-          canCloseAlert.value = true
-        }
-      }, 1000)
-    }
-
-    const stopTimer = () => {
-      stopLoopSound()
-
-      if (timerId) {
-        clearInterval(timerId)
-        timerId = null
-      }
-      isBreakTracking.value = false
-      saveBreakProgress()
-    }
-
-    const resetTimer = () => {
-      stopTimer()
-      seconds.value = 0
-      canCloseAlert.value = false
-    }
-
-    const onCloseAlert = () => {
-      newBreakStarted.value = false
-      lastBreakTimestampWas.value = now.value
-      localStorage.setItem('prevBreakEnded', JSON.stringify(lastBreakTimestampWas.value))
-      resetData()
-      stopTimer()
-      resetTimer()
-      saveBreakProgress()
-    }
-
-    watch(isBreakTracking, (newVal) => {
-      if (newVal) {
-        startTimer()
-      } else {
-        stopTimer()
-      }
-    })
-
-    const saveElapsed = () => {
-      localStorage.setItem('elapsedBreak', JSON.stringify(elapsedSinceLastBreak.value))
-      localStorage.setItem('elapsedBreakUpdate', JSON.stringify(now.value))
-    }
-
-    window.addEventListener('beforeunload', saveElapsed)
-
-    onUnmounted(() => {
-      stopTimer()
-      stopNowTimer()
-    })
-
-    onBeforeUnmount(() => {
-      window.removeEventListener('beforeunload', saveElapsed)
-    })
 
     const hoursAgo = computed(() =>
       Math.floor((now.value - (lastBreakTimestampWas.value ?? 0)) / (1000 * 60 * 60))
@@ -420,7 +298,17 @@ export const useBreaksStore = defineStore(
       lastBreakTimestampWas,
       takeABreakReminders,
       elapsedSinceLastBreak,
+      lastBreakTimestamp,
+      seconds,
       remainingUntilNextBreak,
+      resetData,
+      startNowTimer,
+      stopNowTimer,
+      startInterval,
+      clearExistingInterval,
+      startTimer,
+      stopTimer,
+      resetTimer,
     }
   },
   {
@@ -429,6 +317,7 @@ export const useBreaksStore = defineStore(
 )
 
 export const useBreaks = () => {
+  const store = useBreaksStore()
   const {
     now,
     canCloseAlert,
@@ -444,9 +333,21 @@ export const useBreaks = () => {
     lastBreakTimestampWas,
     takeABreakReminders,
     elapsedSinceLastBreak,
+    lastBreakTimestamp,
+    seconds,
     remainingUntilNextBreak,
-  } = storeToRefs(useBreaksStore())
-  const { onCloseAlert } = useBreaksStore()
+  } = storeToRefs(store)
+  const {
+    onCloseAlert,
+    resetData,
+    startNowTimer,
+    stopNowTimer,
+    startInterval,
+    clearExistingInterval,
+    startTimer,
+    stopTimer,
+    resetTimer,
+  } = store
 
   return {
     now,
@@ -464,6 +365,16 @@ export const useBreaks = () => {
     lastBreakTimestampWas,
     takeABreakReminders,
     elapsedSinceLastBreak,
+    lastBreakTimestamp,
+    seconds,
     remainingUntilNextBreak,
+    resetData,
+    startNowTimer,
+    stopNowTimer,
+    startInterval,
+    clearExistingInterval,
+    startTimer,
+    stopTimer,
+    resetTimer,
   }
 }
