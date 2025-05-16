@@ -57,7 +57,7 @@ watch(itemType, (newVal) => {
         itemType === 'todo' &&
         !isHideDone &&
         !!sortedItems.filter((i) => i.type === itemType).length
-          ? `${(sortedItems.filter((i) => i.isDone).length / sortedItems.length) * 100}% of ${sortedItems.length} (${sortedItems.filter((i) => i.isDone).length})`
+          ? `${Math.ceil((sortedItems.filter((i) => i.isDone).length / sortedItems.length) * 100)}% of ${sortedItems.length} (${sortedItems.filter((i) => i.isDone).length})`
           : `${sortedItems.filter((i) => i.type === itemType).length} ${itemType}s`
       "
       class="mb-4"
