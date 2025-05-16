@@ -1,10 +1,12 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useLoading } from '@/app/useLoading'
 import { useCollections } from '@/entities/collection'
 
 export const useCollection = () => {
-  const { collections } = useCollections()
   const route = useRoute()
+  const { setLoading } = useLoading()
+  const { collections } = useCollections()
 
   const collection = computed(() => {
     return typeof route.params.collection === 'string'
@@ -13,17 +15,17 @@ export const useCollection = () => {
   })
 
   const collectionId = ref<number | null>(null)
-  const loading = ref(true)
+  setLoading(true)
 
   watch(
     [collections, collection],
     () => {
       if (collections.value.length === 0) {
-        loading.value = true
+        setLoading(true)
         collectionId.value = null
         return
       }
-      loading.value = false
+      setLoading(false)
 
       if (!collection.value) {
         collectionId.value = null
@@ -38,5 +40,5 @@ export const useCollection = () => {
     { immediate: true }
   )
 
-  return { collections, collection, collectionId, loading }
+  return { collections, collection, collectionId }
 }
