@@ -21,8 +21,6 @@ import { Bolt } from 'lucide-vue-next'
 
 const { breakPer, breakFor, takeABreakReminders, remainingUntilNextBreak } = useBreaks()
 
-const handleReload = () => window.location.reload()
-
 const mode = useColorMode()
 const themes = ['auto', 'dark', 'light']
 const switchMode = (theme: any) => (mode.value = theme)
@@ -179,11 +177,7 @@ const getColors = (pack: Record<string, any>) => {
         </div>
         <DialogFooter class="settings-page__footer">
           <DialogClose as-child>
-            <Button
-              type="button"
-              @click="handleReload"
-              >Save changes</Button
-            >
+            <Button variant="secondary" type="button">Apply</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
