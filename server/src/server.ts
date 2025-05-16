@@ -8,6 +8,10 @@ import { prisma } from './prismaClient'
 import { authenticate } from './middlewares/authentication'
 import { Item, ItemType, Collection, Timer } from './types'
 
+;(BigInt.prototype as any).toJSON = function () {
+  return this.toString()
+}
+
 const app = express()
 const PORT: string | number = process.env.PORT || 3000
 
