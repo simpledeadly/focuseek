@@ -16,7 +16,8 @@ export const createItem = (
   durationPlanned?: number | null,
   tags?: string[],
   date?: number,
-  deadline?: number
+  deadline?: number,
+  order?: number
 ): Item => {
   return {
     id: Date.now(),
@@ -33,6 +34,7 @@ export const createItem = (
     tags,
     date,
     deadline,
+    order: order ? order : 0,
   }
 }
 
@@ -59,7 +61,8 @@ export const updateItemWithSubItems = (
     }
   }
 
-  return itemList.filter((it) => idsToUpdate.has(it.id)).map((it) => updateItem(it, changes))
+  // Возвращаем весь список, обновляя только нужные элементы
+  return itemList.map((it) => (idsToUpdate.has(it.id) ? updateItem(it, changes) : it))
 }
 
 export const addItemToList = (itemList: Item[], item: Item): Item[] => {
@@ -75,10 +78,8 @@ export const replaceItemInList = (itemList: Item[], newItem: Item): Item[] => {
 }
 
 export const replaceItemsInList = (itemList: Item[], updatedItems: Item[]): Item[] => {
-  const updatedList = itemList.filter(
-    (item) => !updatedItems.some((updated) => updated.id === item.id)
-  )
-  return [...updatedList, ...updatedItems]
+  const updatedItemsMap = new Map(updatedItems.map((item) => [item.id, item]))
+  return itemList.map((item) => updatedItemsMap.get(item.id) ?? item)
 }
 
 export const removeItemFromListById = (itemList: Item[], id: number): Item[] => {
