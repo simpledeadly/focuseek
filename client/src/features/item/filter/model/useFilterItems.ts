@@ -114,7 +114,7 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
   /** Список должен быть:
    *! 1. Оптимизированным
    *! 2. Мог быть вложенным
-   *! 3. Перетаскиваемым (по вложенности и параллельности)
+   *? 3. Перетаскиваемым (по вложенности и параллельности)
    *! 4. Анимированным
    */
 
@@ -129,7 +129,8 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
       isDone: isHideDone.value,
     })
 
-    return applySorting(filtered, sortBy.value, sortOrder.value)
+    // return applySorting(filtered, sortBy.value, sortOrder.value)
+    return filtered
   })
 
   const rootItems = computed(() => filteredItems.value.filter((item) => item.parentItemId === null))
