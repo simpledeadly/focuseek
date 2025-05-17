@@ -10,6 +10,7 @@ const slots = defineSlots<{
   priority?: () => unknown
   options: () => unknown
   subItems?: () => unknown
+  default?: () => unknown
 }>()
 
 const props = defineProps<{
@@ -75,6 +76,12 @@ const props = defineProps<{
       </div>
     </div>
     <div
+      v-if="slots.default"
+      class="item-entity__options mr-10"
+    >
+      <slot />
+    </div>
+    <div
       v-if="slots.options"
       class="item-entity__options"
     >
@@ -100,53 +107,49 @@ const props = defineProps<{
   flex-grow: 1;
   gap: 6px;
   border-bottom: 1px solid hsl(var(--border));
-
-  &__sub-items-toggle {
-    position: absolute;
-    left: -1.5rem;
-    top: 12px;
-    display: flex;
-  }
-
-  &__options {
-    position: absolute;
-    right: 0rem;
-    top: 2px;
-    display: flex;
-  }
-
-  &__checkbox {
-    display: flex;
-    margin-top: 4px;
-    opacity: 0.8;
-  }
-
-  &__column {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  &__params {
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  &__param {
-    display: flex;
-    max-width: 8rem;
-    cursor: pointer;
-  }
 }
 
-.link {
-  color: hsl(var(--primary));
+.item-entity__sub-items-toggle {
+  position: absolute;
+  left: -1.5rem;
+  top: 12px;
+  display: flex;
+}
+
+.item-entity__options {
+  position: absolute;
+  right: 0rem;
+  top: 2px;
+  display: flex;
+}
+
+.item-entity__checkbox {
+  display: flex;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.item-entity__column {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  transition:
+    max-height 0.1s ease-in-out,
+    opacity 0s ease-in-out;
+}
+
+.item-entity__params {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.item-entity__param {
+  display: flex;
+  max-width: 8rem;
   cursor: pointer;
-  transition: all 0.075s linear;
-  text-decoration: underline;
 }
 
 .subitems-list {
