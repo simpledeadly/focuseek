@@ -1,11 +1,5 @@
 import { ShallowRef } from 'vue'
-import {
-  type Item,
-  updateItem,
-  replaceItemInList,
-  updateItemWithSubItems,
-  replaceItemsInList,
-} from '@/entities/item'
+import { type Item, updateItem, replaceItemInList, updateItemWithSubItems } from '@/entities/item'
 import { updateItemOnServer } from '@/shared/api/api'
 import { handleError } from '@/shared/lib/utils'
 
@@ -33,7 +27,7 @@ export const useItemUpdater = (items: ShallowRef<Item[]>) => {
       }
 
       items.value = options.withChildren
-        ? replaceItemsInList(items.value, updateItemWithSubItems(items.value, newItem, fields))
+        ? updateItemWithSubItems(items.value, newItem, fields)
         : replaceItemInList(items.value, newItem)
     } catch (error) {
       handleError(error, `Ошибка при обновлении элемента ${item.id}, item: ${item}`)
