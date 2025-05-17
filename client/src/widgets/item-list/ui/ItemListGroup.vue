@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import draggable from 'vuedraggable'
 import { useSidebar } from '@/shared/ui/sidebar'
 import { AddItemFormInline } from '@/features/item/add'
 import { Search } from '@/widgets/search'
@@ -14,12 +13,7 @@ const {
   collectionId,
   showAllParams,
   isTimeTracking,
-  nestedItemsMap,
   updateItemProperty,
-  onDragStart,
-  onDragEnd,
-  // onAddToRoot,
-  // onRemoveFromRoot,
   addItem,
   removeItem,
   toggleShowSubItems,
@@ -43,64 +37,58 @@ const { isMobile } = useSidebar()
       mode="default"
     >
       <div :key="activeKey">
-        <draggable
-          item-key="id"
-          v-model="sortedItems"
-          :group="{ name: 'items', pull: true, put: true }"
-          @start="onDragStart"
-          @end="onDragEnd"
-          :component-data="{ name: 'fade-list', type: 'transition-group' }"
-          :animation="150"
-        >
-          <template #item="{ element }">
-            <div :data-id="element.id">
-              <ItemList
-                :item="element"
-                :filtered-items="filteredItems"
-                :collections="collections"
-                :item-type="itemType"
-                :show-all-params="showAllParams"
-                :is-time-tracking="isTimeTracking"
-                :has-sub-items="hasSubItems"
-                :filter-nested-items="filterNestedItems"
-                :nested-items="nestedItemsMap[element.id] || []"
-                @toggle-done="updateItemProperty"
-                @change-title="updateItemProperty"
-                @change-description="updateItemProperty"
-                @change-duration-planned="updateItemProperty"
-                @change-duration-real="updateItemProperty"
-                @delete-timer="deleteTimer"
-                @change-date="updateItemProperty"
-                @change-deadline="updateItemProperty"
-                @change-priority="updateItemProperty"
-                @switch-collection="updateItemProperty"
-                @switch-type="updateItemProperty"
-                @remove="removeItem"
-                @toggle-show-sub-items="toggleShowSubItems"
-                @add-description="updateItemProperty"
-                @remove-description="updateItemProperty"
-                @open-details-page="openDetailsPage"
-              />
-            </div>
-          </template>
-        </draggable>
-        <AddItemFormInline
-          key="add-item-form"
-          v-model:type="itemType"
-          @submit="
-            addItem(
-              collectionId,
-              $event.itemTitle,
-              itemType,
-              $event.parentId,
-              $event.description,
-              $event.deadline,
-              $event.date,
-              $event.priority,
-              $event.durationPlanned
-            )
-          "
-        />
+        <TransitionGroup name="fade-list">
+          <div
+            v-for="item in sortedItems"
+            :key="item.id"
+          >
+            <ItemList
+              :item="item"
+              :filtered-items="filteredItems"
+              :collections="collections"
+              :item-type="itemType"
+              :show-all-params="showAllParams"
+              :is-time-tracking="isTimeTracking"
+              :has-sub-items="hasSubItems"
+              :filter-nested-items="filterNestedItems"
+              :openDetailsPage="openDetailsPage"
+              @toggle-done="updateItemProperty"
+              @change-title="updateItemProperty"
+              @change-description="updateItemProperty"
+              @change-duration-planned="updateItemProperty"
+              @change-duration-real="updateItemProperty"
+              @delete-timer="deleteTimer"
+              @change-date="updateItemProperty"
+              @change-deadline="updateItemProperty"
+              @change-priority="updateItemProperty"
+              @switch-collection="updateItemProperty"
+              @switch-type="updateItemProperty"
+              @remove="removeItem"
+              @toggle-show-sub-items="toggleShowSubItems"
+              @add-description="updateItemProperty"
+              @remove-description="updateItemProperty"
+              @open-details-page="openDetailsPage"
+            />
+          </div>
+          <AddItemFormInline
+            v-model:type="itemType"
+            key="add-item-form"
+            @submit="
+              addItem(
+                collectionId ?? 0,
+                $event.itemTitle,
+                itemType,
+                $event.parentId,
+                $event.description,
+                $event.deadline,
+                $event.date,
+                $event.priority,
+                $event.durationPlanned
+              )
+            "
+          >
+          </AddItemFormInline>
+        </TransitionGroup>
       </div>
     </Transition>
   </div>
