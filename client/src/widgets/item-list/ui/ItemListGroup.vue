@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import {
   Pagination,
   PaginationEllipsis,
@@ -36,7 +36,11 @@ const {
 const { isMobile } = useSidebar()
 
 const itemsPerPage = 10
-const currentPage = ref(1)
+const currentPage = ref<number>(1)
+
+watch([itemType, collectionId], () => {
+  currentPage.value = 1
+})
 
 const paginatedItems = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
