@@ -129,16 +129,6 @@ watch(deadlineValue, () => {
   )
 })
 
-declare module 'mousetrap' {
-  interface MousetrapInstance {
-    bindGlobal(
-      keys: string | string[],
-      callback: (e: KeyboardEvent, combo: string) => void,
-      action?: string
-    ): void
-  }
-}
-
 const withGuard = (guard: () => boolean, action: (e: KeyboardEvent, key?: string) => void) => {
   return (e: KeyboardEvent, key?: string) => {
     if (!guard()) return
