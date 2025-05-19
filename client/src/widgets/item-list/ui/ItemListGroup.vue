@@ -35,20 +35,23 @@ const {
 
 const { isMobile } = useSidebar()
 
-const itemsPerPage = 10
+const itemsPerPage = computed(() => {
+  currentPage.value = 1
+  return itemType.value === 'todo' ? 5 : 10
+})
 const currentPage = ref<number>(1)
 
-watch([itemType, collectionId], () => {
+watch(collectionId, () => {
   currentPage.value = 1
 })
 
 const paginatedItems = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
   return sortedItems.value.slice(start, end)
 })
 
-const totalPages = computed(() => Math.ceil(sortedItems.value.length / itemsPerPage))
+const totalPages = computed(() => Math.ceil(sortedItems.value.length / itemsPerPage.value))
 
 const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -93,6 +96,7 @@ const goToPage = (page: number) => {
           v-else
           :key="item.type"
           :index="index"
+          class="w-8 h-8 p-0"
         />
       </template>
 
