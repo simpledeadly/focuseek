@@ -111,13 +111,6 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
     })
   }
 
-  /** Список должен быть:
-   *! 1. Оптимизированным
-   *! 2. Мог быть вложенным
-   *? 3. Перетаскиваемым (по вложенности и параллельности)
-   *! 4. Анимированным
-   */
-
   const filteredItems = computed(() => {
     if (isLoading.value) return []
 
