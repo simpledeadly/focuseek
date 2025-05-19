@@ -74,18 +74,18 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
         if (formatDateToYMD(new Date(item.date)) !== todayStr) return false
       }
       if (filters.priorityFilter !== 0 && filters.priorityFilter !== item.priority) return false
-      if (filters.isDone && !item.isDone) return false
+      if (filters.isDone && item.isDone) return false
 
       return true
     })
   }
 
-  const sortBy = ref<'date' | 'priority' | 'default'>('default')
+  const sortBy = ref<'date' | 'priority' | 'default' | 'isDone'>('isDone')
   const sortOrder = ref<'asc' | 'desc'>('asc')
 
   function applySorting(
     arr: Item[],
-    sortBy: 'default' | 'date' | 'priority',
+    sortBy: 'default' | 'date' | 'priority' | 'isDone',
     sortOrder: 'asc' | 'desc'
   ): Item[] {
     if (sortBy === 'default') return arr
@@ -132,6 +132,11 @@ export const useFilterItems = (items: ShallowRef<Item[]>) => {
     get() {
       if (sortBy.value === 'default') {
         return [...rootItems.value].sort((a, b) => a.order - b.order)
+      } else if (sortBy.value === 'isDone') {
+        return [...rootItems.value].sort((a, b) => {
+          const doneComparison = Number(a.isDone) - Number(b.isDone)
+          return doneComparison !== 0 ? doneComparison : a.order - b.order
+        })
       } else {
         return rootItems.value
       }

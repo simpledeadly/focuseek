@@ -77,6 +77,7 @@ const { dateFilter, priorityFilter, sortBy, sortOrder, isHideDone } = useItemLis
               <SelectItem value="default">No sorting</SelectItem>
               <SelectItem value="date">Date</SelectItem>
               <SelectItem value="priority">Priority</SelectItem>
+              <SelectItem value="isDone">Not done</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
