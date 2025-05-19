@@ -155,7 +155,7 @@ onMounted(() => {
       },
     },
     {
-      keys: ['command+i', 'command+ш'],
+      keys: ['i', 'ш'],
       guard: () => !isShowForm.value,
       action: () => {
         isShowForm.value = true
