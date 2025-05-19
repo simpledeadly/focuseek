@@ -3,8 +3,6 @@ import { computed, ref } from 'vue'
 import {
   Pagination,
   PaginationEllipsis,
-  PaginationFirst,
-  PaginationLast,
   PaginationList,
   PaginationListItem,
   PaginationNext,
@@ -61,15 +59,15 @@ const goToPage = (page: number) => {
     :items-per-page="itemsPerPage"
     :total="sortedItems.length"
     :sibling-count="1"
-    show-edges
     :default-page="currentPage"
     @update:page="goToPage"
+    class="flex justify-center mb-2"
+    show-edges
   >
     <PaginationList
       v-slot="{ items }"
       class="flex items-center gap-1"
     >
-      <PaginationFirst @click="goToPage(1)" />
       <PaginationPrev @click="goToPage(currentPage - 1)" />
 
       <template v-for="(item, index) in items">
@@ -80,7 +78,7 @@ const goToPage = (page: number) => {
           as-child
         >
           <Button
-            class="w-8 h-8 p-0"
+            class="w-8 h-8 p-0 hover:text-opacity-70"
             :variant="item.value === currentPage ? 'default' : 'outline'"
             @click="goToPage(item.value)"
           >
@@ -95,7 +93,6 @@ const goToPage = (page: number) => {
       </template>
 
       <PaginationNext @click="goToPage(currentPage + 1)" />
-      <PaginationLast @click="goToPage(totalPages)" />
     </PaginationList>
   </Pagination>
   <div
@@ -103,7 +100,7 @@ const goToPage = (page: number) => {
     :style="isMobile && 'width: 85vw'"
   >
     <Transition
-      name="fade"
+      name="fade-list"
       mode="default"
     >
       <div :key="activeKey">

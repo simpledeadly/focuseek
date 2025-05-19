@@ -22,11 +22,11 @@ const delegatedProps = computed(() => {
 <template>
   <PaginationNext v-bind="delegatedProps">
     <Button
-      :class="cn('w-9 h-9 p-0', props.class)"
-      variant="outline"
+      :class="cn('w-8 h-8 p-0', props.class)"
+      variant="ghost"
     >
       <slot>
-        <ChevronRight />
+        <ChevronRight class="w-4 h-4" />
       </slot>
     </Button>
   </PaginationNext>
