@@ -37,18 +37,42 @@ const trackedDuration = ref<number>(0)
 const currentTime = ref(Date.now())
 
 let animationFrame: number | null = null
+
 const updateTime = () => {
   currentTime.value = Date.now()
   animationFrame = requestAnimationFrame(updateTime)
 }
 
-const formattedTime = computed(() => {
-  const totalMs = model.value
-    ? trackedDuration.value + (startTime.value ? currentTime.value - startTime.value : 0)
-    : trackedDuration.value || props.item.durationPlanned || 0
+const isOverdue = ref<boolean>(false)
 
-  if (model.value || trackedDuration.value > 0) {
-    return parseUnixTimestampToDuration(totalMs)
+const remainingTime = computed(() => {
+  if (!props.item.durationPlanned) return 0
+
+  const elapsedSinceStart = model.value && startTime.value ? currentTime.value - startTime.value : 0
+  const totalTracked = trackedDuration.value + elapsedSinceStart
+  const remaining = props.item.durationPlanned - totalTracked
+  return remaining > 0 ? remaining : 0
+})
+
+const formattedTime = computed(() => {
+  if (props.item.durationPlanned && remainingTime.value > 0) {
+    return parseUnixTimestampToDuration(remainingTime.value)
+  } else {
+    const totalMs = model.value
+      ? trackedDuration.value + (startTime.value ? currentTime.value - startTime.value : 0)
+      : trackedDuration.value || props.item.durationPlanned || 0
+
+    if (model.value || trackedDuration.value > 0) {
+      return parseUnixTimestampToDuration(totalMs)
+    }
+  }
+})
+
+watch(remainingTime, (newVal, oldVal) => {
+  if (oldVal > 0 && newVal === 0) {
+    isOverdue.value = true
+  } else {
+    isOverdue.value = false
   }
 })
 
@@ -225,6 +249,7 @@ onUnmounted(() => {
           <span
             v-if="displayPlannedTime"
             class="text-muted-foreground"
+            :class="model && isOverdue ? 'text-red-600' : isOverdue && 'text-red-400'"
           >
             ({{ displayPlannedTime }})
           </span>
