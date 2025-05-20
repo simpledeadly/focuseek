@@ -20,7 +20,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="item-entity-wrapper flex items-center">
+  <div class="item-entity-wrapper">
     <div
       v-if="slots.subItemsToggle"
       class="item-entity__sub-items-toggle"
@@ -106,7 +106,7 @@ const props = defineProps<{
 <style lang="scss">
 .item-entity-wrapper {
   position: relative;
-  display: block !important;
+  display: block;
 }
 
 .item-entity {
