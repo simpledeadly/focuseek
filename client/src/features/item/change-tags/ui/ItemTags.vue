@@ -39,7 +39,7 @@ const onChangeTag = (index: number, newValue?: string | null) => {
           :variant="props.tags && props.tags.length > 0 ? 'secondary' : 'outline'"
           :class="
             cn(
-              'justify-start text-left font-normal text-muted-foreground',
+              'justify-start text-left font-medium uppercase text-muted-foreground',
               !props.tags && 'text-muted-foreground'
             )
           "
