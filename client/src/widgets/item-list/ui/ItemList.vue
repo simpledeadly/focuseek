@@ -226,7 +226,10 @@ const handleToggle = (showSubs: boolean) => {
       v-if="showAllParams || (item.tags && item.tags.length > 0)"
       #tags
     >
-      <ItemTags :tags="item.tags" />
+      <ItemTags
+        :tags="item.tags"
+        @change="updateItemProperty(item, { tags: $event })"
+      />
     </template>
     <template
       v-if="item.showSubItems"
