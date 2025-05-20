@@ -114,49 +114,49 @@ const props = defineProps<{
   flex-grow: 1;
   gap: 6px;
   border-bottom: 1px solid hsl(var(--border));
-}
 
-.item-entity__sub-items-toggle {
-  position: absolute;
-  left: -1.5rem;
-  top: 12px;
-  display: flex;
-}
+  &__sub-items-toggle {
+    position: absolute;
+    left: -1.5rem;
+    top: 12px;
+    display: flex;
+  }
 
-.item-entity__options {
-  position: absolute;
-  right: 0rem;
-  top: 2px;
-  display: flex;
-}
+  &__options {
+    position: absolute;
+    right: 0rem;
+    top: 2px;
+    display: flex;
+  }
 
-.item-entity__checkbox {
-  display: flex;
-  margin-top: 4px;
-  opacity: 0.8;
-}
+  &__checkbox {
+    display: flex;
+    margin-top: 4px;
+    opacity: 0.8;
+  }
 
-.item-entity__column {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  transition:
-    max-height 0.1s ease-in-out,
-    opacity 0s ease-in-out;
-}
+  &__column {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    transition:
+      max-height 0.1s ease-in-out,
+      opacity 0s ease-in-out;
+  }
 
-.item-entity__params {
-  margin-top: 2px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-}
+  &__params {
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
 
-.item-entity__param {
-  display: flex;
-  max-width: 8rem;
-  cursor: pointer;
+  &__param {
+    display: flex;
+    max-width: 8rem;
+    cursor: pointer;
+  }
 }
 
 .subitems-list {
