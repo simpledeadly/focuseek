@@ -307,7 +307,8 @@ const handleToggle = (showSubs: boolean) => {
                 $event.deadline,
                 $event.date,
                 $event.priority,
-                $event.durationPlanned
+                $event.durationPlanned,
+                $event.tags
               )
             "
           />
@@ -366,7 +367,8 @@ const handleToggle = (showSubs: boolean) => {
                   $event.deadline,
                   $event.date,
                   $event.priority,
-                  $event.durationPlanned
+                  $event.durationPlanned,
+                  $event.tags
                 )
               "
             />

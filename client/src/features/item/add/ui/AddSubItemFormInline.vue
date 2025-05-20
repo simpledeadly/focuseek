@@ -35,6 +35,7 @@ const emit = defineEmits<{
       date?: number
       priority?: number | null
       durationPlanned?: number | null
+      tags?: string[]
     }
   ): void
 }>()
@@ -52,6 +53,9 @@ const itemPriority = ref<number | null>()
 const dateValue = ref<DateValue>()
 const deadlineValue = ref<DateValue>()
 const durationPlannedValue = ref<string | null>()
+const tagValue = ref<string | null>()
+const tag2Value = ref<string | null>()
+const tag3Value = ref<string | null>()
 
 // const isShowForm = ref<boolean>(false)
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -85,6 +89,9 @@ const clearRefs = () => {
   dateValue.value = undefined
   deadlineValue.value = undefined
   durationPlannedValue.value = null
+  tagValue.value = null
+  tag2Value.value = null
+  tag3Value.value = null
 }
 
 const handleSubmit = () => {
@@ -100,6 +107,9 @@ const handleSubmit = () => {
         durationPlannedValue.value && Number(durationPlannedValue.value) !== 0
           ? parseDurationToUnixTimestamp(durationPlannedValue.value)
           : null,
+      tags: [tagValue.value, tag2Value.value, tag3Value.value].filter(
+        (tag): tag is string => tag !== null && tag !== undefined
+      ),
     }
     emit('submit', data)
   } else {
@@ -312,8 +322,56 @@ const style = checkboxStyle(itemPriority)
                 >
                   <input
                     v-model="durationPlannedValue"
-                    placeholder="e.g. 2h 32m"
-                    class="item-description__input"
+                    placeholder="1h 23m"
+                    class="item-description__input item-entity__input-durPlan"
+                  />
+                </Badge>
+              </div>
+              <div class="item-entity__param">
+                <Badge
+                  :variant="tagValue ? 'secondary' : 'outline'"
+                  :class="
+                    cn('justify-start text-left font-normal', !tagValue && 'text-muted-foreground')
+                  "
+                >
+                  <input
+                    v-model="tagValue"
+                    placeholder="Tag"
+                    class="item-description__input item-entity__input-tag"
+                  />
+                </Badge>
+              </div>
+              <div
+                v-if="tagValue"
+                class="item-entity__param"
+              >
+                <Badge
+                  :variant="tag2Value ? 'secondary' : 'outline'"
+                  :class="
+                    cn('justify-start text-left font-normal', !tag2Value && 'text-muted-foreground')
+                  "
+                >
+                  <input
+                    v-model="tag2Value"
+                    placeholder="Tag"
+                    class="item-description__input item-entity__input-tag"
+                  />
+                </Badge>
+              </div>
+              <div
+                v-if="tag2Value"
+                class="item-entity__param"
+              >
+                <Badge
+                  :variant="tag3Value ? 'secondary' : 'outline'"
+                  :class="
+                    cn('justify-start text-left font-normal', !tag3Value && 'text-muted-foreground')
+                  "
+                >
+                  <input
+                    v-model="tag3Value"
+                    placeholder="Tag"
+                    class="item-description__input item-entity__input-tag"
                   />
                 </Badge>
               </div>

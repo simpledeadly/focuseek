@@ -158,7 +158,8 @@ const goToPage = (page: number) => {
                 $event.deadline,
                 $event.date,
                 $event.priority,
-                $event.durationPlanned
+                $event.durationPlanned,
+                $event.tags
               )
             "
           >
