@@ -8,6 +8,7 @@ import { ItemDescription } from '@/features/item/change-description'
 import { ItemDeadline } from '@/features/item/change-deadline'
 import { ItemPriority } from '@/features/item/change-priority'
 import { ItemDate } from '@/features/item/change-date'
+import { ItemTags } from '@/features/item/change-tags'
 import { ItemCheckbox } from '@/features/item/change-done'
 import { ItemSubItemsToggle } from '@/features/item/show-sub-items'
 import { ItemOptions } from '@/features/item/options'
@@ -140,6 +141,7 @@ const handleToggle = (showSubs: boolean) => {
         item.deadline ||
         item.durationPlanned ||
         item.durationReal !== null ||
+        (item.tags && item.tags.length > 0) ||
         showAllParams
       )
     "
@@ -219,6 +221,12 @@ const handleToggle = (showSubs: boolean) => {
         :model-value="item.priority"
         @update:model-value="updateItemProperty(item, { priority: $event })"
       />
+    </template>
+    <template
+      v-if="showAllParams || (item.tags && item.tags.length > 0)"
+      #tags
+    >
+      <ItemTags :tags="item.tags" />
     </template>
     <template
       v-if="item.showSubItems"

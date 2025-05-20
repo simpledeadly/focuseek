@@ -10,6 +10,7 @@ const slots = defineSlots<{
   priority?: () => unknown
   options: () => unknown
   subItems?: () => unknown
+  tags?: () => unknown
   default?: () => unknown
 }>()
 
@@ -71,6 +72,12 @@ const props = defineProps<{
             v-if="slots.priority"
           >
             <slot name="priority" />
+          </div>
+          <div
+            class="item-entity__param"
+            v-if="slots.tags"
+          >
+            <slot name="tags" />
           </div>
         </div>
       </div>
@@ -143,7 +150,7 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 .item-entity__param {
