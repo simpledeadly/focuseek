@@ -236,6 +236,7 @@ const style = checkboxStyle(itemPriority)
             <input
               v-model="itemTitle"
               type="text"
+              name="title"
               placeholder="Enter title"
               class="item-title__input"
               ref="inputRef"
@@ -245,6 +246,7 @@ const style = checkboxStyle(itemPriority)
             <input
               v-model="itemDescription"
               type="text"
+              name="description"
               placeholder="Enter description"
               class="item-description__input"
             />
@@ -338,6 +340,7 @@ const style = checkboxStyle(itemPriority)
               >
                 <input
                   v-model="durationPlannedValue"
+                  name="durPlan"
                   placeholder="1h 23m"
                   class="item-description__input item-entity__input-durPlan"
                 />
@@ -352,6 +355,7 @@ const style = checkboxStyle(itemPriority)
               >
                 <input
                   v-model="tagValue"
+                  name="tag"
                   placeholder="Tag"
                   class="item-description__input item-entity__input-tag"
                 />
@@ -369,6 +373,7 @@ const style = checkboxStyle(itemPriority)
               >
                 <input
                   v-model="tag2Value"
+                  name="tag2"
                   placeholder="Tag"
                   class="item-description__input item-entity__input-tag"
                 />
@@ -386,6 +391,7 @@ const style = checkboxStyle(itemPriority)
               >
                 <input
                   v-model="tag3Value"
+                  name="tag3"
                   placeholder="Tag"
                   class="item-description__input item-entity__input-tag"
                 />

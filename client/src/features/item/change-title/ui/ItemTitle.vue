@@ -68,6 +68,7 @@ const cancelChanges = () => {
       <input
         v-model="newTitle"
         type="text"
+        name="title"
         class="item-title__input"
       />
       <button

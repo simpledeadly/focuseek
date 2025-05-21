@@ -115,6 +115,7 @@ const cancelChanges = () => {
         ref="inputRef"
         v-model="newDescription"
         type="text"
+        name="description"
         class="item-title__input"
       />
       <button

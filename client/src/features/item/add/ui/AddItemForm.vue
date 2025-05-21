@@ -39,6 +39,7 @@ const { filteredItems, itemType } = useFilters()
   <div class="add-item-wrapper">
     <div class="flex items-center gap-1.5">
       <form
+        name="itemForm"
         class="add-item-form"
         @submit.prevent="handleSubmit"
       >

@@ -44,6 +44,7 @@ const register = async () => {
         <CardDescription>Join Focuseek!</CardDescription>
       </CardHeader>
       <form
+        name="registerForm"
         class="form"
         @submit.prevent="register"
       >

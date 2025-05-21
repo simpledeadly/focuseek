@@ -24,6 +24,7 @@ const handleSubmit = () => {
   <div class="add-collection-wrapper">
     <div class="flex w-full max-w-sm gap-1.5">
       <form
+        name="collectionForm"
         class="add-collection-form"
         @submit.prevent="handleSubmit"
       >

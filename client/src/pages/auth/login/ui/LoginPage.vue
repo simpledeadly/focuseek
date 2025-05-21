@@ -46,6 +46,7 @@ const login = async () => {
         <CardDescription>Jump into Focuseek!</CardDescription>
       </CardHeader>
       <form
+        name="loginForm"
         class="form"
         @submit.prevent="login"
       >
