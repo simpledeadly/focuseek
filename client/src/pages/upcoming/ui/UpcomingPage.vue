@@ -33,16 +33,16 @@ const {
 } = useItemList()
 
 onMounted(() => {
-  dateFilter.value = 'today'
+  dateFilter.value = 'upcoming'
 })
 
 const updateFilters = (type: string) => {
   if (type === 'todo') {
-    dateFilter.value = 'today'
+    dateFilter.value = 'upcoming'
     collectionId.value = null
   } else {
     dateFilter.value = 'all'
-    collectionId.value = 9
+    collectionId.value = 8
   }
 }
 

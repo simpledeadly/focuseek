@@ -18,7 +18,7 @@ export const useFiltersStore = defineStore(
 
     const isHideDone = ref(false)
 
-    const dateFilter = ref<'all' | 'today'>('all')
+    const dateFilter = ref<'all' | 'today' | 'upcoming'>('all')
     const priorityFilter = ref<number | null>(0)
     const sortBy = ref<'date' | 'priority' | 'default' | 'isDone'>('isDone')
     const sortOrder = ref<'asc' | 'desc'>('asc')
@@ -43,7 +43,7 @@ export const useFiltersStore = defineStore(
       filters: {
         itemType: ItemType
         collectionId: number | null
-        dateFilter: 'all' | 'today'
+        dateFilter: 'all' | 'today' | 'upcoming'
         priorityFilter: number | null
         isDone: boolean
       }
@@ -57,6 +57,9 @@ export const useFiltersStore = defineStore(
         if (filters.dateFilter === 'today') {
           if (!item.date) return false
           if (formatDateToYMD(new Date(item.date)) !== todayStr) return false
+        }
+        if (filters.dateFilter === 'upcoming') {
+          if (!item.date) return false
         }
         if (filters.priorityFilter !== 0 && filters.priorityFilter !== item.priority) return false
         if (filters.isDone && item.isDone) return false

@@ -37,6 +37,7 @@ const { dateFilter, priorityFilter, sortBy, sortOrder, isHideDone } = useItemLis
             <SelectGroup>
               <SelectItem value="all">All dates</SelectItem>
               <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="upcoming">Upcoming</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

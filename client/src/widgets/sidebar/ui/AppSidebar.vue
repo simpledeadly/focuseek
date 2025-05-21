@@ -81,6 +81,47 @@ const quitApp = async () => {
 
     <SidebarContent>
       <SidebarGroup>
+        <Transition
+          name="fade"
+          mode="out-in"
+        >
+          <SidebarMenu>
+            <TransitionGroup name="fade-list">
+              <div class="sub-item">
+                <SidebarMenuItem
+                  :class="
+                    route.path.includes('today')
+                      ? 'sidebar__item_active'
+                      : 'sidebar__item'
+                  "
+                >
+                  <RouterLink to="/today">
+                    <SidebarMenuButton as-child>
+                      <span>Today</span>
+                    </SidebarMenuButton>
+                  </RouterLink>
+                </SidebarMenuItem>
+              </div>
+              <div class="sub-item">
+                <SidebarMenuItem
+                  :class="
+                    route.path.includes('upcoming')
+                      ? 'sidebar__item_active'
+                      : 'sidebar__item'
+                  "
+                >
+                  <RouterLink to="/upcoming">
+                    <SidebarMenuButton as-child>
+                      <span>Upcoming</span>
+                    </SidebarMenuButton>
+                  </RouterLink>
+                </SidebarMenuItem>
+              </div>
+            </TransitionGroup>
+          </SidebarMenu>
+        </Transition>
+      </SidebarGroup>
+      <SidebarGroup>
         <SidebarGroupLabel as-child>
           <RouterLink to="/collections">
             <span style="color: hsl(var(--foreground))">Collections</span>

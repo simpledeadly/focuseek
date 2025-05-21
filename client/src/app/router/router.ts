@@ -22,6 +22,12 @@ const routes = [
     meta: { requiresAuth: true, title: 'Сегодня' },
   },
   {
+    path: '/upcoming',
+    component: () => import('@/pages/upcoming'),
+    name: 'upcoming',
+    meta: { requiresAuth: true, title: 'Предстоящее' },
+  },
+  {
     path: '/:collection',
     component: () => import('@/pages/list'),
     name: 'list',
