@@ -2,7 +2,7 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
 import { convertToLink, sanitizeHtml } from '@/shared/lib/utils'
-import { useItemType } from '@/features/item/filter'
+import { useFilters } from '@/features/item/filter'
 import { Check, Edit3, X } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 const isEdit = ref<boolean>(false)
 const newDescription = ref<string | undefined | null>('')
 const inputRef = ref<HTMLInputElement | null>(null)
-const { itemType } = useItemType()
+const { itemType } = useFilters()
 
 const displayDescription = computed(() => {
   if (!props.description || props.description.trim() === '') {

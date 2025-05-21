@@ -1,1 +1,1 @@
-export { useItemType, useHideDone, useFilterItems } from './model/useFilterItems'
+export { useFilters } from './model/useFilters'

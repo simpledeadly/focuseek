@@ -12,6 +12,7 @@ const fetchItems = async (): Promise<Item[]> => {
   }
 }
 
+// @ts-ignore
 const undefinedItem: Item = {
   id: 0,
   title: '',

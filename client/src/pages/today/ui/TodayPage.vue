@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onUnmounted, watch } from 'vue'
 import { Separator } from '@/shared/ui/separator'
 import { getStartOfTodayMillis } from '@/shared/lib/utils'
 import { AddItemFormInline } from '@/features/item/add'
@@ -46,6 +46,10 @@ updateFilters(itemType.value)
 
 watch(itemType, (newVal) => {
   updateFilters(newVal)
+})
+
+onUnmounted(() => {
+  dateFilter.value = 'all'
 })
 </script>
 

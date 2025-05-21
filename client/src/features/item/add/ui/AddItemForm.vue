@@ -4,11 +4,10 @@ import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Separator } from '@/shared/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/tooltip'
-import { useItems } from '@/entities/item'
-import { useFilterItems, useItemType } from '@/features/item/filter'
+import { useFilters } from '@/features/item/filter'
 
 const emit = defineEmits<{
-  (e: 'submit', data: { itemTitle: string; parentId?: number, date?: number }): void
+  (e: 'submit', data: { itemTitle: string; parentId?: number; date?: number }): void
 }>()
 
 const slots = defineSlots<{
@@ -17,11 +16,14 @@ const slots = defineSlots<{
 
 const itemTitle = ref<string>('')
 const parentId = ref<number>()
-const { itemType } = useItemType()
 
 const handleSubmit = () => {
   if (itemTitle.value.length > 0) {
-    const data = { itemTitle: itemTitle.value, parentId: Number(parentId.value), date: Date.now() + 999999 }
+    const data = {
+      itemTitle: itemTitle.value,
+      parentId: Number(parentId.value),
+      date: Date.now() + 999999,
+    }
     emit('submit', data)
   } else {
     alert('Введите заголовок')
@@ -30,8 +32,7 @@ const handleSubmit = () => {
   parentId.value = undefined
 }
 
-const { items } = useItems()
-const { filteredItems } = useFilterItems(items)
+const { filteredItems, itemType } = useFilters()
 </script>
 
 <template>

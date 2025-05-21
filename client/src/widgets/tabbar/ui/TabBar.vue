@@ -2,14 +2,12 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { useItems } from '@/entities/item'
-import { useFilterItems } from '@/features/item/filter'
+import { useFilters } from '@/features/item/filter'
 import { CollectionOptions } from '@/features/collection/options'
 
 const router = useRouter()
 
-const { items } = useItems()
-const { itemType } = useFilterItems(items)
+const { itemType } = useFilters()
 
 const activeTab = computed(() => itemType.value)
 </script>

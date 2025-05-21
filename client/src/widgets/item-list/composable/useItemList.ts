@@ -2,7 +2,7 @@ import { ref, computed, watchEffect } from 'vue'
 import { useItems, filterNestedItems, Item } from '@/entities/item'
 import { router } from '@/app/router/router'
 import { useAddItem } from '@/features/item/add'
-import { useFilterItems } from '@/features/item/filter'
+import { useFilters } from '@/features/item/filter'
 import { useRemoveItem } from '@/features/item/remove'
 import { useShowSubItems } from '@/features/item/show-sub-items'
 import { useCollections } from '@/entities/collection'
@@ -25,7 +25,7 @@ export const useItemList = () => {
     filteredItems,
     sortedItems,
     collectionId,
-  } = useFilterItems(items)
+  } = useFilters()
   const { updateItemProperty } = useItemUpdater(items)
 
   const { addItem } = useAddItem(items)
