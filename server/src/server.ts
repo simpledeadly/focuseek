@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken'
 import { prisma } from './prismaClient'
 import { authenticate } from './middlewares/authentication'
 import { Item, ItemType, Collection, Timer } from './types'
-
 ;(BigInt.prototype as any).toJSON = function () {
   return this.toString()
 }
@@ -358,7 +357,7 @@ app.put('/api/items/:id', async (req, res) => {
   const itemData: Partial<Item> = req.body
 
   try {
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async () => {
       return await updateItemWithChildren(id, itemData)
     })
 
