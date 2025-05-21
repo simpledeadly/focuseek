@@ -200,7 +200,7 @@ const handleToggle = (showSubs: boolean) => {
       #date
     >
       <ItemDate
-        :model-value="item.date"
+        :model-value="new Date(item.date ?? 0).getTime()"
         @change="updateItemProperty(item, { date: $event })"
       />
     </template>
@@ -209,7 +209,7 @@ const handleToggle = (showSubs: boolean) => {
       #deadline
     >
       <ItemDeadline
-        :model-value="item.deadline"
+        :model-value="new Date(item.deadline ?? 0).getTime()"
         @change="updateItemProperty(item, { deadline: $event })"
       />
     </template>
@@ -315,10 +315,7 @@ const handleToggle = (showSubs: boolean) => {
               )
             "
           />
-          <TransitionGroup
-            name="fade-list"
-            mode="out-in"
-          >
+          <TransitionGroup name="fade-list">
             <div
               v-for="subItem in filterNestedItems(filteredItems, item.id)"
               :key="subItem.id"

@@ -107,10 +107,7 @@ const goToPage = (page: number) => {
     class="item-list"
     :style="isMobile && 'width: 85vw'"
   >
-    <Transition
-      name="fade-list"
-      mode="default"
-    >
+    <Transition name="fade-list">
       <div :key="activeKey">
         <TransitionGroup name="fade-list">
           <div

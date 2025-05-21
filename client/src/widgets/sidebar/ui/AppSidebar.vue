@@ -81,45 +81,30 @@ const quitApp = async () => {
 
     <SidebarContent>
       <SidebarGroup>
-        <Transition
-          name="fade"
-          mode="out-in"
-        >
-          <SidebarMenu>
-            <TransitionGroup name="fade-list">
-              <div class="sub-item">
-                <SidebarMenuItem
-                  :class="
-                    route.path.includes('today')
-                      ? 'sidebar__item_active'
-                      : 'sidebar__item'
-                  "
-                >
-                  <RouterLink to="/today">
-                    <SidebarMenuButton as-child>
-                      <span>Today</span>
-                    </SidebarMenuButton>
-                  </RouterLink>
-                </SidebarMenuItem>
-              </div>
-              <div class="sub-item">
-                <SidebarMenuItem
-                  :class="
-                    route.path.includes('upcoming')
-                      ? 'sidebar__item_active'
-                      : 'sidebar__item'
-                  "
-                >
-                  <RouterLink to="/upcoming">
-                    <SidebarMenuButton as-child>
-                      <span>Upcoming</span>
-                    </SidebarMenuButton>
-                  </RouterLink>
-                </SidebarMenuItem>
-              </div>
-            </TransitionGroup>
-          </SidebarMenu>
-        </Transition>
+        <SidebarMenu>
+          <div class="sub-item">
+            <SidebarMenuItem
+              :class="route.path.includes('today') ? 'sidebar__item_active' : 'sidebar__item'"
+            >
+              <RouterLink to="/today">
+                <SidebarMenuButton as-child>
+                  <span>Today</span>
+                </SidebarMenuButton>
+              </RouterLink>
+            </SidebarMenuItem>
+          </div>
+          <div class="sub-item">
+            <SidebarMenuItem
+              :class="route.path.includes('upcoming') ? 'sidebar__item_active' : 'sidebar__item'"
+            >
+              <RouterLink to="/upcoming">
+                <SidebarMenuButton as-child>
+                  <span>Upcoming</span>
+                </SidebarMenuButton>
+              </RouterLink>
+            </SidebarMenuItem>
+          </div>
+        </SidebarMenu>
       </SidebarGroup>
       <SidebarGroup>
         <SidebarGroupLabel as-child>
@@ -127,35 +112,28 @@ const quitApp = async () => {
             <span style="color: hsl(var(--foreground))">Collections</span>
           </RouterLink>
         </SidebarGroupLabel>
-        <Transition
-          name="fade"
-          mode="out-in"
-        >
-          <SidebarMenu>
-            <TransitionGroup name="fade-list">
-              <div
-                v-for="(col, idx) in collections"
-                :key="col.id"
-                :style="`--index: ${idx};`"
-                class="sub-item"
-              >
-                <SidebarMenuItem
-                  :class="
-                    route.path.includes(col.title.toLowerCase())
-                      ? 'sidebar__item_active'
-                      : 'sidebar__item'
-                  "
-                >
-                  <RouterLink :to="`/${col.title.toLowerCase()}`">
-                    <SidebarMenuButton as-child>
-                      <span>{{ col.title }}</span>
-                    </SidebarMenuButton>
-                  </RouterLink>
-                </SidebarMenuItem>
-              </div>
-            </TransitionGroup>
-          </SidebarMenu>
-        </Transition>
+        <SidebarMenu>
+          <div
+            v-for="(col, idx) in collections"
+            :key="col.id"
+            :style="`--index: ${idx};`"
+            class="sub-item"
+          >
+            <SidebarMenuItem
+              :class="
+                route.path.includes(col.title.toLowerCase())
+                  ? 'sidebar__item_active'
+                  : 'sidebar__item'
+              "
+            >
+              <RouterLink :to="`/${col.title.toLowerCase()}`">
+                <SidebarMenuButton as-child>
+                  <span>{{ col.title }}</span>
+                </SidebarMenuButton>
+              </RouterLink>
+            </SidebarMenuItem>
+          </div>
+        </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
 

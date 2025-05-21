@@ -32,9 +32,11 @@ const transitionName = computed<any>(() => 'dissolve-smooth')
       <AppSidebar />
       <MainLayout>
         <template #content>
-          <Transition :name="transitionName">
-            <RouterView />
-          </Transition>
+          <RouterView v-slot="{ Component }">
+            <Transition :name="transitionName">
+              <component :is="Component" />
+            </Transition>
+          </RouterView>
         </template>
       </MainLayout>
     </SidebarProvider>
