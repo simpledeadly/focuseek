@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useColorMode } from '@vueuse/core'
 import { RouterView } from 'vue-router'
 import { Toaster } from '@/shared/ui/sonner'
 import { TooltipProvider } from '@/shared/ui/tooltip'
@@ -12,6 +13,9 @@ import { BreakAlert } from '@/widgets/break-alert'
 import { useLoading } from './useLoading'
 import { isAuthenticated } from './auth/auth'
 import './styles/animations.scss'
+
+const mode = useColorMode()
+mode.value = 'auto'
 
 const { isLoading, setLoading } = useLoading()
 
