@@ -46,11 +46,13 @@ const updateFilters = (type: string) => {
   }
 }
 
-updateFilters(itemType.value)
-
-watch(itemType, (newVal) => {
-  updateFilters(newVal)
-})
+watch(
+  itemType,
+  (newVal) => {
+    updateFilters(newVal)
+  },
+  { immediate: true }
+)
 
 onUnmounted(() => {
   dateFilter.value = 'all'
