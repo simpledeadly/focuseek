@@ -34,6 +34,10 @@ const quitApp = async () => {
   localStorage.removeItem('auth')
   window.location.reload()
 }
+
+const toPath = (title: string) => {
+  return '/' + title.toLowerCase().replace(/\s+/g, '-')
+}
 </script>
 
 <template>
@@ -120,13 +124,9 @@ const quitApp = async () => {
             class="sub-item"
           >
             <SidebarMenuItem
-              :class="
-                route.path.includes(col.title.toLowerCase())
-                  ? 'sidebar__item_active'
-                  : 'sidebar__item'
-              "
+              :class="`sidebar__item${route.path === toPath(col.title) ? '_active' : ''}`"
             >
-              <RouterLink :to="`/${col.title.toLowerCase()}`">
+              <RouterLink :to="toPath(col.title)">
                 <SidebarMenuButton as-child>
                   <span>{{ col.title }}</span>
                 </SidebarMenuButton>
