@@ -1,22 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import {
-  Pagination,
-  PaginationEllipsis,
-  PaginationList,
-  PaginationListItem,
-  PaginationNext,
-  PaginationPrev,
-} from '@/shared/ui/pagination'
-import { Button } from '@/shared/ui/button'
 import { useSidebar } from '@/shared/ui/sidebar'
+import { Separator } from '@/shared/ui/separator'
 import { AddItemFormInline } from '@/features/item/add'
-import { Search } from '@/widgets/search'
 import { useItemList, ItemList } from '..'
 
 const {
   sortedItems,
   activeKey,
+  isHideDone,
   filteredItems,
   itemType,
   collections,
@@ -34,84 +25,28 @@ const {
 } = useItemList()
 
 const { isMobile } = useSidebar()
-
-const itemsPerPage = computed(() => {
-  currentPage.value = 1
-  return itemType.value === 'todo' ? 5 : 10
-})
-const currentPage = ref<number>(1)
-
-watch(collectionId, () => {
-  currentPage.value = 1
-})
-
-const paginatedItems = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return sortedItems.value.slice(start, end)
-})
-
-const totalPages = computed(() => Math.ceil(sortedItems.value.length / itemsPerPage.value))
-
-const goToPage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
-}
 </script>
 
 <template>
-  <Search />
-  <Pagination
-    :items-per-page="itemsPerPage"
-    :total="sortedItems.length"
-    :sibling-count="1"
-    :default-page="currentPage"
-    @update:page="goToPage"
-    class="flex justify-center mb-2"
-    show-edges
-  >
-    <PaginationList
-      v-slot="{ items }"
-      class="flex items-center gap-1"
-    >
-      <PaginationPrev @click="goToPage(currentPage - 1)" />
-
-      <template v-for="(item, index) in items">
-        <PaginationListItem
-          v-if="item.type === 'page'"
-          :key="index"
-          :value="item.value"
-          as-child
-        >
-          <Button
-            class="w-8 h-8 p-0 hover:text-opacity-70"
-            :variant="item.value === currentPage ? 'default' : 'outline'"
-            @click="goToPage(item.value)"
-          >
-            {{ item.value }}
-          </Button>
-        </PaginationListItem>
-        <PaginationEllipsis
-          v-else
-          :key="item.type"
-          :index="index"
-          class="w-8 h-8 p-0"
-        />
-      </template>
-
-      <PaginationNext @click="goToPage(currentPage + 1)" />
-    </PaginationList>
-  </Pagination>
   <div
     class="item-list"
     :style="isMobile && 'width: 85vw'"
   >
+    <Separator
+      :label="
+        itemType === 'todo' &&
+        !isHideDone &&
+        !!sortedItems.filter((i) => i.type === itemType).length
+          ? `${Math.ceil((sortedItems.filter((i) => i.isDone).length / sortedItems.length) * 100)}% of ${sortedItems.length} (${sortedItems.filter((i) => i.isDone).length})`
+          : `${sortedItems.filter((i) => i.type === itemType).length} ${itemType}s`
+      "
+      class="mb-4"
+    />
     <Transition name="fade">
       <div :key="activeKey">
         <TransitionGroup name="fade-list">
           <div
-            v-for="item in paginatedItems"
+            v-for="item in sortedItems"
             :key="item.id"
           >
             <ItemList
