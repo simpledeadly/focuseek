@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { Separator } from '@/shared/ui/separator'
 import { getStartOfTodayMillis } from '@/shared/lib/utils'
 import { AddItemFormInline } from '@/features/item/add'
 import { ItemList, useItemList } from '@/widgets/item-list'
-import { TabBar } from '@/widgets/tabbar'
 import draggable from 'vuedraggable'
 
 const {
@@ -34,25 +33,8 @@ const {
 
 onMounted(() => {
   dateFilter.value = 'today'
+  collectionId.value = null
 })
-
-const updateFilters = (type: string) => {
-  if (type === 'todo') {
-    dateFilter.value = 'today'
-    collectionId.value = null
-  } else {
-    dateFilter.value = 'all'
-    collectionId.value = 9
-  }
-}
-
-watch(
-  itemType,
-  (newVal) => {
-    updateFilters(newVal)
-  },
-  { immediate: true }
-)
 
 onUnmounted(() => {
   dateFilter.value = 'all'
@@ -60,8 +42,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="today-page item-list">
-    <TabBar />
+  <div class="today-page item-list mt-5">
     <Separator
       :label="
         itemType === 'todo' &&
