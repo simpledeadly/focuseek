@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { useFilters } from '@/features/item/filter'
@@ -7,9 +6,7 @@ import { CollectionOptions } from '@/features/collection/options'
 
 const router = useRouter()
 
-const { itemType } = useFilters()
-
-const activeTab = computed(() => itemType.value)
+const { itemType: activeTab } = useFilters()
 </script>
 
 <template>
