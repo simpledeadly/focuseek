@@ -10,6 +10,7 @@ import { AuthLayout } from '@/shared/ui/layouts/auth-layout'
 import { Loader } from '@/widgets/loader'
 import { AppSidebar } from '@/widgets/sidebar'
 import { BreakAlert } from '@/widgets/break-alert'
+import { Search } from '@/widgets/search'
 import { useLoading } from './useLoading'
 import { isAuthenticated } from './auth/auth'
 import './styles/animations.scss'
@@ -24,6 +25,7 @@ const transitionName = computed<any>(() => 'dissolve-smooth')
 
 <template>
   <BreakAlert />
+  <Search />
   <TooltipProvider :delay-duration="400">
     <Toaster
       theme="system"
