@@ -28,6 +28,12 @@ const routes = [
     meta: { requiresAuth: true, title: 'Предстоящее' },
   },
   {
+    path: '/add',
+    component: () => import('@/pages/form'),
+    name: 'add',
+    meta: { requiresAuth: true, title: 'Добавить' },
+  },
+  {
     path: '/:collection',
     component: () => import('@/pages/list'),
     name: 'list',

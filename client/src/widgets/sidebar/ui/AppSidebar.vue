@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
+import { Separator } from '@/shared/ui/separator'
 import { useCollections } from '@/entities/collection'
 import SettingsPage from '@/pages/settings'
 import { ChevronDown, User2 } from 'lucide-vue-next'
@@ -88,7 +89,19 @@ const toPath = (title: string) => {
         <SidebarMenu>
           <div class="sub-item">
             <SidebarMenuItem
-              :class="route.path.includes('today') ? 'sidebar__item_active' : 'sidebar__item'"
+              :class="`sidebar__item${route.path === toPath('add') ? '_active' : ''}`"
+            >
+              <RouterLink to="/add">
+                <SidebarMenuButton as-child>
+                  <span>Add</span>
+                </SidebarMenuButton>
+              </RouterLink>
+            </SidebarMenuItem>
+          </div>
+          <Separator />
+          <div class="sub-item">
+            <SidebarMenuItem
+              :class="`sidebar__item${route.path === toPath('today') ? '_active' : ''}`"
             >
               <RouterLink to="/today">
                 <SidebarMenuButton as-child>
@@ -99,7 +112,7 @@ const toPath = (title: string) => {
           </div>
           <div class="sub-item">
             <SidebarMenuItem
-              :class="route.path.includes('upcoming') ? 'sidebar__item_active' : 'sidebar__item'"
+              :class="`sidebar__item${route.path === toPath('upcoming') ? '_active' : ''}`"
             >
               <RouterLink to="/upcoming">
                 <SidebarMenuButton as-child>
@@ -173,6 +186,7 @@ const toPath = (title: string) => {
     &_active {
       border-radius: 6px;
       background: hsl(var(--border));
+      font-weight: 500;
       // background: hsl(var(--foreground));
       // color: hsl(var(--background));
     }
