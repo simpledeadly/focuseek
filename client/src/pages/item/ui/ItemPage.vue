@@ -1,65 +1,164 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { ItemEntity, useItems, filterNestedItems, Item } from '@/entities/item'
-import { AddItemFormInline, useAddItem } from '@/features/item/add'
-import { ItemTitle, useChangeItemTitle } from '@/features/item/change-title'
-import { ItemDescription, useChangeItemDescription } from '@/features/item/change-description'
-import { ItemDeadline, useChangeItemDeadline } from '@/features/item/change-deadline'
-import { ItemPriority, useChangeItemPriority } from '@/features/item/change-priority'
-import { ItemDate, useChangeItemDate } from '@/features/item/change-date'
-import { ItemCheckbox, useDoneItem } from '@/features/item/done'
-import { useFilterItems } from '@/features/item/filter'
-import { useRemoveItem } from '@/features/item/remove'
-import { ItemSubItemsToggle, useShowSubItems } from '@/features/item/show-sub-items'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { Toggle } from '@/shared/ui/toggle'
+import { ItemEntity, useItems } from '@/entities/item'
+import { AddItemFormInline } from '@/features/item/add'
+import { ItemTitle } from '@/features/item/change-title'
+import { ItemDescription } from '@/features/item/change-description'
+import { ItemDeadline } from '@/features/item/change-deadline'
+import { ItemPriority } from '@/features/item/change-priority'
+import { ItemDate } from '@/features/item/change-date'
+import { ItemTags } from '@/features/item/change-tags'
+import { ItemCheckbox } from '@/features/item/change-done'
+import { ItemSubItemsToggle } from '@/features/item/show-sub-items'
 import { ItemOptions } from '@/features/item/options'
-import { Collection, useCollections } from '@/entities/collection'
-import { useSwitchItemCollection } from '@/features/item/switch-collection'
-import { useSwitchItemType } from '@/features/item/switch-type'
-import { ItemTimeTrack, useItemTimeTrack } from '@/features/item/time-track'
-import { router } from '@/app/router/router'
-import { Checkbox } from '@/shared/ui/checkbox'
+import { ItemTimeTrack } from '@/features/item/time-track'
+import { useItemList } from '@/widgets/item-list/composable/useItemList'
+import { ListTodo } from 'lucide-vue-next'
 import { Label } from '@/shared/ui/label'
+import { Checkbox } from '@/shared/ui/checkbox'
+import { ItemList } from '@/widgets/item-list'
 
-const { items, item, setSelectedItem } = useItems()
-const { itemType, filteredItems, collectionId } = useFilterItems(items)
-const { addItem } = useAddItem(items)
-const { removeItem } = useRemoveItem(items)
-const { toggleDoneItem } = useDoneItem(items)
-const { toggleShowSubItems, hasSubItems } = useShowSubItems(items)
-const { changeItemTitle } = useChangeItemTitle(items)
-const { changeItemDescription } = useChangeItemDescription(items)
-const { changeItemDeadline } = useChangeItemDeadline(items)
-const { changeItemDate } = useChangeItemDate(items)
-const { changeItemPriority } = useChangeItemPriority(items)
-const { switchItemType } = useSwitchItemType(items)
-const { changeItemDurationPlanned, changeItemDurationReal, deleteTimer } = useItemTimeTrack(items)
-
-const { collections, findCollectionTitleById } = useCollections()
-const { switchItemCollection } = useSwitchItemCollection(items)
-
-const showAllParams = ref<boolean>(false)
-const isTimeTracking = ref<boolean>(false)
-const showInfo = ref<boolean>(true)
-
-const openDetailsPage = (item: Item) => {
-  setSelectedItem(item)
-  router.push({
-    path: `/${findCollectionTitleById(item.collectionId).toLowerCase()}/${item.id}`,
-  })
-}
+const {
+  // item,
+  filteredItems,
+  itemType,
+  collections,
+  collectionId,
+  showAllParams,
+  isTimeTracking,
+  isHideDone,
+  updateItemProperty,
+  addItem,
+  removeItem,
+  toggleShowSubItems,
+  hasSubItems,
+  resetTimer,
+  deleteTimer,
+  openDetailsPage,
+  filterNestedItems,
+} = useItemList()
 
 const emit = defineEmits<{
-  (e: 'collections', value: Collection[]): void
+  (e: 'toggle-done', ...args: any[]): void
+  (e: 'change-title', ...args: any[]): void
+  (e: 'change-description', ...args: any[]): void
+  (e: 'change-duration-planned', ...args: any[]): void
+  (e: 'change-duration-real', ...args: any[]): void
+  (e: 'reset-timer', ...args: any[]): void
+  (e: 'delete-timer', ...args: any[]): void
+  (e: 'change-date', ...args: any[]): void
+  (e: 'change-deadline', ...args: any[]): void
+  (e: 'change-priority', ...args: any[]): void
+  (e: 'switch-collection', ...args: any[]): void
+  (e: 'switch-user', ...args: any[]): void
+  (e: 'switch-type', ...args: any[]): void
+  (e: 'remove', ...args: any[]): void
+  (e: 'toggle-show-sub-items', ...args: any[]): void
+  (e: 'add-description', ...args: any[]): void
+  (e: 'remove-description', ...args: any[]): void
+  (e: 'open-details-page', ...args: any[]): void
 }>()
 
-setTimeout(() => {
-  emit('collections', collections.value)
-}, 50)
+const { items, itemIndex } = useItems()
+
+const currentItem = computed(() => items.value.filter((item) => item.id === itemIndex.value)[0])
+// const currentItems = computed(() => items.value.filter((item) => item.title.includes('fo')))
+// ^ it works
+
+const container = ref<HTMLElement | null>(null)
+const isSubForm = ref<boolean>(true)
+const isExpandSubItemForm = ref<boolean>(false)
+const isExpandItemForm = ref<boolean>(false)
+
+const eal = ref<number>(-10)
+const duration = ref<number>(0.15)
+const timingFunction = ref<string>('cubic-bezier(0.55, 0, 0.1, 1)')
+
+const transitionString = computed<string>(() => {
+  return [
+    `max-height ${duration.value}s ${timingFunction.value}`,
+    `opacity ${duration.value}s ${timingFunction.value}`,
+    `transform ${duration.value}s ${timingFunction.value}`,
+  ].join(', ')
+})
+
+const transformString = (axis: 'X' | 'Y', value: number) =>
+  computed<string>(() => {
+    return `translate${axis}(${value}px)`
+  })
+
+function beforeEnter(el: Element) {
+  const element = el as HTMLElement
+  element.style.maxHeight = '0'
+  element.style.opacity = '0'
+  element.style.overflowY = 'hidden'
+  element.style.transform = transformString('Y', eal.value).value
+}
+
+function enter(el: Element, done: () => void) {
+  const element = el as HTMLElement
+  nextTick()
+  element.style.transition = transitionString.value
+  const height = element.scrollHeight
+  element.style.maxHeight = height + 'px'
+  element.style.opacity = '1'
+  element.style.transform = transformString('Y', 0).value
+  element.addEventListener(
+    'transitionend',
+    () => {
+      element.style.maxHeight = 'none'
+      element.style.overflowY = 'visible'
+      element.style.zIndex = '1'
+      done()
+    },
+    { once: true }
+  )
+}
+
+function leave(el: Element, done: () => void) {
+  const element = el as HTMLElement
+  element.style.maxHeight = element.scrollHeight + 'px'
+  element.style.opacity = '1'
+  element.style.transform = transformString('Y', 0).value
+  void element.offsetHeight
+  element.style.transition = transitionString.value
+  element.style.maxHeight = '0'
+  element.style.opacity = '0'
+  element.style.overflowY = 'hidden'
+  element.style.transform = transformString('Y', eal.value).value
+  element.addEventListener('transitionend', done, { once: true })
+}
+
+const handleToggle = (showSubs: boolean) => {
+  toggleShowSubItems(currentItem.value)
+  if (!showSubs) {
+    isExpandSubItemForm.value = false
+    isExpandItemForm.value = false
+  }
+}
+
+const showInfo = ref<boolean>(false)
+const savedIsHideDoneState = localStorage.getItem('isHideDoneState')
+const isHideDoneState = ref<boolean>(
+  savedIsHideDoneState ? JSON.parse(savedIsHideDoneState) : false
+)
+
+onMounted(() => {
+  localStorage.setItem('isHideDoneState', JSON.stringify(isHideDone.value))
+  showAllParams.value = true
+  isHideDone.value = false
+})
+
+onUnmounted(() => {
+  showAllParams.value = false
+  isHideDone.value = isHideDoneState.value
+})
 </script>
 
 <template>
   <div class="item-page">
-    <div class="flex gap-2 items-center">
+    <div class="flex gap-1.5 items-center">
       <Checkbox
         id="si"
         v-model="showInfo"
@@ -73,43 +172,46 @@ setTimeout(() => {
     <div v-if="showInfo">
       <br />
       <br />
-      <h1 style="font-size: 20px">{{ item.title }}</h1>
-      <h3 v-if="item.description">{{ item.description }}</h3>
+      <h1 style="font-size: 20px">{{ currentItem.title }}</h1>
+      <h3 v-if="currentItem.description">{{ currentItem.description }}</h3>
       <br />
-      <p>id: {{ item.id }}</p>
-      <p>userId: {{ item.userId }}</p>
-      <p>collectionId: {{ item.collectionId }}</p>
-      <p>type: {{ item.type }}</p>
-      <p v-if="item.type === 'todo'">isDone: {{ item.isDone || false }}</p>
-      <p v-if="item.priority">priority: {{ item.priority }}</p>
-      <p v-if="item.durationPlanned">durationPlanned: {{ item.durationPlanned }}</p>
-      <p v-if="item.durationReal">durationReal: {{ item.durationReal }}</p>
-      <p v-if="item.date">date: {{ item.date }}</p>
-      <p v-if="item.deadline">deadline: {{ item.deadline }}</p>
-      <p>createdAt: {{ new Date(item.createdAt).toLocaleString() }}</p>
+      <p>id: {{ currentItem.id }}</p>
+      <p>userId: {{ currentItem.userId }}</p>
+      <p>collectionId: {{ currentItem.collectionId }}</p>
+      <p>type: {{ currentItem.type }}</p>
+      <p v-if="currentItem.type === 'todo'">isDone: {{ currentItem.isDone || false }}</p>
+      <p v-if="currentItem.priority">priority: {{ currentItem.priority }}</p>
+      <p v-if="currentItem.durationPlanned">durationPlanned: {{ currentItem.durationPlanned }}</p>
+      <p v-if="currentItem.durationReal">durationReal: {{ currentItem.durationReal }}</p>
+      <p v-if="currentItem.date">date: {{ currentItem.date }}</p>
+      <p v-if="currentItem.deadline">deadline: {{ currentItem.deadline }}</p>
+      <p>createdAt: {{ new Date(currentItem.createdAt).toLocaleString() }}</p>
     </div>
     <br />
 
     <div class="item-list">
       <ItemEntity
+        v-if="currentItem"
+        v-for="item in items.filter((item) => item.id === itemIndex)"
+        :key="item.id"
         :showParams="
-          !item.isDone &&
           !!(
             item.date ||
             item.deadline ||
             item.durationPlanned ||
             item.durationReal !== null ||
+            (item.tags && item.tags.length > 0) ||
             showAllParams
           )
         "
       >
         <template
           #subItemsToggle
-          v-if="hasSubItems(item.id)"
+          v-if="hasSubItems(item.id) || item.showSubItems"
         >
           <ItemSubItemsToggle
             :model-value="item.showSubItems"
-            @update:model-value="toggleShowSubItems(item)"
+            @update:model-value="handleToggle(item.showSubItems ?? false)"
           />
         </template>
         <template
@@ -117,16 +219,17 @@ setTimeout(() => {
           #checkbox
         >
           <ItemCheckbox
+            :itemId="item.id"
             :priority="item.priority"
             :model-value="item.isDone"
-            @update:model-value="toggleDoneItem(item)"
+            @update:model-value="updateItemProperty(item, { isDone: !item.isDone })"
           />
         </template>
         <template #title>
           <ItemTitle
             :is-done="item.isDone"
             :title="item.title"
-            @save="changeItemTitle(item, $event)"
+            @save="updateItemProperty(item, { title: $event })"
           />
         </template>
         <template
@@ -135,19 +238,20 @@ setTimeout(() => {
         >
           <ItemDescription
             :description="item.description"
-            @save="changeItemDescription(item, $event)"
+            @save="updateItemProperty(item, { description: $event })"
           />
         </template>
         <template
-          v-if="item.durationReal !== null || item.durationPlanned"
+          v-if="showAllParams || item.durationReal !== null || item.durationPlanned"
           #timeTrack
         >
           <ItemTimeTrack
             :item="item"
             :model-value="isTimeTracking"
-            @change-duration-planned="changeItemDurationPlanned(item, $event)"
-            @change-duration-real="changeItemDurationReal(item, $event)"
-            @change-duration-real-from-options="deleteTimer(item, $event)"
+            @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
+            @change-duration-real="updateItemProperty(item, { durationReal: $event })"
+            @reset-timer="resetTimer(item)"
+            @remove-timer="deleteTimer(item)"
           />
         </template>
         <template
@@ -155,8 +259,8 @@ setTimeout(() => {
           #date
         >
           <ItemDate
-            :model-value="item.date"
-            @change="changeItemDate(item, $event)"
+            :model-value="new Date(item.date ?? 0).getTime()"
+            @change="updateItemProperty(item, { date: $event })"
           />
         </template>
         <template
@@ -164,8 +268,8 @@ setTimeout(() => {
           #deadline
         >
           <ItemDeadline
-            :model-value="item.deadline"
-            @change="changeItemDeadline(item, $event)"
+            :model-value="new Date(item.deadline ?? 0).getTime()"
+            @change="updateItemProperty(item, { deadline: $event })"
           />
         </template>
         <template
@@ -174,295 +278,144 @@ setTimeout(() => {
         >
           <ItemPriority
             :model-value="item.priority"
-            @update:model-value="changeItemPriority(item, $event)"
+            @update:model-value="updateItemProperty(item, { priority: $event })"
           />
+        </template>
+        <template
+          v-if="showAllParams || (item.tags && item.tags.length > 0)"
+          #tags
+        >
+          <ItemTags
+            :tags="item.tags"
+            @change="updateItemProperty(item, { tags: $event })"
+          />
+        </template>
+        <template
+          v-if="item.showSubItems"
+          #default
+        >
+          <Toggle v-model="isSubForm">
+            <ListTodo :class="isSubForm ? 'text-foreground' : 'text-muted-foreground'" />
+          </Toggle>
         </template>
         <template #options>
           <ItemOptions
             :item="item"
             :collections="collections"
+            :hasSubItems="hasSubItems(item.id)"
             :model-value:collectionId="item.collectionId"
-            @change-collection="switchItemCollection(item, $event)"
-            @change-type="switchItemType(item, item.type === 'todo' ? 'note' : 'todo')"
+            @switch-collection="
+              updateItemProperty(
+                item,
+                { collectionId: $event, parentItemId: null },
+                { withChildren: true }
+              )
+            "
+            @switch-user="
+              updateItemProperty(
+                item,
+                { userId: $event.userId, collectionId: $event.colId, parentItemId: null },
+                { withChildren: true }
+              )
+            "
+            @switch-type="
+              updateItemProperty(
+                item,
+                { type: item.type === 'todo' ? 'note' : 'todo', parentItemId: null },
+                { withChildren: true }
+              )
+            "
             @remove="removeItem(item)"
-            @add-description="changeItemDescription(item, '')"
-            @remove-description="changeItemDescription(item, null)"
+            @add-description="updateItemProperty(item, { description: '' })"
+            @remove-description="updateItemProperty(item, { description: null })"
             :model-value:date="item.date"
-            @edit-date="changeItemDate(item, $event)"
+            @change-date="updateItemProperty(item, { date: $event })"
             :model-value:deadline="item.deadline"
-            @edit-deadline="changeItemDeadline(item, $event)"
+            @change-deadline="updateItemProperty(item, { deadline: $event })"
             :model-value:priority="item.priority"
-            @edit-priority="changeItemPriority(item, $event)"
-            @change-duration-planned="changeItemDurationPlanned(item, $event)"
-            @change-duration-real="changeItemDurationReal(item, $event)"
-            @change-duration-real-from-opitons="deleteTimer(item, $event)"
+            @change-priority="updateItemProperty(item, { priority: $event })"
+            @change-duration-planned="updateItemProperty(item, { durationPlanned: $event })"
+            @reset-timer="resetTimer(item)"
+            @remove-timer="deleteTimer(item)"
             @open-details-page="openDetailsPage(item)"
+            @toggle-sub-item-form="toggleShowSubItems(item)"
           />
         </template>
         <template #subItems>
-          <div
-            v-if="item.showSubItems"
-            class="sub-items-container"
+          <Transition
+            name="sub-fade"
+            v-bind:css="false"
+            @before-enter="beforeEnter"
+            @enter="enter"
+            @leave="leave"
           >
             <div
-              v-for="(subItem, index) in filterNestedItems(filteredItems, item.id)"
-              :key="subItem.id"
-              :style="`--index: ${index};`"
-              class="sub-item"
+              v-show="item.showSubItems"
+              class="sub-items-container"
+              ref="container"
             >
-              <ItemEntity
-                :showParams="
-                  !subItem.isDone &&
-                  !!(
-                    subItem.date ||
-                    subItem.deadline ||
-                    subItem.durationPlanned ||
-                    subItem.durationReal !== null ||
-                    showAllParams
-                  )
-                "
-              >
-                <template
-                  v-if="hasSubItems(subItem.id)"
-                  #subItemsToggle
+              <TransitionGroup name="fade-list">
+                <div
+                  v-for="subItem in filterNestedItems(filteredItems, item.id)"
+                  :key="subItem.id"
+                  class="sub-item"
                 >
-                  <ItemSubItemsToggle
-                    :model-value="subItem.showSubItems"
-                    @update:model-value="toggleShowSubItems(subItem)"
-                  />
-                </template>
-                <template
-                  v-if="itemType !== 'note'"
-                  #checkbox
-                >
-                  <ItemCheckbox
-                    :priority="subItem.priority"
-                    :model-value="subItem.isDone"
-                    @update:model-value="toggleDoneItem(subItem)"
-                  />
-                </template>
-                <template #title>
-                  <ItemTitle
-                    :is-done="subItem.isDone"
-                    :title="subItem.title"
-                    @save="changeItemTitle(subItem, $event)"
-                  />
-                </template>
-                <template
-                  v-if="subItem.description !== null"
-                  #description
-                >
-                  <ItemDescription
-                    :description="subItem.description"
-                    @save="changeItemDescription(subItem, $event)"
-                  />
-                </template>
-                <template
-                  v-if="subItem.durationReal !== null || subItem.durationPlanned"
-                  #timeTrack
-                >
-                  <ItemTimeTrack
+                  <ItemList
                     :item="subItem"
-                    :model-value="isTimeTracking"
-                    @change-duration-planned="changeItemDurationPlanned(subItem, $event)"
-                    @change-duration-real="changeItemDurationReal(subItem, $event)"
-                    @change-duration-real-from-options="deleteTimer(subItem, $event)"
-                  />
-                </template>
-                <template
-                  v-if="subItem.date"
-                  #date
-                >
-                  <ItemDate
-                    :model-value="subItem.date"
-                    @change="changeItemDate(subItem, $event)"
-                  />
-                </template>
-                <template
-                  v-if="showAllParams || subItem.deadline"
-                  #timeLeft
-                >
-                  <ItemDeadline
-                    :model-value="subItem.deadline"
-                    @change="changeItemDeadline(subItem, $event)"
-                  />
-                </template>
-                <template
-                  v-if="showAllParams || subItem.priority"
-                  #priority
-                >
-                  <ItemPriority
-                    :model-value="subItem.priority"
-                    @update:model-value="changeItemPriority(subItem, $event)"
-                  />
-                </template>
-                <template #options>
-                  <ItemOptions
-                    :item="subItem"
+                    :filtered-items="filteredItems"
                     :collections="collections"
-                    :model-value:collectionId="subItem.collectionId"
-                    @change-collection="switchItemCollection(subItem, $event)"
-                    @change-type="
-                      switchItemType(subItem, subItem.type === 'todo' ? 'note' : 'todo')
+                    :item-type="itemType"
+                    :show-all-params="showAllParams"
+                    :is-time-tracking="isTimeTracking"
+                    :has-sub-items="hasSubItems"
+                    :filter-nested-items="filterNestedItems"
+                    @toggle-done="(...args: any) => emit('toggle-done', ...args)"
+                    @change-title="(...args: any) => emit('change-title', ...args)"
+                    @change-description="(...args: any) => emit('change-description', ...args)"
+                    @change-duration-planned="
+                      (...args: any) => emit('change-duration-planned', ...args)
                     "
-                    @remove="removeItem(subItem)"
-                    @add-description="changeItemDescription(subItem, '')"
-                    @remove-description="changeItemDescription(subItem, null)"
-                    :model-value:date="subItem.date"
-                    @edit-date="changeItemDate(subItem, $event)"
-                    :model-value:deadline="subItem.deadline"
-                    @edit-deadline="changeItemDeadline(subItem, $event)"
-                    :model-value:priority="subItem.priority"
-                    @edit-priority="changeItemPriority(subItem, $event)"
-                    @change-duration-planned="changeItemDurationPlanned(subItem, $event)"
-                    @change-duration-real="changeItemDurationReal(subItem, $event)"
-                    @change-duration-real-from-opitons="deleteTimer(subItem, $event)"
-                    @open-details-page="openDetailsPage(subItem)"
+                    @change-duration-real="(...args: any) => emit('change-duration-real', ...args)"
+                    @delete-timer="(...args: any) => emit('delete-timer', ...args)"
+                    @change-date="(...args: any) => emit('change-date', ...args)"
+                    @change-deadline="(...args: any) => emit('change-deadline', ...args)"
+                    @change-priority="(...args: any) => emit('change-priority', ...args)"
+                    @switch-collection="(...args: any) => emit('switch-collection', ...args)"
+                    @switch-user="(...args: any) => emit('switch-user', ...args)"
+                    @switch-type="(...args: any) => emit('switch-type', ...args)"
+                    @remove="(...args: any) => emit('remove', ...args)"
+                    @toggle-show-sub-items="
+                      (...args: any) => emit('toggle-show-sub-items', ...args)
+                    "
+                    @add-description="(...args: any) => emit('add-description', ...args)"
+                    @remove-description="(...args: any) => emit('remove-description', ...args)"
+                    @open-details-page="(...args: any) => emit('open-details-page', ...args)"
                   />
-                </template>
-                <template #subItems>
-                  <div
-                    v-if="subItem.showSubItems"
-                    class="sub-items-container"
-                  >
-                    <ItemEntity
-                      v-for="(subItem2, index) in filterNestedItems(filteredItems, subItem.id)"
-                      :key="subItem2.id"
-                      :style="`--index: ${index};`"
-                      class="sub-item"
-                      :showParams="
-                        !subItem2.isDone &&
-                        !!(
-                          subItem2.date ||
-                          subItem2.deadline ||
-                          subItem2.durationPlanned ||
-                          subItem2.durationReal !== null ||
-                          showAllParams
-                        )
-                      "
-                    >
-                      <template
-                        #subItemsToggle
-                        v-if="hasSubItems(subItem2.id)"
-                      >
-                        <ItemSubItemsToggle
-                          :model-value="subItem2.showSubItems"
-                          @update:model-value="toggleShowSubItems(subItem2)"
-                        />
-                      </template>
-                      <template
-                        v-if="itemType !== 'note'"
-                        #checkbox
-                      >
-                        <ItemCheckbox
-                          :priority="subItem2.priority"
-                          :model-value="subItem2.isDone"
-                          @update:model-value="toggleDoneItem(subItem2)"
-                        />
-                      </template>
-                      <template #title>
-                        <ItemTitle
-                          :is-done="subItem2.isDone"
-                          :title="subItem2.title"
-                          @save="changeItemTitle(subItem2, $event)"
-                        />
-                      </template>
-                      <template
-                        v-if="subItem2.description !== null"
-                        #description
-                      >
-                        <ItemDescription
-                          :description="subItem2.description"
-                          @save="changeItemDescription(subItem2, $event)"
-                        />
-                      </template>
-                      <template
-                        v-if="subItem2.durationReal !== null || subItem2.durationPlanned"
-                        #timeTrack
-                      >
-                        <ItemTimeTrack
-                          :item="subItem2"
-                          :model-value="isTimeTracking"
-                          @change-duration-planned="changeItemDurationPlanned(subItem2, $event)"
-                          @change-duration-real="changeItemDurationReal(subItem2, $event)"
-                          @change-duration-real-from-options="deleteTimer(subItem2, $event)"
-                        />
-                      </template>
-                      <template
-                        v-if="showAllParams || subItem2.date"
-                        #date
-                      >
-                        <ItemDate
-                          :model-value="subItem2.date"
-                          @change="changeItemDate(subItem2, $event)"
-                        />
-                      </template>
-                      <template
-                        v-if="showAllParams || subItem2.deadline"
-                        #timeLeft
-                      >
-                        <ItemDeadline
-                          :model-value="subItem2.deadline"
-                          @change="changeItemDeadline(subItem2, $event)"
-                        />
-                      </template>
-                      <template
-                        v-if="showAllParams || subItem2.priority"
-                        #priority
-                      >
-                        <ItemPriority
-                          :model-value="subItem2.priority"
-                          @update:model-value="changeItemPriority(subItem2, $event)"
-                        />
-                      </template>
-                      <template #options>
-                        <ItemOptions
-                          :item="subItem2"
-                          :collections="collections"
-                          :model-value:collectionId="subItem2.collectionId"
-                          @change-collection="switchItemCollection(subItem2, $event)"
-                          @change-type="
-                            switchItemType(subItem2, subItem2.type === 'todo' ? 'note' : 'todo')
-                          "
-                          @remove="removeItem(subItem2)"
-                          @add-description="changeItemDescription(subItem2, '')"
-                          @remove-description="changeItemDescription(subItem2, null)"
-                          :model-value:date="subItem2.date"
-                          @edit-date="changeItemDate(subItem2, $event)"
-                          :model-value:deadline="subItem2.deadline"
-                          @edit-deadline="changeItemDeadline(subItem2, $event)"
-                          :model-value:priority="subItem2.priority"
-                          @edit-priority="changeItemPriority(subItem2, $event)"
-                          @change-duration-planned="changeItemDurationPlanned(subItem2, $event)"
-                          @change-duration-real="changeItemDurationReal(subItem2, $event)"
-                          @change-duration-real-from-opitons="deleteTimer(subItem2, $event)"
-                          @open-details-page="openDetailsPage(subItem2)"
-                        />
-                      </template>
-                    </ItemEntity>
-                  </div>
-                </template>
-              </ItemEntity>
+                </div>
+                <AddItemFormInline
+                  subForm
+                  v-show="isSubForm"
+                  v-model:type="itemType"
+                  v-model:isExpand="isExpandItemForm"
+                  key="add-sub-item-form"
+                  @submit="
+                    addItem(
+                      collectionId ?? 0,
+                      $event.itemTitle,
+                      itemType,
+                      item.id,
+                      $event.description,
+                      $event.deadline,
+                      $event.date,
+                      $event.priority,
+                      $event.durationPlanned,
+                      $event.tags
+                    )
+                  "
+                />
+              </TransitionGroup>
             </div>
-          </div>
-          <AddItemFormInline
-            v-model:type="itemType"
-            key="add-item-form"
-            @submit="
-              addItem(
-                collectionId,
-                $event.itemTitle,
-                item.type,
-                item.id,
-                $event.description,
-                $event.deadline,
-                $event.date,
-                $event.priority,
-                $event.durationPlanned
-              )
-            "
-          >
-          </AddItemFormInline>
+          </Transition>
         </template>
       </ItemEntity>
     </div>

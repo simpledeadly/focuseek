@@ -1,7 +1,8 @@
 import { defineStore, storeToRefs } from 'pinia'
-import { ref, shallowRef } from 'vue'
+import { reactive, ref, shallowRef } from 'vue'
 import type { Item } from '../types/item'
 import { fetchItemsFromServer } from '@/shared/api/api'
+import { watch } from 'vue'
 
 const fetchItems = async (): Promise<Item[]> => {
   try {
@@ -27,7 +28,9 @@ export const useItemsStore = defineStore('items', () => {
   const items = shallowRef<Item[]>([])
 
   const savedItem = localStorage.getItem('selectedItem')
+  const savedItemIndex = localStorage.getItem('selectedItemIndex')
   const item = ref<Item>(savedItem ? JSON.parse(savedItem) : undefinedItem)
+  const itemIndex = ref<number>(savedItemIndex ? JSON.parse(savedItemIndex) : 0)
 
   const loadItems = async () => {
     try {
@@ -56,20 +59,35 @@ export const useItemsStore = defineStore('items', () => {
 
   const setSelectedItem = (selectedItem: Item | null) => {
     if (selectedItem) {
-      item.value = selectedItem
+      itemIndex.value = selectedItem.id
+      item.value = reactive(selectedItem)
       localStorage.setItem('selectedItem', JSON.stringify(selectedItem))
+      localStorage.setItem('selectedItemIndex', JSON.stringify(selectedItem.id))
     } else {
       item.value = undefinedItem
       localStorage.removeItem('selectedItem')
+      localStorage.removeItem('selectedItemIndex')
     }
   }
 
-  return { items, item, updateOrderOfItem, setSelectedItem }
+  watch(
+    item,
+    (newVal) => {
+      if (newVal && newVal !== undefinedItem) {
+        localStorage.setItem('selectedItem', JSON.stringify(newVal))
+      } else {
+        localStorage.removeItem('selectedItem')
+      }
+    },
+    { deep: true }
+  )
+
+  return { items, item, itemIndex, updateOrderOfItem, setSelectedItem }
 })
 
 export const useItems = () => {
-  const { items, item } = storeToRefs(useItemsStore())
+  const { items, item, itemIndex } = storeToRefs(useItemsStore())
   const { updateOrderOfItem, setSelectedItem } = useItemsStore()
 
-  return { items, item, updateOrderOfItem, setSelectedItem }
+  return { items, item, itemIndex, updateOrderOfItem, setSelectedItem }
 }
