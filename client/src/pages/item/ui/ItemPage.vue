@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { Toggle } from '@/shared/ui/toggle'
 import { ItemEntity, useItems } from '@/entities/item'
+import { useCollections } from '@/entities/collection'
 import { AddItemFormInline } from '@/features/item/add'
 import { ItemTitle } from '@/features/item/change-title'
 import { ItemDescription } from '@/features/item/change-description'
@@ -38,6 +39,8 @@ const {
   openDetailsPage,
   filterNestedItems,
 } = useItemList()
+
+const { findCollectionTitleById } = useCollections()
 
 const emit = defineEmits<{
   (e: 'toggle-done', ...args: any[]): void
@@ -173,11 +176,20 @@ onUnmounted(() => {
       <br />
       <br />
       <h1 style="font-size: 20px">{{ currentItem.title }}</h1>
-      <h3 v-if="currentItem.description">{{ currentItem.description }}</h3>
+      <h3
+        v-if="currentItem.description"
+        class="text-muted-foreground"
+      >
+        {{ currentItem.description }}
+      </h3>
       <br />
       <p>id: {{ currentItem.id }}</p>
       <p>userId: {{ currentItem.userId }}</p>
-      <p>collectionId: {{ currentItem.collectionId }}</p>
+      <p>
+        collectionId: {{ currentItem.collectionId }} ({{
+          findCollectionTitleById(currentItem.collectionId)
+        }})
+      </p>
       <p>type: {{ currentItem.type }}</p>
       <p v-if="currentItem.type === 'todo'">isDone: {{ currentItem.isDone || false }}</p>
       <p v-if="currentItem.priority">priority: {{ currentItem.priority }}</p>
@@ -186,6 +198,7 @@ onUnmounted(() => {
       <p v-if="currentItem.date">date: {{ currentItem.date }}</p>
       <p v-if="currentItem.deadline">deadline: {{ currentItem.deadline }}</p>
       <p>createdAt: {{ new Date(currentItem.createdAt).toLocaleString() }}</p>
+      <p>editedAt: {{ new Date(currentItem.editedAt).toLocaleString() }}</p>
     </div>
     <br />
 
