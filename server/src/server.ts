@@ -23,6 +23,10 @@ app.use(express.json())
 
 // === Endpoints ===
 
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: './public' })
+})
+
 // == AUTH ==
 
 app.post('/api/register', async (req, res) => {
