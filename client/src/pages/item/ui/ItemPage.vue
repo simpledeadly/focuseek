@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { Toggle } from '@/shared/ui/toggle'
+import { Label } from '@/shared/ui/label'
+import { Checkbox } from '@/shared/ui/checkbox'
+import { getLocalString, parseUnixTimestampToDuration } from '@/shared/lib/utils'
 import { ItemEntity, useItems } from '@/entities/item'
 import { useCollections } from '@/entities/collection'
 import { AddItemFormInline } from '@/features/item/add'
@@ -14,10 +16,7 @@ import { ItemCheckbox } from '@/features/item/change-done'
 import { ItemSubItemsToggle } from '@/features/item/show-sub-items'
 import { ItemOptions } from '@/features/item/options'
 import { ItemTimeTrack } from '@/features/item/time-track'
-import { useItemList } from '@/widgets/item-list/composable/useItemList'
-import { ListTodo } from 'lucide-vue-next'
-import { Label } from '@/shared/ui/label'
-import { Checkbox } from '@/shared/ui/checkbox'
+import { useItemList } from '@/widgets/item-list'
 import { ItemList } from '@/widgets/item-list'
 
 const {
@@ -70,7 +69,6 @@ const currentItem = computed(() => items.value.filter((item) => item.id === item
 // ^ it works
 
 const container = ref<HTMLElement | null>(null)
-const isSubForm = ref<boolean>(true)
 const isExpandSubItemForm = ref<boolean>(false)
 const isExpandItemForm = ref<boolean>(false)
 
@@ -147,6 +145,15 @@ const isHideDoneState = ref<boolean>(
   savedIsHideDoneState ? JSON.parse(savedIsHideDoneState) : false
 )
 
+const doneSubitems = computed(() => {
+  return items.value.filter((item) => item.parentItemId === currentItem.value.id && item.isDone)
+    .length
+})
+
+const allSubItems = computed(() => {
+  return items.value.filter((item) => item.parentItemId === currentItem.value.id).length
+})
+
 onMounted(() => {
   localStorage.setItem('isHideDoneState', JSON.stringify(isHideDone.value))
   showAllParams.value = true
@@ -190,15 +197,25 @@ onUnmounted(() => {
           findCollectionTitleById(currentItem.collectionId)
         }})
       </p>
+      <p v-if="items.filter((item) => item.parentItemId === currentItem.id).length > 0">
+        subitems:
+        {{ doneSubitems }}/{{ allSubItems }} ({{ Math.round((doneSubitems / allSubItems) * 100) }}%)
+      </p>
       <p>type: {{ currentItem.type }}</p>
       <p v-if="currentItem.type === 'todo'">isDone: {{ currentItem.isDone || false }}</p>
+      <p v-if="currentItem.tags?.length">tags: {{ currentItem.tags?.join(', ') }}</p>
       <p v-if="currentItem.priority">priority: {{ currentItem.priority }}</p>
       <p v-if="currentItem.durationPlanned">durationPlanned: {{ currentItem.durationPlanned }}</p>
-      <p v-if="currentItem.durationReal">durationReal: {{ currentItem.durationReal }}</p>
-      <p v-if="currentItem.date">date: {{ currentItem.date }}</p>
-      <p v-if="currentItem.deadline">deadline: {{ currentItem.deadline }}</p>
-      <p>createdAt: {{ new Date(currentItem.createdAt).toLocaleString() }}</p>
-      <p>editedAt: {{ new Date(currentItem.editedAt).toLocaleString() }}</p>
+      <p v-if="currentItem.durationReal">
+        durationReal: {{ parseUnixTimestampToDuration(currentItem.durationReal) }}
+      </p>
+      <p v-if="currentItem.date">date: {{ getLocalString(currentItem.date) }}</p>
+      <p v-if="currentItem.deadline">deadline: {{ getLocalString(currentItem.deadline) }}</p>
+      <p>createdAt: {{ getLocalString(currentItem.createdAt) }}</p>
+      <p>editedAt: {{ getLocalString(currentItem.editedAt) }}</p>
+      <p v-if="currentItem.type === 'todo' && currentItem.doneAt">
+        doneAt: {{ currentItem.doneAt && getLocalString(currentItem.doneAt) }}
+      </p>
     </div>
     <br />
 
@@ -308,14 +325,6 @@ onUnmounted(() => {
             @change="updateItemProperty(item, { tags: $event })"
           />
         </template>
-        <template
-          v-if="item.showSubItems"
-          #default
-        >
-          <Toggle v-model="isSubForm">
-            <ListTodo :class="isSubForm ? 'text-foreground' : 'text-muted-foreground'" />
-          </Toggle>
-        </template>
         <template #options>
           <ItemOptions
             :item="item"
@@ -368,7 +377,7 @@ onUnmounted(() => {
             @leave="leave"
           >
             <div
-              v-show="item.showSubItems"
+              v-if="item.showSubItems"
               class="sub-items-container"
               ref="container"
             >
@@ -412,7 +421,6 @@ onUnmounted(() => {
                 </div>
                 <AddItemFormInline
                   subForm
-                  v-show="isSubForm"
                   v-model:type="itemType"
                   v-model:isExpand="isExpandItemForm"
                   key="add-sub-item-form"
