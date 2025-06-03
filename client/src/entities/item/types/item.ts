@@ -9,6 +9,7 @@ export type Item = {
   type: ItemType
   createdAt: number
   editedAt: number
+  doneAt: number | null
   isDone?: boolean
   description?: string | null
   priority?: number | null

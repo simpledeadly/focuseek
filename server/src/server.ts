@@ -293,6 +293,7 @@ app.post('/api/items', authenticate, async (req, res) => {
           type: item.type,
           createdAt: new Date(item.createdAt),
           editedAt: new Date(item.editedAt),
+          doneAt: item.doneAt ? new Date(item.doneAt.toString()) : null,
           isDone: item.isDone,
           description: item.description,
           priority: item.priority,

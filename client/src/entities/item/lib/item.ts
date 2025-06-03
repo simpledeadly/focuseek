@@ -27,6 +27,7 @@ export const createItem = (
     type,
     createdAt: Date.now(),
     editedAt: Date.now(),
+    doneAt: null,
     parentItemId,
     description,
     priority,

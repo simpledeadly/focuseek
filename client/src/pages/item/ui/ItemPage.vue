@@ -235,7 +235,12 @@ onUnmounted(() => {
             :itemId="item.id"
             :priority="item.priority"
             :model-value="item.isDone"
-            @update:model-value="updateItemProperty(item, { isDone: !item.isDone })"
+            @update:model-value="
+              updateItemProperty(item, {
+                isDone: !item.isDone,
+                doneAt: item.isDone ? null : new Date(Date.now()),
+              })
+            "
           />
         </template>
         <template #title>

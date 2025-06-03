@@ -57,6 +57,7 @@ model Item {
   order           Float     @default(0)
   createdAt       DateTime   @default(now()) @map("created_at")
   editedAt        DateTime   @updatedAt @map("edited_at")
+  doneAt          DateTime?
 
   user            User       @relation(fields: [userId], references: [id])
   collection      Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
