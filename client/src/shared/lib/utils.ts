@@ -69,6 +69,10 @@ export const formatDateToYMD = (date: Date, time: boolean = false): string => {
   }
 }
 
+export const getLocalString = (date: number): string => {
+  return new Date(date).toLocaleString('ru-RU')
+}
+
 export const updateLocalStorageField = (key: string, field: string, newValue: string) => {
   const stored = localStorage.getItem(key)
   const obj = stored ? JSON.parse(stored) : {}
