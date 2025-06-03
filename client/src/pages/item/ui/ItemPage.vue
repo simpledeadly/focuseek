@@ -228,7 +228,7 @@ onUnmounted(() => {
           />
         </template>
         <template
-          v-if="itemType !== 'note'"
+          v-if="item.type !== 'note'"
           #checkbox
         >
           <ItemCheckbox

@@ -156,7 +156,7 @@ const handleToggle = (showSubs: boolean) => {
       />
     </template>
     <template
-      v-if="itemType !== 'note'"
+      v-if="item.type !== 'note'"
       #checkbox
     >
       <ItemCheckbox
