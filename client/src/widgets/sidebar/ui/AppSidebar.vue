@@ -9,6 +9,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
@@ -21,12 +22,14 @@ import {
 } from '@/shared/ui/dropdown-menu'
 import { Separator } from '@/shared/ui/separator'
 import { useCollections } from '@/entities/collection'
+import { useItems } from '@/entities/item'
 import SettingsPage from '@/pages/settings'
 import { ChevronDown, User2 } from 'lucide-vue-next'
 
 const { getUsername, getUserId } = useAuth()
 
-const { collections } = useCollections()
+const { collections, findIdByCollectionTitle } = useCollections()
+const { items } = useItems()
 
 const route = useRoute()
 
@@ -143,6 +146,12 @@ const toPath = (title: string) => {
                 <SidebarMenuButton as-child>
                   <span>{{ col.title }}</span>
                 </SidebarMenuButton>
+                <SidebarMenuBadge v-if="col.title === 'Urgent'">
+                  {{
+                    items.filter((item) => item.collectionId === findIdByCollectionTitle('Urgent'))
+                      .length - 1
+                  }}
+                </SidebarMenuBadge>
               </RouterLink>
             </SidebarMenuItem>
           </div>
