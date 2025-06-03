@@ -148,8 +148,10 @@ const toPath = (title: string) => {
                 </SidebarMenuButton>
                 <SidebarMenuBadge v-if="col.title === 'Urgent'">
                   {{
-                    items.filter((item) => item.collectionId === findIdByCollectionTitle('Urgent'))
-                      .length - 1
+                    items.filter(
+                      (item) =>
+                        item.collectionId === findIdByCollectionTitle('Urgent') && !item.isDone
+                    ).length
                   }}
                 </SidebarMenuBadge>
               </RouterLink>
