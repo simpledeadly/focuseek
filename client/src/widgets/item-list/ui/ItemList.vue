@@ -60,7 +60,7 @@ const props = defineProps<{
 }>()
 
 const container = ref<HTMLElement | null>(null)
-const isSubForm = ref<boolean>(false)
+const isSubForm = ref<boolean>(true)
 const isExpandSubItemForm = ref<boolean>(false)
 const isExpandItemForm = ref<boolean>(false)
 
@@ -285,6 +285,8 @@ const handleToggle = (showSubs: boolean) => {
         @remove-timer="deleteTimer(item)"
         @open-details-page="openDetailsPage(item)"
         @toggle-sub-item-form="toggleShowSubItems(item)"
+        @add-tag="updateItemProperty(item, { tags: [...(item.tags ?? []), $event] })"
+        @remove-tags="updateItemProperty(item, { tags: [] })"
       />
     </template>
     <template #subItems>
@@ -296,12 +298,13 @@ const handleToggle = (showSubs: boolean) => {
         @leave="leave"
       >
         <div
-          v-show="item.showSubItems"
+          v-if="item.showSubItems"
           class="sub-items-container"
           ref="container"
         >
           <AddSubItemFormInline
             subForm
+            v-if="!isSubForm"
             v-model:type="itemType"
             v-model:isExpand="isExpandSubItemForm"
             key="add-sub-item-form"
@@ -358,7 +361,7 @@ const handleToggle = (showSubs: boolean) => {
             </div>
             <AddItemFormInline
               subForm
-              v-show="isSubForm"
+              v-if="isSubForm"
               v-model:type="itemType"
               v-model:isExpand="isExpandItemForm"
               key="add-sub-item-form"

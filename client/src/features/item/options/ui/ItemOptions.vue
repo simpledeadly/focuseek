@@ -55,6 +55,8 @@ const emit = defineEmits<{
   (e: 'remove-timer'): void
   (e: 'reset-timer'): void
   (e: 'toggle-sub-item-form'): void
+  (e: 'add-tag', value?: string): void
+  (e: 'remove-tags'): void
 }>()
 
 const dateValue = ref<DateValue>()
@@ -67,6 +69,7 @@ const userIdValue = ref<number>()
 const colIdValue = ref<number>()
 const priority = ref(props.item.priority)
 const collectionId = ref(props.item.collectionId)
+const tagValue = ref<string>()
 
 const dropdownRef = ref<HTMLElement | null>(null)
 
@@ -139,6 +142,13 @@ const handleSwitchUser = () => {
     const msg = 'Заполните все поля указанными числами, иначе элемент потеряется!'
     alert(msg)
     console.log(msg)
+  }
+}
+
+const handleAddTag = () => {
+  if (tagValue.value?.trim()) {
+    emit('add-tag', tagValue.value)
+    tagValue.value = ''
   }
 }
 </script>
@@ -257,6 +267,28 @@ const handleSwitchUser = () => {
           <span>Remove subitem form</span>
           <DropdownMenuShortcut>S</DropdownMenuShortcut>
         </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <span>Add tag</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <Input
+                type="text"
+                v-model="tagValue"
+                placeholder="e.g. idea"
+                @keydown.enter="handleAddTag"
+              />
+              <Button
+                variant="outline"
+                class="mt-1 w-full"
+                @click="emit('remove-tags')"
+                :disabled="!props.item.tags?.length"
+                >Remove all tags</Button
+              >
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
 
         <ItemTimeTrackOptions
           :durPlan="props.item.durationPlanned"

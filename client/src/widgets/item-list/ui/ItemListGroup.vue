@@ -75,6 +75,8 @@ const { isMobile } = useSidebar()
               @add-description="updateItemProperty"
               @remove-description="updateItemProperty"
               @open-details-page="openDetailsPage"
+              @add-tag="updateItemProperty"
+              @remove-tags="updateItemProperty"
             />
           </div>
           <AddItemFormInline
