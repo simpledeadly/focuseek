@@ -39,7 +39,7 @@ const onChangeTag = (index: number, newValue?: string | null) => {
           :variant="props.tags && props.tags.length > 0 ? 'secondary' : 'outline'"
           :class="
             cn(
-              'justify-start text-left font-medium uppercase text-muted-foreground',
+              'item-tags__tag justify-start text-left font-medium uppercase text-muted-foreground',
               !props.tags && 'text-muted-foreground'
             )
           "
@@ -71,5 +71,10 @@ const onChangeTag = (index: number, newValue?: string | null) => {
 .item-tags {
   display: flex;
   gap: 4px;
+
+  &__tag {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
 }
 </style>
