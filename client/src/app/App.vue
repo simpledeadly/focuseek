@@ -14,9 +14,15 @@ import { Search } from '@/widgets/search'
 import { useLoading } from './useLoading'
 import { isAuthenticated } from './auth/auth'
 import './styles/animations.scss'
+import { checkboxStylePacks } from './packs'
 
 const mode = useColorMode()
 mode.value = 'auto'
+
+const isPackExists = localStorage.getItem('pack')
+if (!isPackExists) {
+  localStorage.setItem('pack', JSON.stringify(checkboxStylePacks[2]))
+}
 
 const { isLoading, setLoading } = useLoading()
 

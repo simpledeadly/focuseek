@@ -1,15 +1,5 @@
+import { Pack, PackKey } from '@/app/packs'
 import { computed, Ref, unref } from 'vue'
-
-type Pack = {
-  id: number
-  title: string
-  p1: string
-  p2: string
-  p3: string
-  p0: string
-}
-
-type PackKey = 'p1' | 'p2' | 'p3' | 'p0'
 
 export const checkboxStyle = (
   priorityRef: Ref<number | undefined | null>,

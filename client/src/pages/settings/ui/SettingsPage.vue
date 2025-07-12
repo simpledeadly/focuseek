@@ -18,44 +18,13 @@ import { Card, CardContent } from '@/shared/ui/card'
 import { Carousel, CarouselContent, CarouselItem } from '@/shared/ui/carousel'
 import { parseUnixTimestampToDuration } from '@/shared/lib/utils'
 import { Bolt } from 'lucide-vue-next'
+import { checkboxStylePacks } from '@/app/packs'
 
 const { breakPer, breakFor, takeABreakReminders, remainingUntilNextBreak } = useBreaks()
 
 const mode = useColorMode()
 const themes = ['auto', 'dark', 'light']
 const switchMode = (theme: any) => (mode.value = theme)
-
-const checkboxStylePacks = [
-  {
-    id: 1,
-    title: 'first',
-    p1: '#FF0060',
-    p2: '#F6FA70',
-    p3: '#0079FF',
-  },
-  {
-    id: 2,
-    title: 'second',
-    p1: '#FF1E1E',
-    p2: '#FFFF00',
-    p3: '#00FFD1',
-  },
-  {
-    id: 3,
-    title: 'third',
-    p1: '#FF4A4A',
-    p2: '#FF9551',
-    p3: '#6FEDD6',
-  },
-  {
-    id: 4,
-    title: 'fouth',
-    p1: '#ff2626',
-    p2: '#ffae00',
-    p3: '#007fff',
-    p0: '#fff',
-  },
-]
 
 const pack = JSON.parse(localStorage.getItem('pack')!)
 
@@ -177,7 +146,11 @@ const getColors = (pack: Record<string, any>) => {
         </div>
         <DialogFooter class="settings-page__footer">
           <DialogClose as-child>
-            <Button variant="secondary" type="button">Apply</Button>
+            <Button
+              variant="secondary"
+              type="button"
+              >Apply</Button
+            >
           </DialogClose>
         </DialogFooter>
       </DialogContent>
