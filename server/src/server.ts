@@ -236,7 +236,7 @@ app.get('/api/items', authenticate, async (req, res) => {
         return res.status(404).json({ message: 'Элементы не найдены' })
       }
 
-      const safeItems = items.map((item: Item) => ({
+      const safeItems = items.map((item) => ({
         ...item,
         durationPlanned:
           item.durationPlanned !== undefined && item.durationPlanned !== null
