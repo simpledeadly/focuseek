@@ -5,7 +5,7 @@ import type { Collection } from '@/entities/collection'
 import type { Item } from '@/entities/item'
 import type { Timer } from '@/entities/timer'
 
-const API_URL = 'http://localhost:3000/api'
+const API_URL = (import.meta as any).env.VITE_API_URL
 
 // === USERS ===
 
